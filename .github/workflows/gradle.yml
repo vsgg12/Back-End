@@ -31,7 +31,7 @@ jobs:
       - name: Init Gradle
         uses: gradle/gradle-build-action@v1
         with:
-          gradle-version: 8.4
+          gradle-version: 7.6.1
 
       # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
       # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
