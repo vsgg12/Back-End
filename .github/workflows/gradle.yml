@@ -28,18 +28,18 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: init with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        gradle-version: 8.4
-    - run: gradle init
-
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        gradle-version: 8.4
-        arguments: build
-    - run: build
+#    - name: init with Gradle
+#      uses: gradle/gradle-build-action@v2
+#      with:
+#        gradle-version: 8.4
+#    - run: gradle init
+#
+#    - name: Build with Gradle
+#      uses: gradle/gradle-build-action@v2
+#      with:
+#        gradle-version: 8.4
+#        arguments: build
+#    - run: build
 
     # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
