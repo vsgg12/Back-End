@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Decrypt appspec yml
-        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPSPEC_YML }} --output $RESOURCE_PATH/appspec.tar $RESOURCE_PATH/appspec.tar.gpg
+        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPSPEC_YML }} --output ./appspec.tar ./appspec.tar.gpg
         shell: bash
 
       - name: Unzip appspec yml
