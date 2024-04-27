@@ -40,7 +40,7 @@ jobs:
         shell: bash
 
       - name: Unzip appspec yml
-        run: tar xvf $RESOURCE_PATH/appspec.tar
+        run: tar xvf ./appspec.tar
         shell: bash
 
       - name: Init Gradle
