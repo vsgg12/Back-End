@@ -35,13 +35,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Decrypt appspec yml
-        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPSPEC_YML }} --output ./appspec.tar ./appspec.tar.gpg
-        shell: bash
+#     - name: Decrypt appspec yml
+#       run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPSPEC_YML }} --output ./appspec.tar ./appspec.tar.gpg
+#       shell: bash
 
-      - name: Unzip appspec yml
-        run: tar xvf ./appspec.tar
-        shell: bash
+#      - name: Unzip appspec yml
+#        run: tar xvf ./appspec.tar
+#        shell: bash
 
       - name: Init Gradle
         uses: gradle/gradle-build-action@v1
