@@ -1,5 +1,3 @@
-# health_check.sh
-
 #!/bin/bash
 
 # Crawl current connected port of WAS
@@ -29,6 +27,8 @@ do
         exit 0
     elif [ ${RETRY_COUNT} -eq 10 ]; then
         echo "> Health check failed."
+        echo ">${RESPONSE_CODE}"
+        echo ">${TARGET_PORT}"
         exit 1
     fi
     sleep 10
