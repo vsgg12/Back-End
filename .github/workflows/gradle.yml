@@ -33,7 +33,10 @@ jobs:
           distribution: 'temurin'
 
       - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - run : touch ./src/main/resources/application.properties
+      - run : echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.properties
+      - run : cat ./src/main/resources/application.properties
 
 #     - name: Decrypt appspec yml
 #       run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPSPEC_YML }} --output ./appspec.tar ./appspec.tar.gpg
@@ -50,18 +53,6 @@ jobs:
 #      - name: Init application properties
 #        run: touch src/main/resources/application.properties < ${{ secrets.APPLICATION_PROPERTIES }}
 #        shell: bash
-
-#      - name: Init application properties
-#        run : touch ./src/main/resources/application.properties
-#        shell: bash
-
-      - name: update application properties
-        run : echo -e "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
-        shell: bash
-
-      - name: read application properties
-        run : cat ./src/main/resources/application.properties
-        shell: bash
 
       - name: Init Gradle
         uses: gradle/gradle-build-action@v1
