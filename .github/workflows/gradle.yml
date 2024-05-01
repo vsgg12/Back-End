@@ -55,8 +55,8 @@ jobs:
 #        run : touch ./src/main/resources/application.properties
 #        shell: bash
 
-      - name: insert application properties
-        run : echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+      - name: update application properties
+        run : echo -e "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
         shell: bash
 
       - name: read application properties
