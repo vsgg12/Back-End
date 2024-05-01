@@ -44,11 +44,11 @@ jobs:
 #        shell: bash
 
       - name: Decrypt application properties
-        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPLICATION_PROPERTIES }} --output /home/ec2-user/mdmgg/src/main/resources/application.tar /home/ec2-user/mdmgg/src/main/resources/application.tar.gpg
+        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPLICATION_PROPERTIES }} --output src/main/resources/application.tar src/main/resources/application.tar.gpg
         shell: bash
 
       - name: Unzip application properties
-        run: tar xvf /home/ec2-user/mdmgg/src/main/resources/application.tar
+        run: tar xvf src/main/resources/application.tar
         shell: bash
 
       - name: Init Gradle
