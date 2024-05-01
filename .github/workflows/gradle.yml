@@ -51,9 +51,9 @@ jobs:
 #        run: touch src/main/resources/application.properties < ${{ secrets.APPLICATION_PROPERTIES }}
 #        shell: bash
 
-      - name: Init application properties
-        run : touch ./src/main/resources/application.properties
-        shell: bash
+#      - name: Init application properties
+#        run : touch ./src/main/resources/application.properties
+#        shell: bash
 
       - name: insert application properties
         run : echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
