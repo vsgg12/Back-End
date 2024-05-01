@@ -43,12 +43,12 @@ jobs:
 #        run: tar xvf ./appspec.tar
 #        shell: bash
 
-      - name: Decrypt application properties
-        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPLICATION_PROPERTIES }} --output src/main/resources/application.tar src/main/resources/application.tar.gpg
-        shell: bash
+#      - name: Decrypt application properties
+#        run: gpg --quiet --batch --yes --always-trust --decrypt --passphrase=${{ secrets.APPLICATION_PROPERTIES }} --output src/main/resources/application.tar src/main/resources/application.tar.gpg
+#      shell: bash
 
-      - name: Unzip application properties
-        run: tar xvf src/main/resources/application.tar
+      - name: Init application properties
+        run: touch src/main/resources/application.properties < ${{ secrets.APPLICATION_PROPERTIES }}
         shell: bash
 
       - name: Init Gradle
