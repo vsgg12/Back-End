@@ -48,7 +48,7 @@ jobs:
         shell: bash
 
       - name: Unzip application properties
-        run: tar xvf src/main/resources/application.tar
+        run: sudo tar xvf src/main/resources/application.tar
         shell: bash
 
       - name: Init Gradle
