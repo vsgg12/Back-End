@@ -145,4 +145,11 @@ public class MemberService {
         memberRepository.save(member);
 
     }
+
+    /*
+     * 회원가입
+     */
+    public boolean isNicknameAvailable(String nickname) {
+        return !memberRepository.existByNickname(nickname);
+    }
 }

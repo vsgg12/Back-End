@@ -55,6 +55,15 @@ public class MemberController {
     /*
      * 닉네임 중복 체크
      */
+    @GetMapping("/name")
+    public ResponseEntity<?> checkNickname(@RequestParam String nickname) {
+        if(memberService.isNicknameAvailable(nickname)) {
+            return ResponseEntity.ok("닉네임이 존재합니다.");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("사용 중인 닉네임입니다.");
+        }
+    }
 
 
     /*
