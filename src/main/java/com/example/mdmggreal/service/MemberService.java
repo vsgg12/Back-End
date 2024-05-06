@@ -4,7 +4,6 @@ import com.example.mdmggreal.dto.MemberDTO;
 import com.example.mdmggreal.entity.Member;
 import com.example.mdmggreal.repository.MemberRepository;
 import io.micrometer.common.util.StringUtils;
-import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,12 +16,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 
-
 @Service
-@RequiredArgsConstructor
 public class MemberService {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${naver.client.id}")
     private String NAVER_CLIENT_ID;
@@ -35,6 +32,10 @@ public class MemberService {
 
     private final static String NAVER_AUTH_URI = "https://nid.naver.com";
     private final static String NAVER_API_URI = "https://openapi.naver.com";
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     /*
      * 네이버 로그인 사이트
