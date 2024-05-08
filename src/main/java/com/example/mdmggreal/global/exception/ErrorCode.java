@@ -1,4 +1,4 @@
-package com.example.mdmggreal.exception;
+package com.example.mdmggreal.global.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +13,8 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다."),
 
+    // 이미지
+    NOT_FOUND_IMAGE(HttpStatus.BAD_REQUEST, "이미지가 존재하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;
