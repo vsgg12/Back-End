@@ -1,11 +1,10 @@
 package com.example.mdmggreal;
 
-import org.aspectj.util.FileUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import java.io.File;
-
+@EnableJpaAuditing
 @SpringBootApplication
 public class MdmggRealApplication {
 
