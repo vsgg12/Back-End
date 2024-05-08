@@ -1,4 +1,4 @@
-package com.example.mdmggreal.exception;
+package com.example.mdmggreal.global.exception;
 
 import lombok.Builder;
 import lombok.Data;
