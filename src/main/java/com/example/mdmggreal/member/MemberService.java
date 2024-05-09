@@ -1,8 +1,5 @@
-package com.example.mdmggreal.service;
+package com.example.mdmggreal.member;
 
-import com.example.mdmggreal.dto.MemberDTO;
-import com.example.mdmggreal.entity.Member;
-import com.example.mdmggreal.repository.MemberRepository;
 import io.micrometer.common.util.StringUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,20 +11,18 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
-
 @Service
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    @Value("${naver.client.id}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String NAVER_CLIENT_ID;
 
-    @Value("${naver.client.secret}")
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String NAVER_CLIENT_SECRET;
 
-    @Value("${naver.redirect.uri}")
+    @Value("${spring.security.oauth2.client.registration.naver.redirect-uri}")
     private String NAVER_REDIRECT_URI;
 
     private final static String NAVER_AUTH_URI = "https://nid.naver.com";
@@ -114,20 +109,16 @@ public class MemberService {
         String email = String.valueOf(account.get("email"));
         String nickname = String.valueOf(account.get("nickname"));
         String mobileNumber = String.valueOf(account.get("mobile"));
-        String birthyear = String.valueOf(account.get("birthyear"));
-        int age = 0;
-
-        if(StringUtils.isNotEmpty(birthyear)) {
-            int currentYear = LocalDate.now().getYear();
-            age = currentYear - Integer.parseInt(birthyear);
-        }
+        String profileImage = String.valueOf(account.get("profileImage"));
 
         return MemberDTO.builder()
-                .id(id)
+                .memberId(id)
                 .email(email)
                 .nickname(nickname)
-                .mobileNumber(mobileNumber)
-                .age(age).build();
+                .mobile(mobileNumber)
+                .profileImage(profileImage)
+                .role(MemberRole.USER)
+                .build();
     }
 
     /*
@@ -136,8 +127,12 @@ public class MemberService {
     @Transactional
     public void signup(MemberDTO memberDTO) {
 
+        if(memberRepository.existByMemberId(memberDTO.getMemberId())) {
+            return;
+        }
+
         Member member = new Member();
-        member.setMemberId(memberDTO.getId());
+        member.setMemberId(memberDTO.getMemberId());
         member.setEmail(memberDTO.getEmail());
         member.setNickname(memberDTO.getNickname());
         member.setProfileImage(memberDTO.getProfileImage());
