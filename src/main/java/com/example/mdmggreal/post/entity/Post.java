@@ -1,7 +1,7 @@
 package com.example.mdmggreal.post.entity;
 
 import com.example.mdmggreal.base.entity.BaseEntity;
-import com.example.mdmggreal.member.Member;
+import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.entity.type.VideoType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
