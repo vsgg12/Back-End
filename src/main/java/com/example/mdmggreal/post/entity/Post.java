@@ -1,17 +1,13 @@
 package com.example.mdmggreal.post.entity;
 
 import com.example.mdmggreal.base.entity.BaseEntity;
-import com.example.mdmggreal.entity.Member;
-import com.example.mdmggreal.post.dto.PostAddRequest;
-import com.example.mdmggreal.post.entity.type.VideoType;
+import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity

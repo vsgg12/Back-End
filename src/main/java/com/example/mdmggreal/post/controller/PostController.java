@@ -1,8 +1,10 @@
 package com.example.mdmggreal.post.controller;
 
-import com.example.mdmggreal.post.dto.PostAddRequest;
+import com.example.mdmggreal.post.dto.request.PostAddRequest;
+import com.example.mdmggreal.post.dto.response.PostAddResponse;
 import com.example.mdmggreal.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,14 +31,14 @@ public class PostController {
 //    }
 
     @PostMapping
-    public ResponseEntity<?> postAdd(@RequestPart MultipartFile uploadVideos,
-                                     @RequestPart MultipartFile thumbnailImage,
-                                     @RequestPart PostAddRequest postAddRequest
+    public ResponseEntity<PostAddResponse> postAdd(@RequestPart MultipartFile uploadVideos,
+                                                   @RequestPart MultipartFile thumbnailImage,
+                                                   @RequestPart PostAddRequest postAddRequest
     ) throws IOException {
         postService.addPost(uploadVideos, thumbnailImage, postAddRequest);
         // 멤버 아이디 가져오는거
         String email = "jawoo1003@gmail.com";
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(PostAddResponse.of(HttpStatus.CREATED));
     }
 }
