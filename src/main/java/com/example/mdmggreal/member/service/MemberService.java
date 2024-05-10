@@ -1,8 +1,11 @@
 package com.example.mdmggreal.member.service;
 
+import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repo.MemberRepository;
+import com.example.mdmggreal.member.type.Role;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
@@ -24,7 +27,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -53,13 +56,6 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
     /*
      * 네이버 로그인 사이트
      */
-    public String getNaverLogin() {
-        return NAVER_AUTH_URI + "/oauth2.0/authorize"
-                + "?client_id=" + NAVER_CLIENT_ID
-                + "&redirect_uri=" + NAVER_REDIRECT_URI
-                + "&response_type=code";
-    }
-
     /*
      * 네이버 로그인 정보 콜백
      */
@@ -127,14 +123,18 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
         String email = String.valueOf(account.get("email"));
         String nickname = String.valueOf(account.get("nickname"));
         String mobileNumber = String.valueOf(account.get("mobile"));
-        String profileImage = String.valueOf(account.get("profileImage"));
+        String profileImage = String.valueOf(account.get("profile_image"));
+        String gender = String.valueOf(account.get("gender"));
+        String age = String.valueOf(account.get("age"));
 
         return MemberDTO.builder()
-                .memberId(id)
+                .token(id)
                 .email(email)
                 .nickname(nickname)
                 .mobile(mobileNumber)
                 .profileImage(profileImage)
+                .age(age)
+                .gender(gender)
                 .build();
     }
 
@@ -144,29 +144,10 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
     @Transactional
     public Member signup(OAuthAttributes attributes) {
 
-//        if(memberRepository.existByMemberId(memberDTO.getMemberId())) {
-//            return;
-//        }
-//
-//        Member member = new Member();
-//        member.setMemberId(memberDTO.getMemberId());
-//        member.setEmail(memberDTO.getEmail());
-//        member.setNickname(memberDTO.getNickname());
-//        member.setProfileImage(memberDTO.getProfileImage());
-
-        if(memberRepository.existsByEmail(attributes.getEmail())) {
-            return null;
+        if (memberRepository.existsByMobile(attributes.getMobile())) {
+            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
-
-        Member member = new Member();
-        member.setMemberId(attributes.getNameAttributeKey());
-        member.setMobile(attributes.getMobile());
-        member.setEmail(attributes.getEmail());
-        member.setNickname(attributes.getNickname());
-        member.setProfileImage(attributes.getPicture());
-
-        return memberRepository.save(member);
-
+       return memberRepository.save(Member.from(attributes));
     }
 
     @Override
@@ -178,20 +159,15 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
 
         OAuthAttributes attributes = OAuthAttributes.ofNaver(userNameAttributeName, oAuth2User.getAttributes());
 
-        Member member = signup(attributes);
-        httpSession.setAttribute("member", member);
+    //        Member member = signup(attributes);
+    //        httpSession.setAttribute("member", member);
 
-        return new DefaultOAuth2User(
+        DefaultOAuth2User defaultOAuth2User = new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(null)),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
+        return defaultOAuth2User;
 
     }
 
-    /*
-     * 회원가입
-     */
-//    public boolean isNicknameAvailable(String nickname) {
-//        return !memberRepository.ex(nickname);
-//    }
 }

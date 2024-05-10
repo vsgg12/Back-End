@@ -1,26 +1,30 @@
 package com.example.mdmggreal.member.entity;
 
 import com.example.mdmggreal.base.entity.BaseEntity;
+import com.example.mdmggreal.member.dto.MemberDTO;
+import com.example.mdmggreal.member.type.Agree;
+import com.example.mdmggreal.member.type.Role;
+import com.example.mdmggreal.oauth.OAuthAttributes;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import static com.example.mdmggreal.member.type.Role.USER;
+import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @Entity
-@Table(name = "member")
-@Getter @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 @SuperBuilder
 public class Member extends BaseEntity {
-    public Member() {}
     @Id
-    // 증가 추가..
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    // tokenㅇ로 바꾸기....
-    private String memberId;
-
-
+    /** 토큰  */
+    private String token;
     /** 이메일  */
     @Column(nullable = false)
     private String email;
@@ -35,14 +39,26 @@ public class Member extends BaseEntity {
     private String profileImage;
     /** 티어  */
     private String tier;
+    /** 인증 */
+    @Enumerated(STRING)
+    private Role role;
     /** 포인트  */
     private Integer point;
+    /** 연령대 */
+    private String age;
+    @Embedded
+    private Agree agree;
 
-    public Member(String nickname, String email, String mobile, String memberId, String profileImage) {
-        this.memberId = memberId;
-        this.nickname = nickname;
-        this.email = email;
-        this.mobile = mobile;
-        this.profileImage = profileImage;
+    public static Member from(OAuthAttributes attributes) {
+        return Member.builder()
+                .token(attributes.getToken())
+                .email(attributes.getEmail())
+                .nickname(attributes.getNickname())
+                .mobile(attributes.getMobile())
+                .profileImage(attributes.getPicture())
+                .age(attributes.getAge())
+                .nickname(attributes.getNickname())
+                .role(USER)
+                .build();
     }
 }

@@ -17,6 +17,10 @@ public class OAuthAttributes {
     private final String email;
     private final String picture;
     private final String mobile;
+    private final String age;
+    private final String gender;
+    private final String token;
+
 
 
     public static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
@@ -24,21 +28,14 @@ public class OAuthAttributes {
 
         return OAuthAttributes.builder()
                 .nickname((String) response.get("nickname"))
+                .age((String) response.get("age"))
+                .gender((String) response.get("gender"))
                 .email((String) response.get("email"))
                 .picture((String) response.get("profile_image"))
                 .mobile((String) response.get("mobile"))
-                .attributes(response)
+                .token((String) response.get("id") )
+                .attributes(attributes)
                 .nameAttributeKey(userNameAttributeName)
                 .build();
     }
-
-//    public Member toEntity() {
-//        return Member.builder()
-//                .memberId(nameAttributeKey)
-//                .email(email)
-//                .profileImage(picture)
-//                .mobile(mobile)
-//                .nickname(nickname)
-//                .build();
-//    }
 }

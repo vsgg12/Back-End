@@ -4,8 +4,8 @@ import com.example.mdmggreal.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 @Repository
-public interface MemberRepository extends JpaRepository<Member, String> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findByNickname(String nickname);
-    Member findByMemberId(String memberId);
-    boolean existsByEmail(String email);
+    Member findByToken(String memberId);
+    boolean existsByMobile(String mobile);
 }

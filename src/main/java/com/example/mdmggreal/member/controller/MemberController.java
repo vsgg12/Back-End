@@ -6,6 +6,7 @@ import com.example.mdmggreal.member.dto.MemberDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,39 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
-    private final HttpSession httpSession;
-
-
-    @GetMapping("/")
-    public String index(Model model) {
-        Member member = (Member) httpSession.getAttribute("member");
-        if (member != null) {
-            model.addAttribute("member", member.getMemberId());
-        }
-        return "login";
-    }
-
-    /*
-     * 네이버 로그인 연결
-     */
-    @GetMapping("/naver")
-    public String login(Model model) {
-        model.addAttribute("naverUrl", memberService.getNaverLogin());
-
-        return "naverTest";
-    }
-
-
-
-    /*
-     * 네이버 로그인
-     */
-    @GetMapping("/signin")
-    public String signin () {
-        // ID가 없다면 회원가입 화면으로
-        return memberService.getNaverLogin();
-
-    }
 
     /*
      * 회원가입
@@ -70,8 +38,6 @@ public class MemberController {
     /*
      * 닉네임 중복 체크
      */
-
-
     /*
      * 네이버 로그인 정보 콜백
      */
@@ -81,8 +47,6 @@ public class MemberController {
 
         return ResponseEntity.ok()
                 .body(member);
-
-
     }
 
 }

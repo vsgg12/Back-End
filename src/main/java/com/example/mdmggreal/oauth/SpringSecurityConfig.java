@@ -1,6 +1,7 @@
 package com.example.mdmggreal.oauth;
 
 import com.example.mdmggreal.member.service.MemberService;
+import com.example.mdmggreal.member.type.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,24 +19,28 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 public class SpringSecurityConfig {
 
     private final MemberService memberService;
+    private static final String[] AUTH_WHITELIST = {
+            "/oauth2/**", "/api/users/signup/**", "/api/users/callback/**"
+    };
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizeRequests -> authorizeRequests
-                        .requestMatchers(new MvcRequestMatcher(introspector, "/**")).permitAll())
+//                        .requestMatchers("/api/**").hasRole(Role.USER.name())
+                        .requestMatchers(AUTH_WHITELIST).permitAll())
                 )
-                        .oauth2Login(oauth2Login ->
-                                oauth2Login
-                                        .loginPage("/api/users/signin")
-                                        .userInfoEndpoint(userInfoEndpointConfig ->
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+                                .userInfoEndpoint(userInfoEndpointConfig ->
                                         userInfoEndpointConfig.userService((memberService))));
 
 
