@@ -3,7 +3,7 @@ name: Java CI with Gradle
 # master 브랜치의 push와 pull로 CI가 작동
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
