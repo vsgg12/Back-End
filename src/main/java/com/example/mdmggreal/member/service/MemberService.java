@@ -191,7 +191,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
     /*
      * 회원가입
      */
-    public boolean isNicknameAvailable(String nickname) {
-        return !memberRepository.existByNickname(nickname);
-    }
+//    public boolean isNicknameAvailable(String nickname) {
+//        return !memberRepository.ex(nickname);
+//    }
 }
