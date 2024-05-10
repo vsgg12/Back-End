@@ -58,6 +58,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       # 깃허브 Secret에 넣어둔 Region
         aws-region: ${{ secrets.AWS_REGION }}
+        
     #3
     # 만들어 놓은 S3에 해당 zip 파일 저장
     - name: Upload to S3
