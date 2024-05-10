@@ -33,8 +33,11 @@ public class SpringSecurityConfig {
                         .requestMatchers(new MvcRequestMatcher(introspector, "/**")).permitAll())
                 )
                         .oauth2Login(oauth2Login ->
-                                oauth2Login.userInfoEndpoint(userInfoEndpointConfig ->
+                                oauth2Login
+                                        .loginPage("/api/users/signin")
+                                        .userInfoEndpoint(userInfoEndpointConfig ->
                                         userInfoEndpointConfig.userService((memberService))));
+
 
         return http.build();
     }
