@@ -6,7 +6,9 @@ import com.example.mdmggreal.member.type.Agree;
 import com.example.mdmggreal.member.type.Role;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import static com.example.mdmggreal.member.type.Role.USER;
@@ -49,15 +51,15 @@ public class Member extends BaseEntity {
     @Embedded
     private Agree agree;
 
-    public static Member from(OAuthAttributes attributes) {
+    public static Member from(MemberDTO memberDTO) {
         return Member.builder()
-                .token(attributes.getToken())
-                .email(attributes.getEmail())
-                .nickname(attributes.getNickname())
-                .mobile(attributes.getMobile())
-                .profileImage(attributes.getPicture())
-                .age(attributes.getAge())
-                .nickname(attributes.getNickname())
+                .token(memberDTO.getToken())
+                .email(memberDTO.getEmail())
+                .nickname(memberDTO.getNickname())
+                .mobile(memberDTO.getMobile())
+                .profileImage(memberDTO.getProfileImage())
+                .age(memberDTO.getAge())
+                .nickname(memberDTO.getNickname())
                 .role(USER)
                 .build();
     }

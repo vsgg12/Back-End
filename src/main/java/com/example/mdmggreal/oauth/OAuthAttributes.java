@@ -1,6 +1,5 @@
 package com.example.mdmggreal.oauth;
 
-import com.example.mdmggreal.member.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

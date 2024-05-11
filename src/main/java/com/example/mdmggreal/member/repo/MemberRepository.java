@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    Member findByNickname(String nickname);
-    Member findByToken(String memberId);
+    boolean existsByNickname(String nickname);
     boolean existsByMobile(String mobile);
+    boolean existsByToken(String token);
 }

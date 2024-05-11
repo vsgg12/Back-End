@@ -5,7 +5,6 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repo.MemberRepository;
-import com.example.mdmggreal.member.type.Role;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
@@ -27,7 +26,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -53,9 +51,6 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
         this.httpSession = httpSession;
     }
 
-    /*
-     * 네이버 로그인 사이트
-     */
     /*
      * 네이버 로그인 정보 콜백
      */
@@ -142,12 +137,27 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
      * 회원가입
      */
     @Transactional
-    public Member signup(OAuthAttributes attributes) {
+    public Member signup(MemberDTO memberDTO) {
 
-        if (memberRepository.existsByMobile(attributes.getMobile())) {
+        if (memberRepository.existsByMobile(memberDTO.getMobile())) {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
-       return memberRepository.save(Member.from(attributes));
+       return memberRepository.save(Member.from(memberDTO));
+    }
+
+    /*
+     * 토큰 존재 여부
+     */
+    public boolean isMemberExist (String token) {
+        return memberRepository.existsByToken(token);
+
+    }
+
+    /*
+     * 닉네임 중복 여부
+     */
+    public boolean isNicknameAvailable(String nickname) {
+        return !memberRepository.existsByNickname(nickname);
     }
 
     @Override
@@ -162,11 +172,10 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
     //        Member member = signup(attributes);
     //        httpSession.setAttribute("member", member);
 
-        DefaultOAuth2User defaultOAuth2User = new DefaultOAuth2User(
+        return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(null)),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
-        return defaultOAuth2User;
 
     }
 
