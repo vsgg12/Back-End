@@ -4,9 +4,9 @@ import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.message.MessageService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +18,7 @@ import static com.example.mdmggreal.global.exception.ErrorCode.NICKNAME_ALREADY_
 
 @RestController
 @RequestMapping("/api/users")
+@SessionAttributes("memberDTO") // 세션에 memberDTO 속성을 추가
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -57,6 +58,8 @@ public class MemberController {
     public JSONObject callback(HttpServletRequest request) throws Exception {
         MemberDTO memberDTO = memberService.getNaverInfo(request.getParameter("code"));
 
+        request.getSession().setAttribute("memberDTO", memberDTO);
+
         String isMemberYn = "N";
 
         if(memberService.isMemberExist(memberDTO.getToken())) {
@@ -79,6 +82,14 @@ public class MemberController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("작업 실패: " + e.getMessage());
         }
+    }
+    /*
+     * 로그아웃 구현
+     */
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate(); // 세션 삭제
+        return ResponseEntity.ok("로그아웃되었습니다.");
     }
 
 }

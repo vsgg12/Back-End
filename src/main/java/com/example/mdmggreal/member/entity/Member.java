@@ -4,7 +4,6 @@ import com.example.mdmggreal.base.entity.BaseEntity;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.type.Agree;
 import com.example.mdmggreal.member.type.Role;
-import com.example.mdmggreal.oauth.OAuthAttributes;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
