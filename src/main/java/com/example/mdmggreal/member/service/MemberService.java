@@ -57,7 +57,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
     public MemberDTO getNaverInfo(String code) throws Exception {
         if(StringUtils.isEmpty(code)) throw new Exception("Failed");
 
-        String accessToken = "";
+        String accessToken;
 //        String refreshToken = "";
 
         try{
@@ -138,7 +138,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
         }
 
         // 세션에 사용자 정보 저장
-        httpSession.setAttribute("memberDTO", memberDTO);
+        httpSession.setAttribute("token", memberDTO.getToken());
 
         return memberDTO;
     }
@@ -147,12 +147,12 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
      * 회원가입
      */
     @Transactional
-    public Member signup(MemberDTO memberDTO) {
+    public void signup(MemberDTO memberDTO) {
 
         if (memberRepository.existsByMobile(memberDTO.getMobile())) {
             throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
-       return memberRepository.save(Member.from(memberDTO));
+        memberRepository.save(Member.from(memberDTO));
     }
 
     /*

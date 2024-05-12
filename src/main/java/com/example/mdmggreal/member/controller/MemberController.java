@@ -18,7 +18,7 @@ import static com.example.mdmggreal.global.exception.ErrorCode.NICKNAME_ALREADY_
 
 @RestController
 @RequestMapping("/api/users")
-@SessionAttributes("memberDTO") // 세션에 memberDTO 속성을 추가
+@SessionAttributes("token") // 세션에 memberDTO 속성을 추가
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -58,7 +58,8 @@ public class MemberController {
     public JSONObject callback(HttpServletRequest request) throws Exception {
         MemberDTO memberDTO = memberService.getNaverInfo(request.getParameter("code"));
 
-        request.getSession().setAttribute("memberDTO", memberDTO);
+        // TODO: (확인 후 삭제)회원인 경우에만 가져옵니다
+        String token = (String) request.getSession().getAttribute("token");
 
         String isMemberYn = "N";
 
