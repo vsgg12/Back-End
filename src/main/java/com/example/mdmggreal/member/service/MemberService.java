@@ -69,7 +69,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
             params.add("client_id", NAVER_CLIENT_ID);
             params.add("client_secret", NAVER_CLIENT_SECRET);
             params.add("code", code);
-            params.add("redirect_url", NAVER_REDIRECT_URI);
+            params.add("redirect_uri", NAVER_REDIRECT_URI);
 
             RestTemplate restTemplate = new RestTemplate();
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, headers);
@@ -122,7 +122,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
         String gender = String.valueOf(account.get("gender"));
         String age = String.valueOf(account.get("age"));
 
-        return MemberDTO.builder()
+        MemberDTO memberDTO =  MemberDTO.builder()
                 .token(id)
                 .email(email)
                 .nickname(nickname)
@@ -131,6 +131,16 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
                 .age(age)
                 .gender(gender)
                 .build();
+
+        if (!memberRepository.existsByToken(memberDTO.getToken())) {
+            // 회원이 아닌 경우 프론트엔드로 회원가입 유도
+            return memberDTO;
+        }
+
+        // 세션에 사용자 정보 저장
+        httpSession.setAttribute("memberDTO", memberDTO);
+
+        return memberDTO;
     }
 
     /*
