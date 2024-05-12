@@ -23,7 +23,7 @@ public class SpringSecurityConfig {
     private final MemberService memberService;
     private static final String[] AUTH_WHITELIST = {
 //            "/oauth2/**", "/api/users/signup/**", "/api/users/callback/**", "/api/users/sms/**","/api/test/**"
-            "/api/**","/swagger-ui/**"
+            "/api/**","/swagger-ui/**","/**"
     };
 
     @Bean
