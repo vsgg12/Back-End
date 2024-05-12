@@ -5,13 +5,16 @@
 # service_url.inc 에서 현재 서비스를 하고 있는 WAS의 포트 번호 가져오기
 CURRENT_PORT=$(cat /home/ec2-user/service_url.inc  | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
+KILL_PORT=0
 
 echo "> Nginx currently proxies to ${CURRENT_PORT}."
 
 if [ ${CURRENT_PORT} -eq 8081 ]; then
     TARGET_PORT=8082
+    KILL_PORT=8081
 elif [ ${CURRENT_PORT} -eq 8082 ]; then
     TARGET_PORT=8081
+    KILL_PORT=8082
 else
     echo "> No WAS is connected to nginx"
     exit 1
@@ -26,5 +29,6 @@ echo "> Now Nginx proxies to ${TARGET_PORT}."
 
 # nginx를 reload 해준다.
 sudo service nginx reload
-
+result_value=$(netstat-nap 2>/dev/null | grep ${KILL_PORT} | awk'{print$7}')
+sudo kill -9 ${result_value}
 echo "> Nginx reloaded."
