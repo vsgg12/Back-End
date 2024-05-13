@@ -6,6 +6,8 @@ import com.example.mdmggreal.sse.controller.SSEController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AlarmService {
@@ -20,6 +22,11 @@ public class AlarmService {
     public void sendNotification(String message) {
         // SSE 컨트롤러를 호출하여 알람 발송
         sseController.sendNotification(message);
+    }
+
+    public List<Alarm> getAlarmListByToken(String token) {
+
+        return alarmRepository.findByToken(token);
     }
 
 }
