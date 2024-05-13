@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AlarmService {
 
-    private SSEController sseController;
-    private AlarmRepository alarmRepository;
+    private final SSEController sseController;
+    private final AlarmRepository alarmRepository;
 
     public void saveAlarm(Alarm alarm) {
         alarmRepository.save(alarm);

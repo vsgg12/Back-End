@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AlarmController {
 
-    private AlarmService alarmService;
+    private final AlarmService alarmService;
 
     @PostMapping("/save")
     public void addAlarm(@RequestBody Alarm alarm) {
