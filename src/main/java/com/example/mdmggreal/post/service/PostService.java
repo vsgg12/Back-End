@@ -5,7 +5,7 @@ import com.example.mdmggreal.hashtag.entity.Hashtag;
 import com.example.mdmggreal.hashtag.repository.HashtagRepository;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
-import com.example.mdmggreal.member.repo.MemberRepository;
+import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.post.dto.PostAddRequest;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.entity.type.VideoType;

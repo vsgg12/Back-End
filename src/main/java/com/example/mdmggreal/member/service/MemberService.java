@@ -4,7 +4,7 @@ import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repo.MemberRepository;
+import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
