@@ -74,16 +74,16 @@ public class MemberController {
         return new JSONObject(response);
     }
 
-    @GetMapping("/sendSms")
-    public ResponseEntity<?> sms(@RequestParam String phoneNumber) {
-        String authorizationCode = Integer.toString((int)(Math.random() * (999999 - 100000 + 1)) + 100000);
-        try {
-            messageService.sendMessage(phoneNumber, authorizationCode);
-            return ResponseEntity.ok(authorizationCode);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("작업 실패: " + e.getMessage());
-        }
-    }
+//    @GetMapping("/sendSms")
+//    public ResponseEntity<?> sms(@RequestParam String phoneNumber) {
+//        String authorizationCode = Integer.toString((int)(Math.random() * (999999 - 100000 + 1)) + 100000);
+//        try {
+//            messageService.sendMessage(phoneNumber, authorizationCode);
+//            return ResponseEntity.ok(authorizationCode);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("작업 실패: " + e.getMessage());
+//        }
+//    }
     /*
      * 로그아웃 구현
      */

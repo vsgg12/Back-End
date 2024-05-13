@@ -132,7 +132,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
                 .gender(gender)
                 .build();
 
-        if (!memberRepository.existsByToken(memberDTO.getToken())) {
+        if (!isMemberExist(memberDTO.getToken())) {
             // 회원이 아닌 경우 프론트엔드로 회원가입 유도
             return memberDTO;
         }
@@ -178,9 +178,6 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
         OAuthAttributes attributes = OAuthAttributes.ofNaver(userNameAttributeName, oAuth2User.getAttributes());
-
-    //        Member member = signup(attributes);
-    //        httpSession.setAttribute("member", member);
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(null)),

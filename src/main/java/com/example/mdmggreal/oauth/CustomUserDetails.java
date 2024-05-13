@@ -8,6 +8,8 @@ import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
 
+    // TODO: 삭제
+
     private final Member member;
 
     public CustomUserDetails(Member member) {
