@@ -26,5 +26,4 @@ echo "> Now Nginx proxies to ${TARGET_PORT}."
 
 # nginx를 reload 해준다.
 sudo service nginx reload
-
 echo "> Nginx reloaded."
