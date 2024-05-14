@@ -59,17 +59,24 @@ public class MemberController {
         MemberDTO memberDTO = memberService.getNaverInfo(request.getParameter("code"));
 
         // TODO: (확인 후 삭제)회원인 경우에만 가져옵니다
-        String token = (String) request.getSession().getAttribute("token");
+        // String token = (String) request.getSession().getAttribute("token");
+        // String token = (String) session.getAttribute("token");
 
         String isMemberYn = "N";
+        String isMobileYn = "N";
 
-        if(memberService.isMemberExist(memberDTO.getToken())) {
+        if(memberService.isTokenExist(memberDTO.getToken())) {
             isMemberYn = "Y";
+        }
+
+        if (memberService.isMobileExist(memberDTO.getMobile())) {
+            isMobileYn = "Y";
         }
 
         Map<String, Object> response = new HashMap<>();
         response.put("member", memberDTO);
-        response.put("isMember", isMemberYn);
+        response.put("isMemberYn", isMemberYn);
+        response.put("isMobileYn", isMobileYn);
 
         return new JSONObject(response);
     }
