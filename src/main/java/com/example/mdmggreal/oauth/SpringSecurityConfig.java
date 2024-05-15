@@ -24,8 +24,8 @@ public class SpringSecurityConfig implements WebMvcConfigurer {
 
     private final MemberService memberService;
     private static final String[] AUTH_WHITELIST = {
-            "/oauth2/**", "/api/users/signup/**", "/api/users/callback/**", "/api/**","/api/test/**"
-//            "/api/**","/swagger-ui/**","/**"
+//            "/oauth2/**", "/api/users/signup/**", "/api/users/callback/**", "/api/**","/api/test/**"
+            "/api/**","/swagger-ui/**","/**"
     };
 
     @Bean

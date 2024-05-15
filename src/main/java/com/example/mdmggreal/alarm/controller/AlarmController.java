@@ -22,10 +22,10 @@ public class AlarmController {
     public void addAlarm(@RequestBody Alarm alarm) {
         // 테스트용
         alarmService.saveAlarm(alarm);
-        alarmService.sendNotification(alarm.getAlarmContents());
 
         // TODO 댓글, 투표기간 종료 시 alarmService.sendNotification(message); 사용
     }
+
     /*
      * 리스트 가져오기
      */

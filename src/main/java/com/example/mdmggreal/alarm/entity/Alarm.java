@@ -1,10 +1,9 @@
 package com.example.mdmggreal.alarm.entity;
 
+import com.example.mdmggreal.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import com.example.mdmggreal.base.entity.BaseEntity;
 
 @Entity
 @Getter
