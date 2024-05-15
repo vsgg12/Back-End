@@ -1,5 +1,6 @@
 package com.example.mdmggreal.member.dto;
 
+import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import lombok.Builder;
 import lombok.Data;
@@ -29,4 +30,16 @@ public class MemberDTO  {
     private boolean agreeTerms;
     private boolean agreePrivacy;
     private boolean agreePromotion;
+
+    public static MemberDTO from(Member member) {
+        return MemberDTO.builder()
+                .nickname(member.getNickname())
+                .age(member.getAge())
+                .email(member.getEmail())
+                .mobile(member.getMobile())
+                .gender(member.getGender())
+                .build();
+
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.example.mdmggreal.ingameinfo.entity;
 
-import com.example.mdmggreal.base.entity.BaseEntity;
+import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.ingameinfo.dto.request.InGameInfoRequest;
 import com.example.mdmggreal.ingameinfo.type.Position;
 import com.example.mdmggreal.ingameinfo.type.Tier;

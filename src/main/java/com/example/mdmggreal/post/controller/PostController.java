@@ -2,6 +2,7 @@ package com.example.mdmggreal.post.controller;
 
 import com.example.mdmggreal.post.dto.PostAddRequest;
 import com.example.mdmggreal.post.service.PostService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,25 +16,15 @@ import java.io.IOException;
 public class PostController {
     private final PostService postService;
 
-//    @PostMapping
-//    public ResponseEntity<?> postAdd(@RequestHeader(value = "Authorization") String token,
-//                                     @RequestPart MultipartFile uploadVideos,
-//                                     @RequestPart MultipartFile thumbnailImage,
-//                                     @RequestPart PostAddRequest postAddRequest
-//    ) throws IOException {
-//        postService.addPost(token, uploadVideos, thumbnailImage, postAddRequest);
-//        // 멤버 아이디 가져오는거
-//        String email = "jawoo1003@gmail.com";
-//
-//        return ResponseEntity.ok().build();
-//    }
-
     @PostMapping
-    public ResponseEntity<?> postAdd(@RequestPart MultipartFile uploadVideos,
+    public ResponseEntity<?> postAdd(HttpServletRequest request,
+                                     @RequestPart MultipartFile uploadVideos,
                                      @RequestPart MultipartFile thumbnailImage,
                                      @RequestPart PostAddRequest postAddRequest
     ) throws IOException {
-        postService.addPost(uploadVideos, thumbnailImage, postAddRequest);
+        String token = (String) request.getSession().getAttribute("token");
+
+        postService.addPost(uploadVideos, thumbnailImage, postAddRequest, token);
         // 멤버 아이디 가져오는거
         String email = "jawoo1003@gmail.com";
 
