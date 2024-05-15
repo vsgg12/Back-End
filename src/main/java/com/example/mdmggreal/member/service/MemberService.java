@@ -1,13 +1,13 @@
 package com.example.mdmggreal.member.service;
 
 import com.example.mdmggreal.global.exception.CustomException;
-import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repo.MemberRepository;
+import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_TOKEN;
+
 @Service
+@RequiredArgsConstructor
 public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
@@ -46,18 +49,13 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
     private final static String NAVER_AUTH_URI = "https://nid.naver.com";
     private final static String NAVER_API_URI = "https://openapi.naver.com";
 
-    public MemberService(MemberRepository memberRepository, HttpSession httpSession) {
-        this.memberRepository = memberRepository;
-        this.httpSession = httpSession;
-    }
-
     /*
      * 네이버 로그인 정보 콜백
      */
     public MemberDTO getNaverInfo(String code) throws Exception {
         if(StringUtils.isEmpty(code)) throw new Exception("Failed");
 
-        String accessToken = "";
+        String accessToken;
 //        String refreshToken = "";
 
         try{
@@ -132,13 +130,13 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
                 .gender(gender)
                 .build();
 
-        if (!memberRepository.existsByToken(memberDTO.getToken())) {
+        if (!isTokenExist(memberDTO.getToken())) {
             // 회원이 아닌 경우 프론트엔드로 회원가입 유도
             return memberDTO;
         }
 
-        // 세션에 사용자 정보 저장
-        httpSession.setAttribute("memberDTO", memberDTO);
+        // 회원인 경우 세션에 사용자 정보 저장
+        httpSession.setAttribute("token", memberDTO.getToken());
 
         return memberDTO;
     }
@@ -147,18 +145,22 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
      * 회원가입
      */
     @Transactional
-    public Member signup(MemberDTO memberDTO) {
+    public void signup(MemberDTO memberDTO) {
 
-        if (memberRepository.existsByMobile(memberDTO.getMobile())) {
-            throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
-        }
-       return memberRepository.save(Member.from(memberDTO));
+        memberRepository.save(Member.from(memberDTO));
     }
 
     /*
      * 토큰 존재 여부
      */
-    public boolean isMemberExist (String token) {
+    public boolean isMobileExist (String mobile) {
+        return memberRepository.existsByMobile(mobile);
+    }
+
+    /*
+     * 토큰 존재 여부
+     */
+    public boolean isTokenExist (String token) {
         return memberRepository.existsByToken(token);
 
     }
@@ -179,14 +181,17 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
 
         OAuthAttributes attributes = OAuthAttributes.ofNaver(userNameAttributeName, oAuth2User.getAttributes());
 
-    //        Member member = signup(attributes);
-    //        httpSession.setAttribute("member", member);
-
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(null)),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
 
+    }
+
+    public Member getMemberByToken(String token) {
+        return memberRepository.findByToken(token).orElseThrow(
+                () -> new CustomException(INVALID_TOKEN)
+        );
     }
 
 }

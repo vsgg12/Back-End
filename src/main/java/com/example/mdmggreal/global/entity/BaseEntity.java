@@ -1,4 +1,4 @@
-package com.example.mdmggreal.base.entity;
+package com.example.mdmggreal.global.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
