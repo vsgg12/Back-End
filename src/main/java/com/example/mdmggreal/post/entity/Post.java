@@ -1,7 +1,8 @@
 package com.example.mdmggreal.post.entity;
 
-import com.example.mdmggreal.base.entity.BaseEntity;
-import com.example.mdmggreal.post.dto.request.PostAddRequest;
+import com.example.mdmggreal.global.entity.BaseEntity;
+import com.example.mdmggreal.member.entity.Member;
+import com.example.mdmggreal.post.dto.PostAddRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,9 +22,9 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(content = "member_id")
-//    private Member member;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Embedded
     private Video video;
@@ -32,9 +33,9 @@ public class Post extends BaseEntity {
     private String thumbnailURL;
     private Long viewCount;
 
-    public static Post of(PostAddRequest request,String thumbnailURL, String videoUrl) {
+    public static Post of(PostAddRequest request, String thumbnailURL, String videoUrl, Member member) {
         return Post.builder()
-//                .member(member)
+                .member(member)
                 .title(request.title())
                 .content(request.content())
                 .thumbnailURL(thumbnailURL)
