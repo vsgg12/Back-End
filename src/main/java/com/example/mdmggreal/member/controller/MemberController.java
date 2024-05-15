@@ -71,6 +71,7 @@ public class MemberController {
         response.put("member", memberDTO);
         response.put("isMemberYn", isMemberYn);
         response.put("isMobileYn", isMobileYn);
+        response.put("url", "http://localhost:3000/api/auth/callback");
 
         return new JSONObject(response);
     }
