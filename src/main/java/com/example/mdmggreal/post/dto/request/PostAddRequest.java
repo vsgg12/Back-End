@@ -1,4 +1,4 @@
-package com.example.mdmggreal.post.dto;
+package com.example.mdmggreal.post.dto.request;
 
 
 import com.example.mdmggreal.ingameinfo.dto.request.InGameInfoRequest;
