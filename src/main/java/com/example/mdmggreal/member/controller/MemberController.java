@@ -2,7 +2,6 @@ package com.example.mdmggreal.member.controller;
 
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.service.MemberService;
-import com.example.mdmggreal.message.MessageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,6 @@ import static com.example.mdmggreal.global.exception.ErrorCode.NICKNAME_ALREADY_
 public class MemberController {
 
     private final MemberService memberService;
-    private final MessageService messageService;
 
     /*
      * 회원가입
@@ -81,16 +79,6 @@ public class MemberController {
         return new JSONObject(response);
     }
 
-//    @GetMapping("/sendSms")
-//    public ResponseEntity<?> sms(@RequestParam String phoneNumber) {
-//        String authorizationCode = Integer.toString((int)(Math.random() * (999999 - 100000 + 1)) + 100000);
-//        try {
-//            messageService.sendMessage(phoneNumber, authorizationCode);
-//            return ResponseEntity.ok(authorizationCode);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("작업 실패: " + e.getMessage());
-//        }
-//    }
     /*
      * 로그아웃 구현
      */

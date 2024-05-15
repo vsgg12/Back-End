@@ -29,15 +29,4 @@ public class MemberDTO  {
     private boolean agreeTerms;
     private boolean agreePrivacy;
     private boolean agreePromotion;
-
-    public static MemberDTO from(OAuthAttributes attributes) {
-        return MemberDTO.builder()
-                .token(attributes.getToken())
-                .age(attributes.getAge())
-                .gender(attributes.getGender())
-                .mobile(attributes.getMobile())
-                .email(attributes.getEmail())
-                .nickname(attributes.getNickname())
-                .build();
-    }
 }
