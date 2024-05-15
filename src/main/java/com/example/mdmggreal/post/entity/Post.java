@@ -2,7 +2,7 @@ package com.example.mdmggreal.post.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.post.dto.PostAddRequest;
+import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
