@@ -1,4 +1,4 @@
-package com.example.mdmggreal.member.repo;
+package com.example.mdmggreal.member.repository;
 
 import com.example.mdmggreal.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;

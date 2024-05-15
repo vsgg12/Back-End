@@ -1,6 +1,7 @@
 package com.example.mdmggreal.member.entity;
 
 import com.example.mdmggreal.base.entity.BaseEntity;
+import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.type.Agree;
 import com.example.mdmggreal.member.type.Role;
@@ -58,8 +59,14 @@ public class Member extends BaseEntity {
                 .mobile(memberDTO.getMobile())
                 .profileImage(memberDTO.getProfileImage())
                 .age(memberDTO.getAge())
-                .nickname(memberDTO.getNickname())
+                .agree(Agree.builder()
+                        .agreeAge(memberDTO.isAgreeAge())
+                        .agreeTerms(memberDTO.isAgreeTerms())
+                        .agreePrivacy(memberDTO.isAgreePrivacy())
+                        .agreePromotion(memberDTO.isAgreePromotion())
+                        .build())
                 .role(USER)
+                .tier(String.valueOf(Tier.IRON))
                 .build();
     }
 }
