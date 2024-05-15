@@ -1,7 +1,6 @@
 package com.example.mdmggreal.member.service;
 
 import com.example.mdmggreal.global.exception.CustomException;
-import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
