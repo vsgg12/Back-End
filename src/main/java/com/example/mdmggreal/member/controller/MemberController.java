@@ -56,10 +56,6 @@ public class MemberController {
     public JSONObject callback(HttpServletRequest request) throws Exception {
         MemberDTO memberDTO = memberService.getNaverInfo(request.getParameter("code"));
 
-        // TODO: (확인 후 삭제)회원인 경우에만 가져옵니다
-        // String token = (String) request.getSession().getAttribute("token");
-        // String token = (String) session.getAttribute("token");
-
         String isMemberYn = "N";
         String isMobileYn = "N";
 
@@ -75,6 +71,7 @@ public class MemberController {
         response.put("member", memberDTO);
         response.put("isMemberYn", isMemberYn);
         response.put("isMobileYn", isMobileYn);
+        response.put("url", "http://localhost:3000/api/auth/callback");
 
         return new JSONObject(response);
     }
