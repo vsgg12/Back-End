@@ -41,5 +41,9 @@ public class InGameInfo extends BaseEntity {
                 .build();
     }
 
+    public InGameInfo(Long id) {
+        this.id = id;
+    }
+
 
 }
