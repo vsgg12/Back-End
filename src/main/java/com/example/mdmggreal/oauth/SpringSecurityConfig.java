@@ -24,7 +24,7 @@ public class SpringSecurityConfig implements WebMvcConfigurer {
 
     private final MemberService memberService;
     private static final String[] AUTH_WHITELIST = {
-//            "/oauth2/**", "/api/users/signup/**", "/api/users/callback/**", "/api/users/sms/**","/api/test/**"
+//            "/oauth2/**", "/api/users/signup/**", "/api/users/callback/**", "/api/**","/api/test/**"
             "/api/**","/swagger-ui/**","/**"
     };
 
@@ -33,7 +33,7 @@ public class SpringSecurityConfig implements WebMvcConfigurer {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -56,7 +56,9 @@ public class SpringSecurityConfig implements WebMvcConfigurer {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 허용할 Origin 설정
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE")); // 허용할 HTTP 메소드 설정
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(false); // 자격 증명 허용 안함
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -65,7 +67,11 @@ public class SpringSecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000");
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH")
+                .allowedHeaders("Authorization", "Cache-Control", "Content-Type")
+                .allowCredentials(false); // 자격 증명 허용 안함
+
     }
 
 }

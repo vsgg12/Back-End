@@ -3,6 +3,7 @@ package com.example.mdmggreal.global.entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -17,10 +18,9 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
 public class BaseEntity {
     @CreatedDate
-    protected LocalDateTime createdDateTime;
+    private LocalDateTime createdDateTime;
     @LastModifiedDate
-    protected LocalDateTime modifyDateTime;
+    private LocalDateTime modifyDateTime;
 }

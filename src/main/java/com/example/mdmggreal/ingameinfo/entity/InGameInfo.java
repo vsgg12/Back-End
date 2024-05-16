@@ -7,6 +7,7 @@ import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -16,10 +17,11 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 public class InGameInfo extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "in_game_info_id")
     private Long id;
     private String championName;
     @Enumerated(STRING)
@@ -37,6 +39,10 @@ public class InGameInfo extends BaseEntity {
                 .position(request.position())
                 .post(post)
                 .build();
+    }
+
+    public InGameInfo(Long id) {
+        this.id = id;
     }
 
 
