@@ -33,6 +33,8 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final BooleanPath isDeleted = createBoolean("isDeleted");
+
     public final com.example.mdmggreal.member.entity.QMember member;
 
     //inherited
@@ -41,8 +43,6 @@ public class QComment extends EntityPathBase<Comment> {
     public final QComment parent;
 
     public final com.example.mdmggreal.post.entity.QPost post;
-
-    public final NumberPath<Long> view = createNumber("view", Long.class);
 
     public QComment(String variable) {
         this(Comment.class, forVariable(variable), INITS);

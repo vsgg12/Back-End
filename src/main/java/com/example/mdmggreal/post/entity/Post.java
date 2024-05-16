@@ -3,6 +3,7 @@ package com.example.mdmggreal.post.entity;
 import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
+import com.example.mdmggreal.post.entity.type.PostStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import static com.example.mdmggreal.post.entity.type.PostStatus.PROGRESS;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -30,6 +33,8 @@ public class Post extends BaseEntity {
 
     @Embedded
     private Video video;
+    @Enumerated(STRING)
+    private PostStatus status;
     private String title;
     private String content;
     private String thumbnailURL;
@@ -41,6 +46,7 @@ public class Post extends BaseEntity {
                 .title(request.title())
                 .content(request.content())
                 .thumbnailURL(thumbnailURL)
+                .status(PROGRESS)
                 .video(Video.of(videoUrl, request.type()))
                 .viewCount(0L)
                 .build();

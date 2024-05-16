@@ -36,6 +36,8 @@ public class QPost extends EntityPathBase<Post> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifyDateTime = _super.modifyDateTime;
 
+    public final EnumPath<com.example.mdmggreal.post.entity.type.PostStatus> status = createEnum("status", com.example.mdmggreal.post.entity.type.PostStatus.class);
+
     public final StringPath thumbnailURL = createString("thumbnailURL");
 
     public final StringPath title = createString("title");
