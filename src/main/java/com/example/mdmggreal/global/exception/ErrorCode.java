@@ -14,6 +14,7 @@ public enum ErrorCode {
     EMAIL_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 아이디입니다."),
     NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
     INVALID_TOKEN(HttpStatus.NOT_FOUND, "유효하지 않은 토큰입니다."),
+    NO_PERMISSION(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
 
     // 이미지
     NOT_FOUND_IMAGE(HttpStatus.BAD_REQUEST, "이미지가 존재하지 않습니다."),
