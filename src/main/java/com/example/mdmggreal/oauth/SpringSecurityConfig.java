@@ -56,7 +56,7 @@ public class SpringSecurityConfig implements WebMvcConfigurer {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // 허용할 Origin 설정
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST")); // 허용할 HTTP 메소드 설정
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE")); // 허용할 HTTP 메소드 설정
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
