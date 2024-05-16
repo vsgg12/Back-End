@@ -7,6 +7,7 @@ import com.example.mdmggreal.member.type.Agree;
 import com.example.mdmggreal.member.type.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -19,10 +20,11 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@SuperBuilder
+@Builder
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "member_id")
     private Long id;
 
     /** 토큰  */
@@ -40,7 +42,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private String profileImage;
     /** 티어  */
-    private String tier;
+    private Tier tier;
     /** 인증 */
     @Enumerated(STRING)
     private Role role;
@@ -69,7 +71,7 @@ public class Member extends BaseEntity {
                         .agreePromotion(memberDTO.isAgreePromotion())
                         .build())
                 .role(USER)
-                .tier(String.valueOf(Tier.IRON))
+                .tier(Tier.IRON)
                 .build();
     }
 }

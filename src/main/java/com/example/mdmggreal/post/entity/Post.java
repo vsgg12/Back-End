@@ -5,6 +5,7 @@ import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -15,11 +16,12 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "post_id")
     private Long id;
 
     @ManyToOne
@@ -42,6 +44,11 @@ public class Post extends BaseEntity {
                 .video(Video.of(videoUrl, request.type()))
                 .viewCount(0L)
                 .build();
+    }
+
+
+    public void addView() {
+        this.viewCount = this.viewCount + 1;
     }
 
 
