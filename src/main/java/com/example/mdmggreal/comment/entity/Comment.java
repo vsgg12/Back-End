@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,10 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private Long view;
+    @ColumnDefault("FALSE")
+    @Column(nullable = false)
+    private Boolean isDeleted;
+
 
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
         return Comment.builder()
@@ -51,7 +55,6 @@ public class Comment extends BaseEntity {
                 .post(post)
                 .parent(comment)
                 .member(member)
-                .view(0L)
                 .build();
     }
 
@@ -60,7 +63,10 @@ public class Comment extends BaseEntity {
                 .content(request.getContent())
                 .post(post)
                 .member(member)
-                .view(0L)
                 .build();
+    }
+
+    public void changeIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }
