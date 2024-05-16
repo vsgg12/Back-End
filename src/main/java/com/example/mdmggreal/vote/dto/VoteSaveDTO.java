@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VoteDTO {
+public class VoteSaveDTO {
 
     private Long ingameInfoId;
     private Long ratio;

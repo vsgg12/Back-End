@@ -1,16 +1,15 @@
 package com.example.mdmggreal.vote.controller;
 
 import com.example.mdmggreal.global.response.BaseResponse;
-import com.example.mdmggreal.vote.dto.VoteDTO;
+import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.vote.dto.VoteSaveDTO;
+import com.example.mdmggreal.vote.dto.VoteStatisticsDTO;
 import com.example.mdmggreal.vote.service.VoteService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,11 +21,22 @@ public class VoteController {
     private final VoteService voteService;
 
     @PostMapping("/save")
-    public ResponseEntity<BaseResponse> save(@RequestBody List<VoteDTO> voteDTOs, HttpServletRequest request) {
+    public ResponseEntity<BaseResponse> save(@RequestBody List<VoteSaveDTO> voteSaveDTOS, HttpServletRequest request) {
         String token = (String) request.getSession().getAttribute("token");
-        voteService.saveVotes(voteDTOs, token);
+        voteService.saveVotes(voteSaveDTOS, token);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
+    }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<Post>> getVotedPostsByMemberId(HttpServletRequest request) {
+        String token = (String) request.getSession().getAttribute("token");
+        List<Post> votedPosts = voteService.getVotedPostsByMemberId(token);
+        return ResponseEntity.ok(votedPosts);
+    }
+
+    @GetMapping("/avg")
+    public List<VoteStatisticsDTO> getChampionAverages(@RequestParam Long postId) {
+        return voteService.getChampionNamesWithAverageRatioByPostId(postId);
     }
 
 }

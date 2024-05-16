@@ -70,8 +70,8 @@ public class SpringSecurityConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH")
                 .allowedHeaders("Authorization", "Cache-Control", "Content-Type")
-                .allowCredentials(false); // 자격 증명 허용 안함
-
+                .allowCredentials(true) // 쿠키 인증 요청 허용
+                .maxAge(3000); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
     }
 
 }

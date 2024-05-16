@@ -1,6 +1,7 @@
 package com.example.mdmggreal.post.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
+import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import jakarta.persistence.*;
@@ -9,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+
+import java.util.List;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -34,6 +37,9 @@ public class Post extends BaseEntity {
     private String content;
     private String thumbnailURL;
     private Long viewCount;
+
+    @OneToMany(mappedBy = "post")
+    private List<InGameInfo> inGameInfos;
 
     public static Post of(PostAddRequest request, String thumbnailURL, String videoUrl, Member member) {
         return Post.builder()
