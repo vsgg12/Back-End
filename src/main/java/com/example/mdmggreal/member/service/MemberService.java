@@ -1,11 +1,13 @@
 package com.example.mdmggreal.member.service;
 
+import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +27,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_TOKEN;
+
 @Service
+@RequiredArgsConstructor
 public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
@@ -43,11 +48,6 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
 
     private final static String NAVER_AUTH_URI = "https://nid.naver.com";
     private final static String NAVER_API_URI = "https://openapi.naver.com";
-
-    public MemberService(MemberRepository memberRepository, HttpSession httpSession) {
-        this.memberRepository = memberRepository;
-        this.httpSession = httpSession;
-    }
 
     /*
      * 네이버 로그인 정보 콜백
@@ -186,6 +186,12 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
 
+    }
+
+    public Member getMemberByToken(String token) {
+        return memberRepository.findByToken(token).orElseThrow(
+                () -> new CustomException(INVALID_TOKEN)
+        );
     }
 
 }
