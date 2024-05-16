@@ -5,7 +5,6 @@ import com.example.mdmggreal.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +52,7 @@ public class MemberController {
      * 네이버 로그인 정보 콜백
      */
     @GetMapping("/callback")
-    public JSONObject callback(HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> callback(HttpServletRequest request) throws Exception {
         MemberDTO memberDTO = memberService.getNaverInfo(request.getParameter("code"));
 
         String isMemberYn = "N";
@@ -73,7 +72,7 @@ public class MemberController {
         response.put("isMobileYn", isMobileYn);
         response.put("url", "http://localhost:3000/api/auth/callback");
 
-        return new JSONObject(response);
+        return ResponseEntity.ok(response);
     }
 
     /*

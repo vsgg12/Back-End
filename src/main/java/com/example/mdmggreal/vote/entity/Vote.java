@@ -4,9 +4,9 @@ import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -14,7 +14,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 public class Vote extends BaseEntity {
 
     @Id
