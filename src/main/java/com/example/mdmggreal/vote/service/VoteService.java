@@ -1,5 +1,6 @@
 package com.example.mdmggreal.vote.service;
 
+import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.vote.dto.VoteDTO;
@@ -28,9 +29,11 @@ public class VoteService {
 
     public Vote convertToEntity(VoteDTO voteDTO, String token) {
         Member memberByToken = memberService.getMemberByToken(token);
+        InGameInfo inGameInfo = new InGameInfo(voteDTO.getIngameInfoId());
         return Vote.builder()
                 .ratio(voteDTO.getRatio())
                 .memberId(memberByToken.getId())
+                .inGameInfo(inGameInfo)
                 .build();
     }
 }
