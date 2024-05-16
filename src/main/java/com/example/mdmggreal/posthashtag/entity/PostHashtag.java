@@ -16,6 +16,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class PostHashtag {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "post_hashtag_id")
     private Long id;
 
     @ManyToOne

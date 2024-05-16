@@ -1,5 +1,6 @@
 package com.example.mdmggreal.member.dto;
 
+import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import lombok.Builder;
@@ -25,6 +26,10 @@ public class MemberDTO  {
     private String mobile;
     /** 프로필사진  */
     private String profileImage;
+    /**
+     * 티어
+     */
+    private Tier tier;
     /** 인증여부 */
     private boolean agreeAge;
     private boolean agreeTerms;
@@ -38,6 +43,7 @@ public class MemberDTO  {
                 .email(member.getEmail())
                 .mobile(member.getMobile())
                 .gender(member.getGender())
+                .tier(member.getTier())
                 .build();
 
     }

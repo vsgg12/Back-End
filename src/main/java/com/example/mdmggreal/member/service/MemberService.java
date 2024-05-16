@@ -6,6 +6,7 @@ import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.oauth.OAuthAttributes;
 import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -193,5 +194,7 @@ public class MemberService implements OAuth2UserService<OAuth2UserRequest, OAuth
                 () -> new CustomException(INVALID_TOKEN)
         );
     }
-
+    public static String getToken(HttpServletRequest request) {
+        return (String) request.getSession().getAttribute("token");
+    }
 }
