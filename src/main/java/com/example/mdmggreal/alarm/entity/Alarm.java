@@ -2,14 +2,16 @@ package com.example.mdmggreal.alarm.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@Builder
 public class Alarm extends BaseEntity {
 
     @Id
