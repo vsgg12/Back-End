@@ -6,23 +6,24 @@ import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-@SuperBuilder
 @Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "comment_id")
     private Long id;
 
     private String content;
@@ -31,7 +32,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
@@ -42,7 +43,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private Long like;
+    private Long view;
 
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
         return Comment.builder()
@@ -50,15 +51,16 @@ public class Comment extends BaseEntity {
                 .post(post)
                 .parent(comment)
                 .member(member)
-                .like(0L)
+                .view(0L)
                 .build();
     }
+
     public static Comment of(Post post, Member member, CommentAddRequest request) {
         return Comment.builder()
                 .content(request.getContent())
                 .post(post)
                 .member(member)
-                .like(0L)
+                .view(0L)
                 .build();
     }
 }
