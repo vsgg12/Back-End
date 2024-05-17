@@ -3,6 +3,7 @@ package com.example.mdmggreal.post.controller;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.dto.response.PostAddResponse;
+import com.example.mdmggreal.post.dto.response.PostGetListResponse;
 import com.example.mdmggreal.post.dto.response.PostGetResponse;
 import com.example.mdmggreal.post.service.PostService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,38 +47,25 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostGetResponse>> postsGetOrderByCreatedDateTime(HttpServletRequest request, @RequestParam("orderby") String orderBy) {
+    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(HttpServletRequest request, @RequestParam("orderby") String orderBy) {
         String token = getToken(request);
         List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(token, orderBy);
-        List<PostGetResponse> postGetResponses = new ArrayList<>();
-        posts.forEach(post -> {
-            postGetResponses.add(PostGetResponse.from(OK, post));
-        });
-        return ResponseEntity.ok(postGetResponses);
+        return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
+
     @GetMapping("/search")
-    public ResponseEntity<List<PostGetResponse>> postsGetKeyword(HttpServletRequest request, @RequestParam("keyword") String keyWord) {
+    public ResponseEntity<PostGetListResponse> postsGetKeyword(HttpServletRequest request, @RequestParam("keyword") String keyWord) {
         String token = getToken(request);
-        List<PostDTO> posts = postService.getPostsKeyword(token, keyWord);
-        List<PostGetResponse> postGetResponses = new ArrayList<>();
-        posts.forEach(post -> {
-            postGetResponses.add(PostGetResponse.from(OK, post));
-        });
-        return ResponseEntity.ok(postGetResponses);
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(token, keyWord);
+        return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
-
-
 
 
     @GetMapping("/users")
-    public ResponseEntity<List<PostGetResponse>> postsGetByMember(HttpServletRequest request) {
+    public ResponseEntity<PostGetListResponse> postsGetByMember(HttpServletRequest request) {
 
         String token = getToken(request);
         List<PostDTO> posts = postService.getPostsByMember(token);
-        List<PostGetResponse> postGetResponses = new ArrayList<>();
-        posts.forEach(post -> {
-            postGetResponses.add(PostGetResponse.from(OK, post));
-        });
-        return ResponseEntity.ok(postGetResponses);
+        return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 }
