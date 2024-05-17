@@ -3,7 +3,6 @@ package com.example.mdmggreal.vote.controller;
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
-import com.example.mdmggreal.vote.dto.VoteStatisticsDTO;
 import com.example.mdmggreal.vote.service.VoteService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -35,8 +35,9 @@ public class VoteController {
     }
 
     @GetMapping("/avg")
-    public List<VoteStatisticsDTO> getChampionAverages(@RequestParam Long postId) {
-        return voteService.getChampionNamesWithAverageRatioByPostId(postId);
+    public ResponseEntity<List<Map<String, Object>>> getChampionAverages(@RequestParam Long postId) {
+        List<Map<String, Object>> averageVotes = voteService.getChampionNamesWithAverageRatioByPostId(postId);
+        return ResponseEntity.ok(averageVotes);
     }
 
 }

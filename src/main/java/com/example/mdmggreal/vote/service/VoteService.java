@@ -5,14 +5,12 @@ import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
-import com.example.mdmggreal.vote.dto.VoteStatisticsDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,8 +20,21 @@ public class VoteService {
     private final MemberService memberService;
     private final VoteRepository voteRepository;
 
-    public List<VoteStatisticsDTO> getChampionNamesWithAverageRatioByPostId(Long postId) {
-        return voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
+    public List<Map<String, Object>> getChampionNamesWithAverageRatioByPostId(Long postId) {
+        List<Object[]> results = voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
+        List<Map<String, Object>> averageVotes = new ArrayList<>();
+
+        for(Object[] result : results) {
+            InGameInfo inGameInfo = (InGameInfo)result[0];
+            Double average = (Double)result[1];
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("championName", inGameInfo.getChampionName());
+            map.put("averageValue", average);
+
+            averageVotes.add(map);
+        }
+        return averageVotes;
     }
 
     public List<Post> getVotedPostsByMemberId(String token) {
