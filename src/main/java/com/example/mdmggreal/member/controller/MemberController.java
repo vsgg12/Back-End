@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -57,7 +58,7 @@ public class MemberController {
      * 네이버 로그인 정보 콜백
      */
     @GetMapping("/callback")
-    public ResponseEntity<?> callback(@RequestParam String code, @RequestBody String state, HttpServletResponse response) throws Exception {
+    public RedirectView callback(@RequestParam String code, @RequestBody String state, HttpServletResponse response) throws Exception {
         MemberDTO memberDTO = memberService.getNaverInfo(code);
 
         String isMemberYn = "N";
@@ -94,9 +95,9 @@ public class MemberController {
         response.addCookie(userInfoCookie);
 
         // 프론트엔드로 리다이렉트
-        response.sendRedirect("http://localhost:3000/api/oauth/naver/callback");
-
-        return ResponseEntity.ok(response);
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:3000/api/oauth/naver/callback");
+        return redirectView;
     }
 
     /*
