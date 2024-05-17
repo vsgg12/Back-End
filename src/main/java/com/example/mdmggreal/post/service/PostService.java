@@ -9,7 +9,7 @@ import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.service.MemberService;
+import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.entity.Post;
@@ -36,13 +36,13 @@ public class PostService {
     private final InGameInfoRepository inGameInfoRepository;
     private final PostHashtagRepository postHashtagRepository;
     private final HashtagRepository hashtagRepository;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final PostRepositoryImpl postRepositoryImpl;
 
     @Transactional
-    public void addPost(MultipartFile uploadVideos, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String token) throws IOException {
+    public void addPost(MultipartFile uploadVideos, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String mobile) throws IOException {
 
-        Member member = getMemberByToken(token);
+        Member member = getMember(mobile);
 
         String thumbnailUrl = s3Service.uploadImages(thumbnailImage);
 
@@ -68,16 +68,19 @@ public class PostService {
     }
 
     @Transactional
-    public PostDTO getPost(Long postId, String token) {
-        Member memberByToken = getMemberByToken(token);
+    public PostDTO getPost(Long postId, String mobile) {
+        Member member = getMember(mobile);
+
 
         Post post = getPost(postId);
         post.addView();
-        return PostDTO.of(MemberDTO.from(memberByToken), post);
+        return PostDTO.of(MemberDTO.from(member), post);
 
     }
-    public List<PostDTO> getPostsOrderByCreatedDateTime(String token, String orderBy) {
-        Member member = getMemberByToken(token);
+
+    public List<PostDTO> getPostsOrderByCreatedDateTime(String mobile, String orderBy) {
+        Member member = getMember(mobile);
+
         List<Post> posts = postRepositoryImpl.getPostsOrderByCreatedDateTime(orderBy);
         List<PostDTO> postDTOS = new ArrayList<>();
         posts.forEach(post -> {
@@ -88,8 +91,11 @@ public class PostService {
         return postDTOS;
     }
 
-    public List<PostDTO> getPostsByMember(String token) {
-        Member member = getMemberByToken(token);
+
+
+    public List<PostDTO> getPostsByMember(String mobile) {
+        Member member = getMember(mobile);
+
         List<Post> posts = postRepositoryImpl.getPostsMember(member.getId());
         List<PostDTO> postDTOS = new ArrayList<>();
         posts.forEach(post -> {
@@ -100,8 +106,8 @@ public class PostService {
         return postDTOS;
     }
 
-    public List<PostDTO> getPostsKeyword(String token, String keyWord) {
-        Member member = getMemberByToken(token);
+    public List<PostDTO> getPostsKeyword(String mobile, String keyWord) {
+        Member member = getMember(mobile);
         List<Post> posts = postRepositoryImpl.getPostsKeyword(keyWord);
         List<PostDTO> postDTOS = new ArrayList<>();
         posts.forEach(post -> {
@@ -112,16 +118,16 @@ public class PostService {
         return postDTOS;
     }
 
-    private Member getMemberByToken(String token) {
-        return memberService.getMemberByToken(token);
-    }
 
     private Post getPost(Long postId) {
         return postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)
         );
     }
-
-
+    private Member getMember(String mobile) {
+        return memberRepository.findByMobile(mobile).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+        );
+    }
 
 }

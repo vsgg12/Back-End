@@ -8,6 +8,7 @@ import com.example.mdmggreal.comment.repository.CommentRepository;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
+import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
@@ -27,13 +28,15 @@ import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final CommentDAO commentDAO;
 
     @Transactional
-    public void addComment(Long postId, CommentAddRequest request, String token) {
-        Member member = memberService.getMemberByToken(token);
+    public void addComment(Long postId, CommentAddRequest request, String mobile) {
+        Member member = memberRepository.findByMobile(mobile).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+        );
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)
         );
@@ -53,8 +56,10 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentDTO> getCommentList(Long postId, String token) {
-        Member member = memberService.getMemberByToken(token);
+    public List<CommentDTO> getCommentList(Long postId, String mobile) {
+        Member member = memberRepository.findByMobile(mobile).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+        );
         List<Comment> list = commentDAO.getList(postId);
         List<CommentDTO> commentResponseDTOList = new ArrayList<>();
         Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
@@ -70,8 +75,10 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteCommentList(Long postId, String token, Long commentId) {
-        Member member = memberService.getMemberByToken(token);
+    public void deleteCommentList(Long postId, String mobile, Long commentId) {
+        Member member = memberRepository.findByMobile(mobile).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+        );
         Comment comment = commentDAO.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> new CustomException(INVALID_COMMENT));
         if (!comment.getMember().getId().equals(member.getId())) {
