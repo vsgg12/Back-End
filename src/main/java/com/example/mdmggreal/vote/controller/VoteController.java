@@ -2,7 +2,6 @@ package com.example.mdmggreal.vote.controller;
 
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
-import com.example.mdmggreal.vote.dto.VoteDTO;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.vote.dto.VoteAvgDTO;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
@@ -23,7 +22,7 @@ public class VoteController {
     private final VoteService voteService;
 
     @PostMapping("/save")
-    public ResponseEntity<BaseResponse> save(@RequestHeader(value = "Authorization") String token, @RequestBody List<VoteDTO> voteDTOs, HttpServletRequest request) {
+    public ResponseEntity<BaseResponse> save(@RequestHeader(value = "Authorization") String token, @RequestBody List<VoteSaveDTO> voteDTOs, HttpServletRequest request) {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
         voteService.saveVotes(voteDTOs, mobile);
@@ -31,9 +30,10 @@ public class VoteController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<Post>> getVotedPostsByMemberId(HttpServletRequest request) {
-        String token = (String) request.getSession().getAttribute("token");
-        List<Post> votedPosts = voteService.getVotedPostsByMemberId(token);
+    public ResponseEntity<List<Post>> getVotedPostsByMemberId(@RequestHeader(value = "Authorization") String token, HttpServletRequest request) {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        List<Post> votedPosts = voteService.getVotedPostsByMemberId(mobile);
         return ResponseEntity.ok(votedPosts);
     }
 
