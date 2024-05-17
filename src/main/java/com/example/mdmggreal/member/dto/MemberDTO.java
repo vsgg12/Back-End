@@ -2,14 +2,12 @@ package com.example.mdmggreal.member.dto;
 
 import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.oauth.OAuthAttributes;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Builder
-@Data
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberDTO  {
 
     /** 네이버_토큰_ID  */

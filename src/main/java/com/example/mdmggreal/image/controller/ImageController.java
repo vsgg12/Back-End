@@ -1,6 +1,7 @@
 package com.example.mdmggreal.image.controller;
 
 import com.example.mdmggreal.global.response.BaseResponse;
+import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.image.dto.request.ImageDeleteRequest;
 import com.example.mdmggreal.image.dto.response.ImageUploadResponse;
 import com.example.mdmggreal.image.service.ImageService;
@@ -21,14 +22,20 @@ public class ImageController {
     private final ImageService imageService;
 
     @PostMapping("/upload")
-    public ResponseEntity<ImageUploadResponse> imageUpload(@RequestPart(value = "file") List<MultipartFile> multipartFile) throws IOException {
-        List<String> ImageUrlList = imageService.uploadImage(multipartFile);
+    public ResponseEntity<ImageUploadResponse> imageUpload(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestPart(value = "file") List<MultipartFile> multipartFile) throws IOException {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        List<String> ImageUrlList = imageService.uploadImage(multipartFile, mobile);
         return ResponseEntity.ok(ImageUploadResponse.from(ImageUrlList, HttpStatus.OK));
     }
 
     @DeleteMapping
-    public ResponseEntity<BaseResponse> imageDelete(@RequestBody ImageDeleteRequest request) {
-        imageService.deleteImage(request);
+    public ResponseEntity<BaseResponse> imageDelete(@RequestHeader(value = "Authorization") String token, @RequestBody ImageDeleteRequest request) {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        imageService.deleteImage(request, mobile);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
     }
 }

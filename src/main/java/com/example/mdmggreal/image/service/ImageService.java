@@ -1,7 +1,11 @@
 package com.example.mdmggreal.image.service;
 
 import com.example.mdmggreal.amazon.service.S3Service;
+import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.image.dto.request.ImageDeleteRequest;
+import com.example.mdmggreal.member.entity.Member;
+import com.example.mdmggreal.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,14 +19,20 @@ import java.util.List;
 @Slf4j
 public class ImageService {
     private final S3Service s3Service;
+    private final MemberRepository memberRepository;
 
-    public List<String> uploadImage(List<MultipartFile> multipartFile) throws IOException {
-
+    public List<String> uploadImage(List<MultipartFile> multipartFile, String mobile) throws IOException {
+        Member member = getMember(mobile);
         return s3Service.uploadImages(multipartFile);
     }
 
-    public void deleteImage(ImageDeleteRequest request) {
-
+    public void deleteImage(ImageDeleteRequest request, String mobile) {
+        Member member = getMember(mobile);
         s3Service.delete(request);
+    }
+    private Member getMember(String mobile) {
+        return memberRepository.findByMobile(mobile).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+        );
     }
 }

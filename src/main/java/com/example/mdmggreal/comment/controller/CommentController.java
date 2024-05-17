@@ -5,7 +5,7 @@ import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.comment.dto.response.CommentGetListResponse;
 import com.example.mdmggreal.comment.service.CommentService;
 import com.example.mdmggreal.global.response.BaseResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.mdmggreal.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,31 +19,32 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
+
     @PostMapping
-    public ResponseEntity<BaseResponse> commentAdd(HttpServletRequest servletRequest,
+    public ResponseEntity<BaseResponse> commentAdd(@RequestHeader(value = "Authorization") String token,
                                                    @PathVariable(value = "postid") Long postId, @RequestBody CommentAddRequest request
     ) {
-        String token = getToken(servletRequest);
-        commentService.addComment(postId, request, token);
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        commentService.addComment(postId, request, mobile);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.CREATED));
 
     }
 
     @GetMapping
-    public ResponseEntity<CommentGetListResponse> commentGetList(HttpServletRequest servletRequest, @PathVariable(value = "id") Long postId) {
-        String token = getToken(servletRequest);
-        List<CommentDTO> commentList = commentService.getCommentList(postId, token);
+    public ResponseEntity<CommentGetListResponse> commentGetList(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "id") Long postId) {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        List<CommentDTO> commentList = commentService.getCommentList(postId, mobile);
         return ResponseEntity.ok(CommentGetListResponse.from(commentList, HttpStatus.OK));
     }
 
     @DeleteMapping("/{commentid}")
-    public ResponseEntity<BaseResponse> commentDelete(HttpServletRequest servletRequest, @PathVariable(value = "postid") Long postId, @PathVariable(value = "comment") Long commentId) {
-        String token = getToken(servletRequest);
-        commentService.deleteCommentList(postId, token, commentId);
+    public ResponseEntity<BaseResponse> commentDelete(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "postid") Long postId, @PathVariable(value = "comment") Long commentId) {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        commentService.deleteCommentList(postId, mobile, commentId);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
     }
 
-    private static String getToken(HttpServletRequest servletRequest) {
-        return (String) servletRequest.getSession().getAttribute("token");
-    }
 }
