@@ -2,6 +2,9 @@ package com.example.mdmggreal.post.dto;
 
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.post.entity.Video;
+import com.example.mdmggreal.post.entity.type.PostStatus;
+import com.example.mdmggreal.post.entity.type.VideoType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +22,8 @@ public class PostDTO {
     private String content;
     private String thumbnailURL;
     private Long viewCount;
+    private PostStatus status;
+    private Video video;
     private MemberDTO memberDTO;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -29,6 +34,8 @@ public class PostDTO {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .thumbnailURL(post.getThumbnailURL())
+                .video(post.getVideo())
+                .status(post.getStatus())
                 .viewCount(post.getViewCount())
                 .memberDTO(memberDTO)
                 .createdAt(post.getCreatedDateTime())
