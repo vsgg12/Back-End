@@ -22,7 +22,7 @@ public class CommentController {
     public ResponseEntity<BaseResponse> commentAdd(HttpServletRequest servletRequest,
                                                    @PathVariable(value = "postid") Long postId, @RequestBody CommentAddRequest request
     ) {
-        String token = (String) servletRequest.getSession().getAttribute("token");
+        String token = getToken(servletRequest);
         commentService.addComment(postId, request, token);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.CREATED));
 
@@ -30,15 +30,19 @@ public class CommentController {
 
     @GetMapping
     public ResponseEntity<CommentGetListResponse> commentGetList(HttpServletRequest servletRequest, @PathVariable(value = "id") Long postId) {
-        String token = (String) servletRequest.getSession().getAttribute("token");
+        String token = getToken(servletRequest);
         List<CommentDTO> commentList = commentService.getCommentList(postId, token);
         return ResponseEntity.ok(CommentGetListResponse.from(commentList, HttpStatus.OK));
     }
 
     @DeleteMapping("/{commentid}")
     public ResponseEntity<BaseResponse> commentDelete(HttpServletRequest servletRequest, @PathVariable(value = "postid") Long postId, @PathVariable(value = "comment") Long commentId) {
-        String token = (String) servletRequest.getSession().getAttribute("token");
+        String token = getToken(servletRequest);
         commentService.deleteCommentList(postId, token, commentId);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
+    }
+
+    private static String getToken(HttpServletRequest servletRequest) {
+        return (String) servletRequest.getSession().getAttribute("token");
     }
 }
