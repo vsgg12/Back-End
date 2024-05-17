@@ -12,5 +12,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByMobile(String mobile);
     boolean existsByToken(String token);
 
+    Optional<Member> findByMobile(String mobile);
+
     Optional<Member> findByToken(String token);
 }
