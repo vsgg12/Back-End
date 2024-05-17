@@ -2,13 +2,19 @@ package com.example.mdmggreal.member.controller;
 
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.service.MemberService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,13 +58,13 @@ public class MemberController {
      * 네이버 로그인 정보 콜백
      */
     @GetMapping("/callback")
-    public ResponseEntity<?> callback(HttpServletRequest request) throws Exception {
-        MemberDTO memberDTO = memberService.getNaverInfo(request.getParameter("code"));
+    public RedirectView callback(@RequestParam String code, @RequestBody String state, HttpServletResponse response) throws Exception {
+        MemberDTO memberDTO = memberService.getNaverInfo(code);
 
         String isMemberYn = "N";
         String isMobileYn = "N";
 
-        if(memberService.isTokenExist(memberDTO.getToken())) {
+        if (memberService.isTokenExist(memberDTO.getToken())) {
             isMemberYn = "Y";
         }
 
@@ -66,13 +72,32 @@ public class MemberController {
             isMobileYn = "Y";
         }
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("member", memberDTO);
-        response.put("isMemberYn", isMemberYn);
-        response.put("isMobileYn", isMobileYn);
-        response.put("url", "http://localhost:3000/api/auth/callback");
+        // 사용자 정보를 JSON 문자열로 변환하여 쿠키에 저장
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("token", memberDTO.getToken());
+        userInfo.put("isMemberYn", isMemberYn);
+        userInfo.put("isMobileYn", isMobileYn);
+        userInfo.put("nickname", memberDTO.getNickname());
+        userInfo.put("email", memberDTO.getEmail());
+        userInfo.put("profileImage", memberDTO.getProfileImage());
+        userInfo.put("mobile", memberDTO.getMobile());
+        userInfo.put("gender", memberDTO.getGender());
+        userInfo.put("age", memberDTO.getAge());
 
-        return ResponseEntity.ok(response);
+        String userInfoJson = URLEncoder.encode(new ObjectMapper().writeValueAsString(userInfo), StandardCharsets.UTF_8.toString());
+        Cookie userInfoCookie = new Cookie("userInfo", userInfoJson);
+
+        // 쿠키 설정
+        int maxAge = 60 * 5; // 5분 동안 유지
+        userInfoCookie.setMaxAge(maxAge);
+        userInfoCookie.setPath("/"); // 모든 경로에서 쿠키 접근 가능
+        userInfoCookie.setHttpOnly(true); // JavaScript에서 쿠키 접근 불가능하게 설정
+        response.addCookie(userInfoCookie);
+
+        // 프론트엔드로 리다이렉트
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:3000/api/oauth/naver/callback");
+        return redirectView;
     }
 
     /*

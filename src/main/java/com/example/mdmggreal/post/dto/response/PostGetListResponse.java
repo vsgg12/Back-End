@@ -10,12 +10,12 @@ import java.util.List;
 
 @Getter
 @SuperBuilder
-public class PostGetResponse extends BaseResponse {
+public class PostGetListResponse extends BaseResponse {
 
-    private PostDTO postDTO;
+    private List<PostDTO> postDTO;
 
-    public static PostGetResponse from(HttpStatus status, PostDTO postDTO) {
-        return PostGetResponse.builder()
+    public static PostGetListResponse from(HttpStatus status, List<PostDTO> postDTO) {
+        return PostGetListResponse.builder()
                 .resultCode(status.value())
                 .resultMsg(status.name())
                 .postDTO(postDTO)
