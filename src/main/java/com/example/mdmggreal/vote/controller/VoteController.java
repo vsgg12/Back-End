@@ -2,6 +2,7 @@ package com.example.mdmggreal.vote.controller;
 
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.vote.dto.VoteAvgDTO;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.service.VoteService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,9 +35,9 @@ public class VoteController {
         return ResponseEntity.ok(votedPosts);
     }
 
-    @GetMapping("/avg")
-    public ResponseEntity<List<Map<String, Object>>> getChampionAverages(@RequestParam Long postId) {
-        List<Map<String, Object>> averageVotes = voteService.getChampionNamesWithAverageRatioByPostId(postId);
+    @GetMapping("/{postId}/avg")
+    public ResponseEntity<List<VoteAvgDTO>> getChampionAverages(@PathVariable Long postId) {
+        List<VoteAvgDTO> averageVotes = voteService.getChampionNamesWithAverageRatioByPostId(postId);
         return ResponseEntity.ok(averageVotes);
     }
 

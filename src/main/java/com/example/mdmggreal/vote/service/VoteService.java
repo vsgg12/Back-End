@@ -4,6 +4,7 @@ import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.vote.dto.VoteAvgDTO;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteRepository;
@@ -20,19 +21,16 @@ public class VoteService {
     private final MemberService memberService;
     private final VoteRepository voteRepository;
 
-    public List<Map<String, Object>> getChampionNamesWithAverageRatioByPostId(Long postId) {
+    public List<VoteAvgDTO> getChampionNamesWithAverageRatioByPostId(Long postId) {
         List<Object[]> results = voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
-        List<Map<String, Object>> averageVotes = new ArrayList<>();
+        List<VoteAvgDTO> averageVotes = new ArrayList<>();
 
         for(Object[] result : results) {
             InGameInfo inGameInfo = (InGameInfo)result[0];
             Double average = (Double)result[1];
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("championName", inGameInfo.getChampionName());
-            map.put("averageValue", average);
-
-            averageVotes.add(map);
+            VoteAvgDTO dto = new VoteAvgDTO(inGameInfo.getChampionName(), average);
+            averageVotes.add(dto);
         }
         return averageVotes;
     }
