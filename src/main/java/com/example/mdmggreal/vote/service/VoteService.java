@@ -3,15 +3,13 @@ package com.example.mdmggreal.vote.service;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.service.MemberService;
-import com.example.mdmggreal.post.entity.Post;
-import com.example.mdmggreal.vote.dto.VoteAvgDTO;
-import com.example.mdmggreal.vote.dto.VoteSaveDTO;
+import com.example.mdmggreal.vote.dto.VoteDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +17,7 @@ import java.util.stream.Collectors;
 public class VoteService {
 
     private final MemberService memberService;
+
     private final VoteRepository voteRepository;
 
     public List<VoteAvgDTO> getChampionNamesWithAverageRatioByPostId(Long postId) {
@@ -46,20 +45,25 @@ public class VoteService {
     }
 
     public List<Vote> saveVotes(List<VoteSaveDTO> voteSaveDTOS, String token) {
+        Member member = getMember(mobile);
         List<Vote> votes = voteSaveDTOS.stream()
-                .map(voteSaveDTO -> convertToEntity(voteSaveDTO, token))
+                .map(voteSaveDTO -> convertToEntity(voteSaveDTO, mobile))
                 .collect(Collectors.toList());
         return voteRepository.saveAll(votes);
     }
 
     public Vote convertToEntity(VoteSaveDTO voteSaveDTO, String token) {
-        Member memberByToken = memberService.getMemberByToken(token);
-        InGameInfo inGameInfo = new InGameInfo(voteSaveDTO.getIngameInfoId());
-
+        Member member = getMember(mobile);
+        InGameInfo inGameInfo = new InGameInfo(voteDTO.getIngameInfoId());
         return Vote.builder()
-                .ratio(voteSaveDTO.getRatio())
-                .memberId(memberByToken.getId())
+                .ratio(voteDTO.getRatio())
+                .memberId(member.getId())
                 .inGameInfo(inGameInfo)
                 .build();
+    }
+    private Member getMember(String mobile) {
+        return memberRepository.findByMobile(mobile).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+        );
     }
 }
