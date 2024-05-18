@@ -1,6 +1,8 @@
 package com.example.mdmggreal.alarm.entity;
 
+import com.example.mdmggreal.alarm.dto.AlarmDTO;
 import com.example.mdmggreal.global.entity.BaseEntity;
+import com.example.mdmggreal.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +21,17 @@ public class Alarm extends BaseEntity {
     @Column(name = "alarmId")
     private Long id;
 
-    private String token;
+    private Long memberId;
     private String alarmContents;
     private String alarmType;
+
+    public static Alarm from(AlarmDTO alarmDTO, Member member) {
+        return Alarm.builder()
+                .memberId(member.getId())
+                .alarmContents(alarmDTO.getAlarmContents())
+                .alarmType(alarmDTO.getAlarmType())
+                .build();
+
+    }
 
 }

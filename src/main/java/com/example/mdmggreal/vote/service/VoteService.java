@@ -5,39 +5,63 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
-import com.example.mdmggreal.member.service.MemberService;
-import com.example.mdmggreal.vote.dto.VoteDTO;
+import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.vote.dto.VoteAvgDTO;
+import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class VoteService {
 
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
+
     private final VoteRepository voteRepository;
 
-    public List<Vote> saveVotes(List<VoteDTO> voteDTOs, String mobile) {
+    public List<VoteAvgDTO> getChampionNamesWithAverageRatioByPostId(Long postId) {
+        List<Object[]> results = voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
+        List<VoteAvgDTO> averageVotes = new ArrayList<>();
+
+        for(Object[] result : results) {
+            InGameInfo inGameInfo = (InGameInfo)result[0];
+            Double average = (Double)result[1];
+
+            VoteAvgDTO dto = new VoteAvgDTO(inGameInfo.getChampionName(), average);
+            averageVotes.add(dto);
+        }
+        return averageVotes;
+    }
+
+    public List<Post> getVotedPostsByMemberId(String mobile) {
         Member member = getMember(mobile);
-        List<Vote> votes = voteDTOs.stream()
-                .map(voteDTO -> convertToEntity(voteDTO, mobile))
+        List<Vote> votes = voteRepository.findByMemberId(member.getId());
+        return votes.stream()
+                .map(Vote::getInGameInfo)
+                .filter(Objects::nonNull)
+                .map(InGameInfo::getPost)
+                .collect(Collectors.toList());
+    }
+
+    public List<Vote> saveVotes(List<VoteSaveDTO> voteSaveDTOS, String mobile) {
+        List<Vote> votes = voteSaveDTOS.stream()
+                .map(voteSaveDTO -> convertToEntity(voteSaveDTO, mobile))
                 .collect(Collectors.toList());
         return voteRepository.saveAll(votes);
     }
 
-
-
-    public Vote convertToEntity(VoteDTO voteDTO, String mobile) {
+    public Vote convertToEntity(VoteSaveDTO voteSaveDTO, String mobile) {
         Member member = getMember(mobile);
-        InGameInfo inGameInfo = new InGameInfo(voteDTO.getIngameInfoId());
+        InGameInfo inGameInfo = new InGameInfo(voteSaveDTO.getIngameInfoId());
         return Vote.builder()
-                .ratio(voteDTO.getRatio())
+                .ratio(voteSaveDTO.getRatio())
                 .memberId(member.getId())
                 .inGameInfo(inGameInfo)
                 .build();
