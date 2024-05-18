@@ -36,7 +36,7 @@ public class MemberController {
      * 닉네임 중복 체크
      */
     @GetMapping("/nicknamecheck")
-    public ResponseEntity<NicknameCheckResponse> nicknameCheck(@RequestParam String nickname) {
+    public ResponseEntity<NicknameCheckResponse> nicknameCheck(@RequestParam("nickname") String nickname) {
         Boolean check = memberService.checkNickname(nickname);
         return ResponseEntity.ok(NicknameCheckResponse.of(HttpStatus.OK, check));
     }

@@ -7,7 +7,6 @@ import com.example.mdmggreal.post.dto.response.PostAddResponse;
 import com.example.mdmggreal.post.dto.response.PostGetListResponse;
 import com.example.mdmggreal.post.dto.response.PostGetResponse;
 import com.example.mdmggreal.post.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -27,14 +27,23 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostAddResponse> postAdd(@RequestHeader(value = "Authorization") String token,
-                                                   @RequestPart MultipartFile uploadVideos,
-                                                   @RequestPart MultipartFile thumbnailImage,
-                                                   @RequestPart PostAddRequest postAddRequest
+                                                   @RequestPart("uploadVideos") MultipartFile uploadVideos,
+                                                   @RequestPart("content") MultipartFile contentFile,
+                                                   @RequestPart("thumbnailImage") MultipartFile thumbnailImage,
+                                                   @RequestPart("postAddRequest") PostAddRequest postAddRequest
     ) throws IOException {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
 
-        postService.addPost(uploadVideos, thumbnailImage, postAddRequest, mobile);
+        try {
+            String content = new String(contentFile.getBytes(), StandardCharsets.UTF_8);
+            postService.addPost(uploadVideos, thumbnailImage, postAddRequest, content, mobile);
+            // content 처리 로직
+        } catch (IOException e) {
+            // 처리 중 에러 발생 시 처리
+            e.printStackTrace();
+        }
+
         return ResponseEntity.ok(PostAddResponse.of(HttpStatus.CREATED));
     }
 

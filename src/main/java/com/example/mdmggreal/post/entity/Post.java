@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import static com.example.mdmggreal.post.entity.type.PostStatus.PROGRESS;
 import static jakarta.persistence.EnumType.STRING;
@@ -40,11 +39,11 @@ public class Post extends BaseEntity {
     private String thumbnailURL;
     private Long viewCount;
 
-    public static Post of(PostAddRequest request, String thumbnailURL, String videoUrl, Member member) {
+    public static Post of(PostAddRequest request, String thumbnailURL, String videoUrl, String content, Member member) {
         return Post.builder()
                 .member(member)
                 .title(request.title())
-                .content(request.content())
+                .content(content)
                 .thumbnailURL(thumbnailURL)
                 .status(PROGRESS)
                 .video(Video.of(videoUrl, request.type()))

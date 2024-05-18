@@ -40,7 +40,7 @@ public class PostService {
     private final PostRepositoryImpl postRepositoryImpl;
 
     @Transactional
-    public void addPost(MultipartFile uploadVideos, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String mobile) throws IOException {
+    public void addPost(MultipartFile uploadVideos, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, String mobile) throws IOException {
 
         Member member = getMember(mobile);
 
@@ -54,7 +54,7 @@ public class PostService {
             videoUrl = postAddRequest.videoUrl();
         }
 
-        Post post = postRepository.save(Post.of(postAddRequest, thumbnailUrl, videoUrl, member));
+        Post post = postRepository.save(Post.of(postAddRequest, thumbnailUrl, videoUrl, content, member));
 
         postAddRequest.inGameInfoRequests().forEach(inGameInfo -> {
             inGameInfoRepository.save(InGameInfo.of(inGameInfo, post));
