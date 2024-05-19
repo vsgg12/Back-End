@@ -4,7 +4,6 @@ import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.entity.Video;
 import com.example.mdmggreal.post.entity.type.PostStatus;
-import com.example.mdmggreal.post.entity.type.VideoType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
