@@ -1,6 +1,8 @@
 package com.example.mdmggreal.post.controller;
 
 import com.example.mdmggreal.global.security.JwtUtil;
+import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoResponse;
+import com.example.mdmggreal.ingameinfo.service.InGameInfoService;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.dto.response.PostAddResponse;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;
@@ -23,17 +26,27 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final InGameInfoService inGameInfoService;
 
     @PostMapping
     public ResponseEntity<PostAddResponse> postAdd(@RequestHeader(value = "Authorization") String token,
-                                                   @RequestPart MultipartFile uploadVideos,
-                                                   @RequestPart MultipartFile thumbnailImage,
-                                                   @RequestPart PostAddRequest postAddRequest
+                                                   @RequestPart("uploadVideos") MultipartFile uploadVideos,
+                                                   @RequestPart("content") MultipartFile contentFile,
+                                                   @RequestPart("thumbnailImage") MultipartFile thumbnailImage,
+                                                   @RequestPart("postAddRequest") PostAddRequest postAddRequest
     ) throws IOException {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
 
-        postService.addPost(uploadVideos, thumbnailImage, postAddRequest, mobile);
+        try {
+            String content = new String(contentFile.getBytes(), StandardCharsets.UTF_8);
+            postService.addPost(uploadVideos, thumbnailImage, postAddRequest, content, mobile);
+            // content 처리 로직
+        } catch (IOException e) {
+            // 처리 중 에러 발생 시 처리
+            e.printStackTrace();
+        }
+
         return ResponseEntity.ok(PostAddResponse.of(HttpStatus.CREATED));
     }
 
@@ -42,8 +55,9 @@ public class PostController {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
         PostDTO post = postService.getPost(postId, mobile);
+        List<InGameInfoResponse> inGameInfo = inGameInfoService.getInGameInfo(postId);
 
-        return ResponseEntity.ok(PostGetResponse.from(OK, post));
+        return ResponseEntity.ok(PostGetResponse.from(OK, post, inGameInfo));
     }
 
     @GetMapping

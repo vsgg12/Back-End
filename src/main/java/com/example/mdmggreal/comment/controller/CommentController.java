@@ -32,7 +32,7 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<CommentGetListResponse> commentGetList(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "id") Long postId) {
+    public ResponseEntity<CommentGetListResponse> commentGetList(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "postid") Long postId) {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
         List<CommentDTO> commentList = commentService.getCommentList(postId, mobile);

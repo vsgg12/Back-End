@@ -55,6 +55,7 @@ public class Comment extends BaseEntity {
                 .post(post)
                 .parent(comment)
                 .member(member)
+                .isDeleted(false)
                 .build();
     }
 
@@ -63,6 +64,7 @@ public class Comment extends BaseEntity {
                 .content(request.getContent())
                 .post(post)
                 .member(member)
+                .isDeleted(false)
                 .build();
     }
 
