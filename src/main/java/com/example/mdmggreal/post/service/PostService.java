@@ -78,8 +78,8 @@ public class PostService {
 
     }
 
-    public List<PostDTO> getPostsOrderByCreatedDateTime(String mobile, String orderBy) {
-        Member member = getMember(mobile);
+    public List<PostDTO> getPostsOrderByCreatedDateTime(/*String mobile, */String orderBy) {
+//        Member member = getMember(mobile);
 
         List<Post> posts = postRepositoryImpl.getPostsOrderByCreatedDateTime(orderBy);
         List<PostDTO> postDTOS = new ArrayList<>();

@@ -7,7 +7,6 @@ import com.example.mdmggreal.post.dto.response.PostAddResponse;
 import com.example.mdmggreal.post.dto.response.PostGetListResponse;
 import com.example.mdmggreal.post.dto.response.PostGetResponse;
 import com.example.mdmggreal.post.service.PostService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,10 +47,10 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization") String token, @RequestParam("orderby") String orderBy) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(mobile, orderBy);
+    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(/*@RequestHeader(value = "Authorization") String token,*/ @RequestParam("orderby") String orderBy) {
+//        JwtUtil.validateToken(token);
+//        String mobile = JwtUtil.getMobile(token);
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(orderBy);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
