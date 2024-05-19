@@ -48,10 +48,6 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-    public Comment() {
-        this.isDeleted = false; // 기본값 설정
-    }
-
 
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
         return Comment.builder()
@@ -59,6 +55,7 @@ public class Comment extends BaseEntity {
                 .post(post)
                 .parent(comment)
                 .member(member)
+                .isDeleted(false)
                 .build();
     }
 
@@ -67,6 +64,7 @@ public class Comment extends BaseEntity {
                 .content(request.getContent())
                 .post(post)
                 .member(member)
+                .isDeleted(false)
                 .build();
     }
 
