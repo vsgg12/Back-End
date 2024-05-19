@@ -48,6 +48,10 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted = false;
 
+    public Comment() {
+        this.isDeleted = false; // 기본값 설정
+    }
+
 
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
         return Comment.builder()
