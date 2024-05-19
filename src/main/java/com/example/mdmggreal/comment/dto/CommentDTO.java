@@ -25,6 +25,7 @@ public class CommentDTO {
                 .id(comment.getId())
                 .content(comment.getIsDeleted() ? "삭제된 댓글입니다.":comment.getContent())
                 .member(MemberDTO.from(comment.getMember()))
+                .children(new ArrayList<>())  // children 리스트를 초기화
                 .build();
     }
 }
