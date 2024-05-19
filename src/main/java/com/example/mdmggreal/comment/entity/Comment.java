@@ -46,7 +46,7 @@ public class Comment extends BaseEntity {
 
     @ColumnDefault("FALSE")
     @Column(nullable = false)
-    private Boolean isDeleted = false;
+    private Boolean isDeleted;
 
     public Comment() {
         this.isDeleted = false; // 기본값 설정
