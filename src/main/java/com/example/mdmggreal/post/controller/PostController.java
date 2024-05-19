@@ -1,6 +1,8 @@
 package com.example.mdmggreal.post.controller;
 
 import com.example.mdmggreal.global.security.JwtUtil;
+import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoResponse;
+import com.example.mdmggreal.ingameinfo.service.InGameInfoService;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.dto.response.PostAddResponse;
@@ -24,6 +26,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final InGameInfoService inGameInfoService;
 
     @PostMapping
     public ResponseEntity<PostAddResponse> postAdd(@RequestHeader(value = "Authorization") String token,
@@ -52,8 +55,9 @@ public class PostController {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
         PostDTO post = postService.getPost(postId, mobile);
+        List<InGameInfoResponse> inGameInfo = inGameInfoService.getInGameInfo(postId);
 
-        return ResponseEntity.ok(PostGetResponse.from(OK, post));
+        return ResponseEntity.ok(PostGetResponse.from(OK, post, inGameInfo));
     }
 
     @GetMapping
