@@ -46,7 +46,7 @@ public class Comment extends BaseEntity {
 
     @ColumnDefault("FALSE")
     @Column(nullable = false)
-    private Boolean isDeleted;
+    private Boolean isDeleted = false;
 
 
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
