@@ -39,7 +39,7 @@ public class MemberService {
     }
 
     public void signup(MemberDTO memberDTO) {
-        if (memberRepository.existsByMobile(memberDTO.getMobile())) {
+        if (memberRepository.existsByEmail(memberDTO.getEmail())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);
         }
         memberRepository.save(Member.from(memberDTO));
