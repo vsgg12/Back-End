@@ -2,6 +2,7 @@ package com.example.mdmggreal.member.controller;
 
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.member.dto.MemberDTO;
+import com.example.mdmggreal.member.dto.response.EmailCheckResponse;
 import com.example.mdmggreal.member.dto.response.MobileCheckResponse;
 import com.example.mdmggreal.member.dto.response.NicknameCheckResponse;
 import com.example.mdmggreal.member.service.MemberService;
@@ -31,6 +32,14 @@ public class MemberController {
         String phone = memberService.checkMobile(mobile);
         return ResponseEntity.ok(MobileCheckResponse.from(phone, HttpStatus.OK));
     }
+
+    @GetMapping("/emailcheck")
+    public ResponseEntity<EmailCheckResponse> emailCheck(@RequestParam("email") String email) {
+        String token = memberService.checkEmail(email);
+        return ResponseEntity.ok(EmailCheckResponse.from(token, HttpStatus.OK));
+    }
+
+
 
     /*
      * 닉네임 중복 체크

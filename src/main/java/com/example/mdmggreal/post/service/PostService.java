@@ -1,6 +1,5 @@
 package com.example.mdmggreal.post.service;
 
-import com.example.mdmggreal.amazon.service.S3Service;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.hashtag.entity.Hashtag;
@@ -18,6 +17,7 @@ import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.post.repository.PostRepositoryImpl;
 import com.example.mdmggreal.posthashtag.entity.PostHashtag;
 import com.example.mdmggreal.posthashtag.repository.PostHashtagRepository;
+import com.example.mdmggreal.service.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
