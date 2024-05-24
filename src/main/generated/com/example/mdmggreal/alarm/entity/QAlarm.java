@@ -30,10 +30,10 @@ public class QAlarm extends EntityPathBase<Alarm> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifyDateTime = _super.modifyDateTime;
-
-    public final StringPath token = createString("token");
 
     public QAlarm(String variable) {
         super(Alarm.class, forVariable(variable));

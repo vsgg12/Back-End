@@ -28,6 +28,16 @@ public class MemberService {
         }
     }
 
+    public String checkEmail(String email) {
+        if (memberRepository.existsByEmail(email)) {
+            Member member = memberRepository.findByEmail(email).get();
+
+            return jwtUtil.createAccessToken(CustomUserInfoDto.of(member));
+        } else {
+            return null;
+        }
+    }
+
     public void signup(MemberDTO memberDTO) {
         if (memberRepository.existsByMobile(memberDTO.getMobile())) {
             throw new CustomException(ErrorCode.USER_ALREADY_EXISTS);

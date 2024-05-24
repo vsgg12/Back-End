@@ -1,4 +1,4 @@
-package com.example.mdmggreal.amazon.service;
+package com.example.mdmggreal.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;

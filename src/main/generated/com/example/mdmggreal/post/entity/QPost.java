@@ -31,8 +31,6 @@ public class QPost extends EntityPathBase<Post> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final ListPath<com.example.mdmggreal.ingameinfo.entity.InGameInfo, com.example.mdmggreal.ingameinfo.entity.QInGameInfo> inGameInfos = this.<com.example.mdmggreal.ingameinfo.entity.InGameInfo, com.example.mdmggreal.ingameinfo.entity.QInGameInfo>createList("inGameInfos", com.example.mdmggreal.ingameinfo.entity.InGameInfo.class, com.example.mdmggreal.ingameinfo.entity.QInGameInfo.class, PathInits.DIRECT2);
-
     public final com.example.mdmggreal.member.entity.QMember member;
 
     //inherited
