@@ -1,5 +1,6 @@
 package com.example.mdmggreal.post.dto;
 
+import com.example.mdmggreal.hashtag.entity.Hashtag;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.entity.Video;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -26,8 +28,11 @@ public class PostDTO {
     private MemberDTO memberDTO;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<Hashtag> hashtagList;
+    private Boolean isVote;
 
-    public static PostDTO of(MemberDTO memberDTO, Post post) {
+    public static PostDTO of(MemberDTO memberDTO, Post post, List<Hashtag> hashtagList, Boolean isVote) {
+
         return PostDTO.builder()
                 .id(post.getId())
                 .title(post.getTitle())
@@ -39,6 +44,8 @@ public class PostDTO {
                 .memberDTO(memberDTO)
                 .createdAt(post.getCreatedDateTime())
                 .updatedAt(post.getModifyDateTime())
+                .hashtagList(hashtagList)
+                .isVote(isVote)
                 .build();
 
     }
