@@ -24,11 +24,11 @@ public class VoteRepositoryImpl extends QuerydslRepositorySupport {
     }
 
     public Optional<Vote> getVoteByPostIdAndMemberId(Long postId, Long memberId) {
-        return Optional.of(from(vote)
-                .leftJoin(member)
-                .on(vote.memberId.eq(memberId).and(vote.memberId.eq(memberId)))
-                .leftJoin(inGameInfo)
-                .on(vote.inGameInfo.id.eq(inGameInfo.id).and(inGameInfo.post.id.eq(postId)))
-                .fetchOne());
+        return Optional.ofNullable(
+                from(vote)
+                        .leftJoin(member).on(vote.memberId.eq(memberId))
+                        .leftJoin(inGameInfo).on(vote.inGameInfo.id.eq(inGameInfo.id).and(inGameInfo.post.id.eq(postId)))
+                        .fetchOne()
+        );
     }
 }
