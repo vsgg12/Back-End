@@ -28,4 +28,5 @@ public class Hashtag {
                 .name(name)
                 .build();
     }
+
 }
