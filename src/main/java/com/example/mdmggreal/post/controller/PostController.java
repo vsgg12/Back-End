@@ -64,7 +64,7 @@ public class PostController {
     public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization") String token, @RequestParam("orderby") String orderBy) {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
-        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(orderBy,mobile);
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(mobile,orderBy);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
