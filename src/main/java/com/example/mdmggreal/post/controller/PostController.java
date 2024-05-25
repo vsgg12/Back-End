@@ -61,10 +61,10 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(/*@RequestHeader(value = "Authorization") String token,*/ @RequestParam("orderby") String orderBy) {
-//        JwtUtil.validateToken(token);
-//        String mobile = JwtUtil.getMobile(token);
-        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(orderBy);
+    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization") String token, @RequestParam("orderby") String orderBy) {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(orderBy,mobile);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
