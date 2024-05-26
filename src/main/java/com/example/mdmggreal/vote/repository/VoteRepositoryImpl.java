@@ -28,7 +28,7 @@ public class VoteRepositoryImpl extends QuerydslRepositorySupport {
                 from(vote)
                         .leftJoin(member).on(vote.memberId.eq(memberId))
                         .leftJoin(inGameInfo).on(vote.inGameInfo.id.eq(inGameInfo.id).and(inGameInfo.post.id.eq(postId)))
-                        .fetchOne()
+                        .fetchFirst() // 수정
         );
     }
 }
