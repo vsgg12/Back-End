@@ -37,7 +37,7 @@ public class VoteController {
         return ResponseEntity.ok(votedPosts);
     }
 
-    @GetMapping("/{postId}/avg")
+    @GetMapping("/avg")
     public ResponseEntity<List<VoteAvgDTO>> getChampionAverages(@PathVariable Long postId) {
         List<VoteAvgDTO> averageVotes = voteService.getChampionNamesWithAverageRatioByPostId(postId);
         return ResponseEntity.ok(averageVotes);
