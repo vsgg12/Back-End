@@ -82,8 +82,7 @@ public class PostService {
         Post post = getPost(postId);
         post.addView();
         List<Hashtag> hashtags = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
-        Optional<Vote> voteByPostIdAndMemberId = voteRepositoryImpl.getVoteByPostIdAndMemberId(post.getId(), loginMember.getId());
-        boolean isVote = voteRepositoryImpl.getVoteByPostIdAndMemberId(post.getId(), loginMember.getId()).isPresent();
+        boolean isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
 
         return PostDTO.of(MemberDTO.from(loginMember), post, hashtags, isVote);
 
@@ -97,7 +96,7 @@ public class PostService {
         posts.forEach(post -> {
             MemberDTO from = MemberDTO.from(post.getMember());
             List<Hashtag> listHashtagByPostId = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
-            boolean isVote = voteRepositoryImpl.getVoteByPostIdAndMemberId(post.getId(), loginMember.getId()).isPresent();
+            boolean isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
             postDTOS.add(PostDTO.of(from, post, listHashtagByPostId, isVote));
         });
 
@@ -114,7 +113,7 @@ public class PostService {
         posts.forEach(post -> {
             MemberDTO from = MemberDTO.from(post.getMember());
             List<Hashtag> listHashtagByPostId = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
-            boolean isVote = voteRepositoryImpl.getVoteByPostIdAndMemberId(post.getId(), loginMember.getId()).isPresent();
+            boolean isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
             postDTOS.add(PostDTO.of(from, post, listHashtagByPostId, isVote));
         });
 
@@ -128,7 +127,7 @@ public class PostService {
         posts.forEach(post -> {
             MemberDTO from = MemberDTO.from(post.getMember());
             List<Hashtag> listHashtagByPostId = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
-            boolean isVote = voteRepositoryImpl.getVoteByPostIdAndMemberId(post.getId(), loginMember.getId()).isPresent();
+            boolean isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
             postDTOS.add(PostDTO.of(from, post, listHashtagByPostId, isVote));
         });
 
