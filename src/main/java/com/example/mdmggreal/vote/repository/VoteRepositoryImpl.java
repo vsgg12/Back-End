@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import static com.example.mdmggreal.ingameinfo.entity.QInGameInfo.inGameInfo;
 import static com.example.mdmggreal.member.entity.QMember.member;
+import static com.example.mdmggreal.post.entity.QPost.post;
 import static com.example.mdmggreal.vote.entity.QVote.vote;
 
 @Repository
@@ -35,8 +36,13 @@ public class VoteRepositoryImpl extends QuerydslRepositorySupport {
     public boolean existsVoteByMemberId(Long postId, Long memberId) {
         return
                 from(vote)
-                        .leftJoin(member).on(vote.memberId.eq(memberId))
-                        .leftJoin(inGameInfo).on(vote.inGameInfo.id.eq(inGameInfo.id).and(inGameInfo.post.id.eq(postId)))
+                        .leftJoin(member)
+                        .on(vote.memberId.eq(memberId))
+                        .leftJoin(inGameInfo)
+                        .on(vote.inGameInfo.id.eq(inGameInfo.id))
+                        .leftJoin(post)
+                        .on(post.id.eq(inGameInfo.post.id))
+                        .where(post.id.eq(postId).and(member.id.eq(memberId)))
                         .fetchFirst() != null;
     }
 }
