@@ -80,11 +80,12 @@ public class PostService {
 
 
         Post post = getPost(postId);
+        Member member = post.getMember();
         post.addView();
         List<Hashtag> hashtags = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
         boolean isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
 
-        return PostDTO.of(MemberDTO.from(loginMember), post, hashtags, isVote);
+        return PostDTO.of(MemberDTO.from(member), post, hashtags, isVote);
 
     }
 
@@ -94,10 +95,10 @@ public class PostService {
         List<Post> posts = postRepositoryImpl.getPostsOrderByCreatedDateTime(orderBy);
         List<PostDTO> postDTOS = new ArrayList<>();
         posts.forEach(post -> {
-            MemberDTO from = MemberDTO.from(post.getMember());
+            MemberDTO member = MemberDTO.from(post.getMember());
             List<Hashtag> listHashtagByPostId = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
             boolean isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
-            postDTOS.add(PostDTO.of(from, post, listHashtagByPostId, isVote));
+            postDTOS.add(PostDTO.of(member, post, listHashtagByPostId, isVote));
         });
 
         return postDTOS;
