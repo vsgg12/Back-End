@@ -31,4 +31,12 @@ public class VoteRepositoryImpl extends QuerydslRepositorySupport {
                         .fetchFirst() // 수정
         );
     }
+
+    public boolean existsVoteByMemberId(Long postId, Long memberId) {
+        return
+                from(vote)
+                        .leftJoin(member).on(vote.memberId.eq(memberId))
+                        .leftJoin(inGameInfo).on(vote.inGameInfo.id.eq(inGameInfo.id).and(inGameInfo.post.id.eq(postId)))
+                        .fetchFirst() != null;
+    }
 }

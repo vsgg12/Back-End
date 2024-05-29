@@ -16,21 +16,21 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/vote")
+@RequestMapping("/api/vote/{postId}")
 public class VoteController {
 
     private final VoteService voteService;
 
-    @PostMapping("/save")
-    public ResponseEntity<BaseResponse> save(@RequestHeader(value = "Authorization") String token, @RequestBody List<VoteSaveDTO> voteDTOs, HttpServletRequest request) {
+    @PostMapping
+    public ResponseEntity<BaseResponse> save(@RequestHeader(value = "Authorization") String token, @RequestBody List<VoteSaveDTO> voteDTOs, @PathVariable Long postId) {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
-        voteService.saveVotes(voteDTOs, mobile);
+        voteService.saveVotes(voteDTOs, mobile, postId);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<Post>> getVotedPostsByMemberId(@RequestHeader(value = "Authorization") String token, HttpServletRequest request) {
+    public ResponseEntity<List<Post>> getVotedPostsByMemberId(@RequestHeader(value = "Authorization") String token) {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
         List<Post> votedPosts = voteService.getVotedPostsByMemberId(mobile);
