@@ -10,6 +10,7 @@ import com.example.mdmggreal.vote.dto.VoteAvgDTO;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteRepository;
+import com.example.mdmggreal.vote.repository.VoteRepositoryImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.VOTE_ALREADY_EXISTS;
+
 @Service
 @AllArgsConstructor
 public class VoteService {
@@ -25,16 +28,31 @@ public class VoteService {
     private final MemberRepository memberRepository;
 
     private final VoteRepository voteRepository;
+    private final VoteRepositoryImpl voteRepositoryImpl;
+
+    public List<Vote> saveVotes(List<VoteSaveDTO> voteSaveDTOS, String mobile, Long postId) {
+        Member member = getMember(mobile);
+        boolean isVote = voteRepositoryImpl.existsVoteByMemberId(postId, member.getId());
+        if (isVote) {
+            throw new CustomException(VOTE_ALREADY_EXISTS);
+        }
+
+        List<Vote> votes = voteSaveDTOS.stream()
+                .map(voteSaveDTO -> convertToEntity(voteSaveDTO, mobile))
+                .collect(Collectors.toList());
+        return voteRepository.saveAll(votes);
+    }
 
     public List<VoteAvgDTO> getChampionNamesWithAverageRatioByPostId(Long postId) {
         List<Object[]> results = voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
         List<VoteAvgDTO> averageVotes = new ArrayList<>();
 
-        for(Object[] result : results) {
-            InGameInfo inGameInfo = (InGameInfo)result[0];
-            Double average = (Double)result[1];
+        for (Object[] result : results) {
+            InGameInfo inGameInfo = (InGameInfo) result[0];
+            Double average = (Double) result[1];
 
-            VoteAvgDTO dto = new VoteAvgDTO(inGameInfo.getChampionName(), average);
+            VoteAvgDTO dto = new VoteAvgDTO(
+                    inGameInfo.getChampionName(), average, inGameInfo.getPosition(), inGameInfo.getTier());
             averageVotes.add(dto);
         }
         return averageVotes;
@@ -50,12 +68,6 @@ public class VoteService {
                 .collect(Collectors.toList());
     }
 
-    public List<Vote> saveVotes(List<VoteSaveDTO> voteSaveDTOS, String mobile) {
-        List<Vote> votes = voteSaveDTOS.stream()
-                .map(voteSaveDTO -> convertToEntity(voteSaveDTO, mobile))
-                .collect(Collectors.toList());
-        return voteRepository.saveAll(votes);
-    }
 
     public Vote convertToEntity(VoteSaveDTO voteSaveDTO, String mobile) {
         Member member = getMember(mobile);
@@ -66,6 +78,7 @@ public class VoteService {
                 .inGameInfo(inGameInfo)
                 .build();
     }
+
     private Member getMember(String mobile) {
         return memberRepository.findByMobile(mobile).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
