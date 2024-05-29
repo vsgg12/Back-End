@@ -16,12 +16,12 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/vote/{postId}")
+@RequestMapping("/api/post/{postId}")
 public class VoteController {
 
     private final VoteService voteService;
 
-    @PostMapping
+    @PostMapping("/vote")
     public ResponseEntity<BaseResponse> save(@RequestHeader(value = "Authorization") String token, @RequestBody List<VoteSaveDTO> voteDTOs, @PathVariable Long postId) {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
