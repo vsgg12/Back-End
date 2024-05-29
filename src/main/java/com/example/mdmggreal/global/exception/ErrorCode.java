@@ -25,7 +25,8 @@ public enum ErrorCode {
 
     // 게시글
     INVALID_POST(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글 입니다."),
-
+    //투표
+    VOTE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 투표한 게시글 입니다."),
     // 댓글
     INVALID_COMMENT(HttpStatus.BAD_REQUEST, "부모 댓글이 없습니다."),
 
@@ -33,4 +34,4 @@ public enum ErrorCode {
 
     private final HttpStatus httpStatus;
     private final String message;
-    }
+}
