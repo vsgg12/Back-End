@@ -3,6 +3,9 @@ package com.example.mdmggreal.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
+import com.amazonaws.services.s3.transfer.Upload;
 import com.example.mdmggreal.image.dto.request.ImageDeleteRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,12 +58,26 @@ public class S3Service {
 
     public String uploadVideo(MultipartFile multipartFile) throws IOException {
 
+        TransferManager transferManager = TransferManagerBuilder.standard()
+                .withS3Client(amazonS3)
+                .build();
+
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
         String path = "video/" + UUID.randomUUID();
 
-        amazonS3.putObject(bucket, path, multipartFile.getInputStream(), metadata);
+        Upload upload = transferManager.upload(bucket, path, multipartFile.getInputStream(), metadata);
+
+        try {
+            // Wait for the upload to complete
+            upload.waitForCompletion();
+        } catch (InterruptedException e) {
+            // Handle interruption
+            Thread.currentThread().interrupt();
+            throw new IOException("Upload interrupted", e);
+        }
+
         return amazonS3.getUrl(bucket, path).toString();
     }
 
