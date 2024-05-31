@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,6 @@ public class S3Service {
     private String bucket;
 
     public String uploadImages(MultipartFile multipartFile) throws IOException {
-
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
@@ -52,14 +52,12 @@ public class S3Service {
         });
 
         return imageUrl;
-
-
     }
 
     public String uploadVideo(MultipartFile multipartFile) throws IOException {
-
         TransferManager transferManager = TransferManagerBuilder.standard()
                 .withS3Client(amazonS3)
+                .withExecutorFactory(() -> Executors.newFixedThreadPool(10)) // 병렬 업로드를 위한 스레드 풀 설정
                 .build();
 
         ObjectMetadata metadata = new ObjectMetadata();
@@ -76,6 +74,8 @@ public class S3Service {
             // Handle interruption
             Thread.currentThread().interrupt();
             throw new IOException("Upload interrupted", e);
+        } finally {
+            transferManager.shutdownNow(); // TransferManager 종료
         }
 
         return amazonS3.getUrl(bucket, path).toString();
@@ -88,5 +88,4 @@ public class S3Service {
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
         });
     }
-
 }
