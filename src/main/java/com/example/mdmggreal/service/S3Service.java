@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.transfer.TransferManager;
-import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.example.mdmggreal.image.dto.request.ImageDeleteRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
 @RequiredArgsConstructor
 public class S3Service {
     private final AmazonS3 amazonS3;
+    private final TransferManager transferManager;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -32,50 +33,50 @@ public class S3Service {
         metadata.setContentType(multipartFile.getContentType());
         String path = "image/" + UUID.randomUUID();
 
-        amazonS3.putObject(bucket, path, multipartFile.getInputStream(), metadata);
+        Upload upload = transferManager.upload(bucket, path, multipartFile.getInputStream(), metadata);
+        try {
+            upload.waitForCompletion();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Upload interrupted", e);
+        }
+
         return amazonS3.getUrl(bucket, path).toString();
     }
 
     public List<String> uploadImages(List<MultipartFile> multipartFileList) throws IOException {
         List<String> imageUrl = new ArrayList<>();
-        multipartFileList.forEach(multipartFile -> {
+        for (MultipartFile multipartFile : multipartFileList) {
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(multipartFile.getSize());
             metadata.setContentType(multipartFile.getContentType());
             String path = "image/" + UUID.randomUUID();
-            try {
-                amazonS3.putObject(bucket, path, multipartFile.getInputStream(), metadata);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            imageUrl.add(amazonS3.getUrl(bucket, path).toString());
-        });
 
+            Upload upload = transferManager.upload(bucket, path, multipartFile.getInputStream(), metadata);
+            try {
+                upload.waitForCompletion();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IOException("Upload interrupted", e);
+            }
+
+            imageUrl.add(amazonS3.getUrl(bucket, path).toString());
+        }
         return imageUrl;
     }
 
     public String uploadVideo(MultipartFile multipartFile) throws IOException {
-        TransferManager transferManager = TransferManagerBuilder.standard()
-                .withS3Client(amazonS3)
-                .withExecutorFactory(() -> Executors.newFixedThreadPool(10)) // 병렬 업로드를 위한 스레드 풀 설정
-                .build();
-
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
         String path = "video/" + UUID.randomUUID();
 
         Upload upload = transferManager.upload(bucket, path, multipartFile.getInputStream(), metadata);
-
         try {
-            // Wait for the upload to complete
             upload.waitForCompletion();
         } catch (InterruptedException e) {
-            // Handle interruption
             Thread.currentThread().interrupt();
             throw new IOException("Upload interrupted", e);
-        } finally {
-            transferManager.shutdownNow(); // TransferManager 종료
         }
 
         return amazonS3.getUrl(bucket, path).toString();
