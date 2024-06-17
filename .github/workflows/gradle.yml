@@ -62,7 +62,7 @@ jobs:
     #3
     # 만들어 놓은 S3에 해당 zip 파일 저장
     - name: Upload to S3
-      run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./vsgg.zip s3://mdmggbucket/vsgg.zip
+      run: aws s3 cp --region ${{ secrets.AWS_REGION }} ./vsgg.zip s3://vsgg-bucket/vsgg.zip
     
     #4
     # AWS CodeDeploy에 배포
@@ -72,8 +72,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         aws deploy create-deployment \
-        --application-name logging-system-deploy \
-        --deployment-group-name develop \
+        --application-name vsgg-CodeDeploy \
+        --deployment-group-name vsgg \
         --file-exists-behavior OVERWRITE \
-        --s3-location bucket=mdmggbucket,bundleType=zip,key=vsgg.zip \
+        --s3-location bucket=vsgg-bucket,bundleType=zip,key=vsgg.zip \
         --region ${{ secrets.AWS_REGION }}
