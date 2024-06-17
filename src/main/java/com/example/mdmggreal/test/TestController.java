@@ -14,7 +14,7 @@ public class TestController {
 
     @PostMapping("/content")
     public String test(String content) {
-        return content;
+        return "성공~~!";
     }
     @GetMapping
     public ResponseEntity test() {
