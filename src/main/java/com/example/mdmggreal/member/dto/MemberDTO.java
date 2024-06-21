@@ -27,7 +27,7 @@ public class MemberDTO  {
     /**
      * 티어
      */
-    private Tier tier;
+    private String tier;
     /** 인증여부 */
     private boolean agreeAge;
     private boolean agreeTerms;
@@ -41,7 +41,7 @@ public class MemberDTO  {
                 .email(member.getEmail())
                 .mobile(member.getMobile())
                 .gender(member.getGender())
-                .tier(member.getTier())
+                .tier(member.getTier().getName())
                 .build();
 
     }
