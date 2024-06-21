@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import static com.example.mdmggreal.member.type.Role.USER;
 import static jakarta.persistence.EnumType.STRING;
@@ -26,7 +25,6 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "member_id")
     private Long id;
-
     /** 토큰  */
     private String token;
     /** 이메일  */

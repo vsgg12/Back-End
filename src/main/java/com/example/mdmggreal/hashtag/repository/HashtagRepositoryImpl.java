@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.example.mdmggreal.hashtag.entity.QHashtag.hashtag;
-import static com.example.mdmggreal.post.entity.QPost.post;
 import static com.example.mdmggreal.posthashtag.entity.QPostHashtag.postHashtag;
 
 @Repository
@@ -26,9 +25,7 @@ public class HashtagRepositoryImpl extends QuerydslRepositorySupport {
         return from(hashtag)
                 .leftJoin(postHashtag)
                 .on(hashtag.id.eq(postHashtag.hashtag.id))
-                .leftJoin(post)
-                .on(postHashtag.post.id.eq(post.id))
-                .where(post.id.eq(postId))
+                .where(postHashtag.post.id.eq(postId))
                 .fetch();
     }
 }
