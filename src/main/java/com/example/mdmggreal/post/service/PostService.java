@@ -81,8 +81,8 @@ public class PostService {
         return PostDTO.of(MemberDTO.from(member), post, hashtags, inGameInfoResponses, isVote);
     }
 
-    public List<PostDTO> getPostsOrderByCreatedDateTime(String token, String orderBy) {
-        List<Post> posts = postRepositoryImpl.getPostsOrderByCreatedDateTime(orderBy);
+    public List<PostDTO> getPostsOrderByCreatedDateTime(String token, String orderBy, String keyword) {
+        List<Post> posts = postRepositoryImpl.getPostList(orderBy, keyword);
         List<PostDTO> postDTOS = new ArrayList<>();
 
 
