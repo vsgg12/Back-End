@@ -72,7 +72,6 @@ public class PostService {
         List<Hashtag> hashtags = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
         List<InGameInfoResponse> inGameInfoResponses = inGameInfoRepository.findByPostId(postId).stream().map(InGameInfoResponse::of).toList();
         boolean isVote = false;
-        member.getMobile();
         if (token != null) {
             String mobile = JwtUtil.getMobile(token);
             Member loginMember = getMember(mobile);
