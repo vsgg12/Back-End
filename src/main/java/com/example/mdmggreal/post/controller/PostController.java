@@ -1,8 +1,6 @@
 package com.example.mdmggreal.post.controller;
 
 import com.example.mdmggreal.global.security.JwtUtil;
-import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoResponse;
-import com.example.mdmggreal.ingameinfo.service.InGameInfoService;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.dto.response.PostAddResponse;
@@ -26,7 +24,6 @@ import static org.springframework.http.HttpStatus.OK;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-    private final InGameInfoService inGameInfoService;
 
     @PostMapping
     public ResponseEntity<PostAddResponse> postAdd(@RequestHeader(value = "Authorization") String token,
@@ -37,49 +34,27 @@ public class PostController {
     ) throws IOException {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
+        String content = new String(contentFile.getBytes(), StandardCharsets.UTF_8);
 
-        try {
-            String content = new String(contentFile.getBytes(), StandardCharsets.UTF_8);
-            postService.addPost(uploadVideos, thumbnailImage, postAddRequest, content, mobile);
-            // content 처리 로직
-        } catch (IOException e) {
-            // 처리 중 에러 발생 시 처리
-            e.printStackTrace();
-        }
+        postService.addPost(uploadVideos, thumbnailImage, postAddRequest, content, mobile);
 
         return ResponseEntity.ok(PostAddResponse.of(HttpStatus.CREATED));
     }
 
     @GetMapping("{postId}")
-    public ResponseEntity<PostGetResponse> postGet(@RequestHeader(value = "Authorization") String token, @PathVariable Long postId) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        PostDTO post = postService.getPost(postId, mobile);
-        List<InGameInfoResponse> inGameInfo = inGameInfoService.getInGameInfo(postId);
-
-        return ResponseEntity.ok(PostGetResponse.from(OK, post, inGameInfo));
+    public ResponseEntity<PostGetResponse> postGet(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
+        PostDTO post = postService.getPost(postId, token);
+        return ResponseEntity.ok(PostGetResponse.from(OK, post));
     }
 
     @GetMapping
-    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization") String token, @RequestParam("orderby") String orderBy) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(mobile,orderBy);
+    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization", required = false) String token, @RequestParam("orderby") String orderBy, @RequestParam("keyword") String keyWord) {
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(token, orderBy, keyWord);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
-
-    @GetMapping("/search")
-    public ResponseEntity<PostGetListResponse> postsGetKeyword(@RequestHeader(value = "Authorization") String token, @RequestParam("keyword") String keyWord) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<PostDTO> posts = postService.getPostsKeyword(mobile, keyWord);
-        return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
-    }
-
 
     @GetMapping("/users")
     public ResponseEntity<PostGetListResponse> postsGetByMember(@RequestHeader(value = "Authorization") String token) {
-
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
         List<PostDTO> posts = postService.getPostsByMember(mobile);

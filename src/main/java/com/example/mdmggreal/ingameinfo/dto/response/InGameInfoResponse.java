@@ -11,15 +11,15 @@ import lombok.experimental.SuperBuilder;
 public class InGameInfoResponse {
 
     private Long inGameInfoId;
-    private Tier tier;
-    private Position position;
+    private String tier;
+    private String position;
     private String championName;
 
     public static InGameInfoResponse of(InGameInfo inGameInfo) {
         return InGameInfoResponse.builder()
                 .inGameInfoId(inGameInfo.getId())
-                .tier(inGameInfo.getTier())
-                .position(inGameInfo.getPosition())
+                .tier(inGameInfo.getTier().getName())
+                .position(inGameInfo.getPosition().getName())
                 .championName(inGameInfo.getChampionName())
                 .build();
     }

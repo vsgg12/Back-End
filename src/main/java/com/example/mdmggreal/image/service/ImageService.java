@@ -5,7 +5,7 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.image.dto.request.ImageDeleteRequest;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
-import com.example.mdmggreal.service.S3Service;
+import com.example.mdmggreal.s3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -5,7 +5,7 @@ import com.example.mdmggreal.ingameinfo.type.Tier;
 
 public record InGameInfoRequest(
         String championName,
-        Position position,
-        Tier tier) {
+        String position,
+        String tier) {
 
 }

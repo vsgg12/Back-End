@@ -5,17 +5,14 @@ import com.example.mdmggreal.ingameinfo.dto.request.InGameInfoRequest;
 import com.example.mdmggreal.ingameinfo.type.Position;
 import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.post.entity.Post;
-import com.example.mdmggreal.vote.entity.Vote;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-
-import java.util.List;
 
 import static jakarta.persistence.EnumType.STRING;
+import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -32,20 +29,17 @@ public class InGameInfo extends BaseEntity {
     @Enumerated(STRING)
     private Tier tier;
     private Position position;
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
-
-    @OneToMany(mappedBy = "inGameInfo")
-    private List<Vote> votes;
 
 
     public static InGameInfo of(InGameInfoRequest request, Post post) {
 
         return InGameInfo.builder()
                 .championName(request.championName())
-                .tier(request.tier())
-                .position(request.position())
+                .tier(Tier.fromName(request.tier()))
+                .position(Position.fromName(request.position()))
                 .post(post)
                 .build();
     }
