@@ -20,7 +20,7 @@ import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.post.repository.PostRepositoryImpl;
 import com.example.mdmggreal.posthashtag.entity.PostHashtag;
 import com.example.mdmggreal.posthashtag.repository.PostHashtagRepository;
-import com.example.mdmggreal.service.S3Service;
+import com.example.mdmggreal.s3.service.S3Service;
 import com.example.mdmggreal.vote.repository.VoteRepositoryImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

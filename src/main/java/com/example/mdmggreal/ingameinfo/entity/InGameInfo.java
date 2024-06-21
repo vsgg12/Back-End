@@ -38,8 +38,8 @@ public class InGameInfo extends BaseEntity {
 
         return InGameInfo.builder()
                 .championName(request.championName())
-                .tier(request.tier())
-                .position(request.position())
+                .tier(Tier.fromName(request.tier()))
+                .position(Position.fromName(request.position()))
                 .post(post)
                 .build();
     }
