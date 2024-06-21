@@ -5,7 +5,9 @@ import static com.querydsl.core.types.PathMetadataFactory.*;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;
+
 import javax.annotation.processing.Generated;
+
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
@@ -39,8 +41,6 @@ public class QInGameInfo extends EntityPathBase<InGameInfo> {
     public final com.example.mdmggreal.post.entity.QPost post;
 
     public final EnumPath<com.example.mdmggreal.ingameinfo.type.Tier> tier = createEnum("tier", com.example.mdmggreal.ingameinfo.type.Tier.class);
-
-    public final ListPath<com.example.mdmggreal.vote.entity.Vote, com.example.mdmggreal.vote.entity.QVote> votes = this.<com.example.mdmggreal.vote.entity.Vote, com.example.mdmggreal.vote.entity.QVote>createList("votes", com.example.mdmggreal.vote.entity.Vote.class, com.example.mdmggreal.vote.entity.QVote.class, PathInits.DIRECT2);
 
     public QInGameInfo(String variable) {
         this(InGameInfo.class, forVariable(variable), INITS);
