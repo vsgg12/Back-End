@@ -48,14 +48,8 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization", required = false) String token, @RequestParam("orderby") String orderBy) {
-        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(token, orderBy);
-        return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<PostGetListResponse> postsGetKeyword(@RequestHeader(value = "Authorization", required = false) String token, @RequestParam("keyword") String keyWord) {
-        List<PostDTO> posts = postService.getPostsKeyword(token, keyWord);
+    public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization", required = false) String token, @RequestParam("orderby") String orderBy, @RequestParam("keyword") String keyWord) {
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(token, orderBy, keyWord);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
