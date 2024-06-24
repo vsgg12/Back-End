@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.mdmggreal.ingameinfo.entity.QInGameInfo.inGameInfo;
@@ -16,10 +17,10 @@ import static com.example.mdmggreal.vote.entity.QVote.vote;
 
 @Repository
 @Slf4j
-public class VoteRepositoryImpl extends QuerydslRepositorySupport {
+public class VoteQueryDSLRepository extends QuerydslRepositorySupport {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public VoteRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+    public VoteQueryDSLRepository(JPAQueryFactory jpaQueryFactory) {
         super(Vote.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }
@@ -31,6 +32,17 @@ public class VoteRepositoryImpl extends QuerydslRepositorySupport {
                         .leftJoin(inGameInfo).on(vote.inGameInfo.id.eq(inGameInfo.id).and(inGameInfo.post.id.eq(postId)))
                         .fetchFirst() // 수정
         );
+    }
+
+    public List<Vote> getVoteListByPostId(Long postId) {
+        return from(vote)
+                .leftJoin(inGameInfo)
+                .on(vote.inGameInfo.id.eq(inGameInfo.id))
+                .leftJoin(post)
+                .on(inGameInfo.post.id.eq(post.id))
+                .where(post.id.eq(postId))
+                .groupBy(vote.memberId)
+                .fetch();
     }
 
     public boolean existsVoteByMemberId(Long postId, Long memberId) {

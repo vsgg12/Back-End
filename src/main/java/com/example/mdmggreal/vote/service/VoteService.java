@@ -10,7 +10,7 @@ import com.example.mdmggreal.vote.dto.VoteAvgDTO;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteRepository;
-import com.example.mdmggreal.vote.repository.VoteRepositoryImpl;
+import com.example.mdmggreal.vote.repository.VoteQueryDSLRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +28,11 @@ public class VoteService {
     private final MemberRepository memberRepository;
 
     private final VoteRepository voteRepository;
-    private final VoteRepositoryImpl voteRepositoryImpl;
+    private final VoteQueryDSLRepository voteQueryDSLRepository;
 
     public List<Vote> saveVotes(List<VoteSaveDTO> voteSaveDTOS, String mobile, Long postId) {
         Member member = getMember(mobile);
-        boolean isVote = voteRepositoryImpl.existsVoteByMemberId(postId, member.getId());
+        boolean isVote = voteQueryDSLRepository.existsVoteByMemberId(postId, member.getId());
         if (isVote) {
             throw new CustomException(VOTE_ALREADY_EXISTS);
         }

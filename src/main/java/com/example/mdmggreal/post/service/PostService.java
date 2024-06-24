@@ -21,7 +21,7 @@ import com.example.mdmggreal.post.repository.PostRepositoryImpl;
 import com.example.mdmggreal.posthashtag.entity.PostHashtag;
 import com.example.mdmggreal.posthashtag.repository.PostHashtagRepository;
 import com.example.mdmggreal.s3.service.S3Service;
-import com.example.mdmggreal.vote.repository.VoteRepositoryImpl;
+import com.example.mdmggreal.vote.repository.VoteQueryDSLRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class PostService {
     private final HashtagRepositoryImpl hashtagRepositoryImpl;
     private final MemberRepository memberRepository;
     private final PostRepositoryImpl postRepositoryImpl;
-    private final VoteRepositoryImpl voteRepositoryImpl;
+    private final VoteQueryDSLRepository voteQueryDSLRepository;
     private final HashtagRepository hashtagRepository;
 
     @Transactional
@@ -75,7 +75,7 @@ public class PostService {
         if (token != null) {
             String mobile = JwtUtil.getMobile(token);
             Member loginMember = getMember(mobile);
-            isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
+            isVote = voteQueryDSLRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
         }
 
         return PostDTO.of(MemberDTO.from(member), post, hashtags, inGameInfoResponses, isVote);
@@ -96,7 +96,7 @@ public class PostService {
             if (token != null) {
                 String mobile = JwtUtil.getMobile(token);
                 Member loginMember = getMember(mobile);
-                isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
+                isVote = voteQueryDSLRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
             }
 
             postDTOS.add(PostDTO.of(member, post, listHashtagByPostId, inGameInfoResponses, isVote));
@@ -114,7 +114,7 @@ public class PostService {
             List<InGameInfoResponse> inGameInfoResponses = inGameInfoRepository.findByPostId(post.getId()).stream().map(InGameInfoResponse::of).toList();
             MemberDTO member = MemberDTO.from(post.getMember());
             List<Hashtag> listHashtagByPostId = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
-            boolean isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
+            boolean isVote = voteQueryDSLRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
             postDTOS.add(PostDTO.of(member, post, listHashtagByPostId, inGameInfoResponses, isVote));
         });
 
@@ -135,7 +135,7 @@ public class PostService {
 
                 String mobile = JwtUtil.getMobile(token);
                 Member loginMember = getMember(mobile);
-                isVote = voteRepositoryImpl.existsVoteByMemberId(post.getId(), loginMember.getId());
+                isVote = voteQueryDSLRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
             }
 
             postDTOS.add(PostDTO.of(from, post, listHashtagByPostId, inGameInfoResponses, isVote));

@@ -26,8 +26,7 @@ public class BatchScheduler {
     }
 
 
-//    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
-    @Scheduled(cron = "0/10 * * * * *") // 10초마다 실행
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void runBatchJob() throws Exception {
 
         jobLauncher.run(deleteOldAlarmsJob, new JobParametersBuilder().toJobParameters());
