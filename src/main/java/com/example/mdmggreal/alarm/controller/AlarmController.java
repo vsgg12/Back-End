@@ -1,6 +1,7 @@
 package com.example.mdmggreal.alarm.controller;
 
-import com.example.mdmggreal.alarm.entity.Alarm;
+import com.example.mdmggreal.alarm.dto.AlarmDTO;
+import com.example.mdmggreal.alarm.entity.PostAlarm;
 import com.example.mdmggreal.alarm.service.AlarmService;
 import com.example.mdmggreal.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +22,24 @@ public class AlarmController {
     /*
      * 리스트 가져오기
      */
-    @GetMapping("/users")
-    public List<Alarm> getAlarmListForUser(@RequestHeader(value = "Authorization") String token) {
+    @GetMapping
+    public List<AlarmDTO> alarmGet(@RequestHeader(value = "Authorization") String token) {
         JwtUtil.validateToken(token);
         String mobile = JwtUtil.getMobile(token);
-        return alarmService.getAlarmListByMemberId(mobile);
+        return alarmService.getAlarmList(mobile);
+    }
 
+    @GetMapping("/comment")
+    public List<AlarmDTO> CommentAlarmGet(@RequestHeader(value = "Authorization") String token) {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        return alarmService.getCommentAlarmList(mobile);
+    }
+
+    @GetMapping("/post")
+    public List<AlarmDTO> postAlarmGet(@RequestHeader(value = "Authorization") String token) {
+        JwtUtil.validateToken(token);
+        String mobile = JwtUtil.getMobile(token);
+        return alarmService.getPostAlarmList(mobile);
     }
 }
