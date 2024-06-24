@@ -1,6 +1,5 @@
 package com.example.mdmggreal.comment.service;
 
-import com.example.mdmggreal.alarm.service.AlarmService;
 import com.example.mdmggreal.alarm.service.CommentAlarmService;
 import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
@@ -11,7 +10,6 @@ import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
-import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import jakarta.transaction.Transactional;

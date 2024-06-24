@@ -1,6 +1,5 @@
 package com.example.mdmggreal.alarm.entity;
 
-import com.example.mdmggreal.alarm.dto.AlarmDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.comment.entity.Comment;
 import com.example.mdmggreal.global.entity.BaseEntity;

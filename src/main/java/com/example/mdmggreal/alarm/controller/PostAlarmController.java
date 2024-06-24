@@ -6,7 +6,6 @@ import com.example.mdmggreal.alarm.service.PostAlarmService;
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package com.example.mdmggreal.alarm.dto.response;
 
 import com.example.mdmggreal.alarm.dto.AlarmDTO;
-import com.example.mdmggreal.alarm.dto.CommentAlarmDTO;
 import com.example.mdmggreal.global.response.BaseResponse;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
