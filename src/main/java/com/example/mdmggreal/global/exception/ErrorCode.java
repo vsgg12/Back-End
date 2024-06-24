@@ -30,9 +30,9 @@ public enum ErrorCode {
     // 댓글
     INVALID_COMMENT(HttpStatus.BAD_REQUEST, "부모 댓글이 없습니다."),
     // 해시태그
-    HASHTAGNAME_NOT_MATCH(HttpStatus.BAD_REQUEST, "해시태그 이름이 일치하지 않습니다.")
-
-    ;
+    HASHTAGNAME_NOT_MATCH(HttpStatus.BAD_REQUEST, "해시태그 이름이 일치하지 않습니다."),
+    // 알람
+    INVALID_ALARM(HttpStatus.BAD_REQUEST, "존재하지 않는 알람입니다." );
 
     private final HttpStatus httpStatus;
     private final String message;

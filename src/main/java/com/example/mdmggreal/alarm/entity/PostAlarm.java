@@ -1,7 +1,6 @@
 package com.example.mdmggreal.alarm.entity;
 
 import com.example.mdmggreal.alarm.dto.AlarmDTO;
-import com.example.mdmggreal.alarm.dto.reqeust.PostAlarmRequest;
 import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.entity.Post;
@@ -46,4 +45,7 @@ public class PostAlarm extends BaseEntity {
     }
 
 
+    public void editIsRead() {
+        this.isRead = true;
+    }
 }

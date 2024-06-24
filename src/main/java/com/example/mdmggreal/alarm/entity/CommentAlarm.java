@@ -1,6 +1,7 @@
 package com.example.mdmggreal.alarm.entity;
 
 import com.example.mdmggreal.alarm.dto.AlarmDTO;
+import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.comment.entity.Comment;
 import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.member.entity.Member;
@@ -35,13 +36,18 @@ public class CommentAlarm extends BaseEntity {
     private Boolean isRead;
     private String alarmContents;
 
-    public static PostAlarm from(AlarmDTO alarmDTO, Member member, Comment comment) {
-        return PostAlarm.builder()
-                .member(member)
-                .alarmContents(alarmDTO.getAlarmContents())
+    public static CommentAlarm from(Comment comment, CommentAddRequest request) {
+        return CommentAlarm.builder()
+                .member(comment.getMember())
+                .comment(comment)
+                .alarmContents(request.getContent())
                 .isRead(FALSE)
                 .build();
 
+    }
+
+    public void editIsRead() {
+        this.isRead = true;
     }
 
 }
