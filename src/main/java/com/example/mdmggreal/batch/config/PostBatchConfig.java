@@ -30,8 +30,6 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     private final VoteQueryDSLRepository voteQueryDSLRepository;
     private final PostAlarmService postAlarmService;
 
-
-
     @Bean
     public Job updatePostJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws DuplicateJobException {
         return new JobBuilder("updatePostJob", jobRepository)
@@ -42,30 +40,37 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
 
     @Bean
     public Step updatePostStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        Step step = new StepBuilder("deleteOldAlarmsStep", jobRepository)
+        return new StepBuilder("updatePostStep", jobRepository)
                 .tasklet(updatePostTasklet(), transactionManager)
                 .build();
-        return step;
     }
 
     @Bean
     public Tasklet updatePostTasklet() {
-        return ((contribution, chunkContext) -> {
+        return (contribution, chunkContext) -> {
             LocalDateTime now = LocalDateTime.now();
             List<Post> postList = postRepository.findByEndDateTimeBefore(now);
-            if (postList.isEmpty()) {
-
-            } else {
-                for (Post post : postList) {
-                    post.editStatus();
-                    List<Vote> voteList = voteQueryDSLRepository.getVoteListByPostId(post.getId());
-                    for (Vote vote : voteList) {
-                        postAlarmService.addAlarm()
-                    }
-                }
-            }
-
+            processPosts(postList);
             return RepeatStatus.FINISHED;
-        });
+        };
+    }
+
+    private void processPosts(List<Post> postList) {
+        if (!postList.isEmpty()) {
+            for (Post post : postList) {
+                post.editStatus();
+                notifyVotes(post);
+            }
+        }
+    }
+
+    private void notifyVotes(Post post) {
+        List<Vote> voteList = voteQueryDSLRepository.getVoteListByPostId(post.getId());
+        if (!voteList.isEmpty()) {
+            for (Vote vote : voteList) {
+                postAlarmService.addAlarm(post, vote.getMemberId());
+            }
+        }
+
     }
 }

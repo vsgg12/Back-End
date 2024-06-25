@@ -1,6 +1,7 @@
 package com.example.mdmggreal.vote.repository;
 
 
+import com.example.mdmggreal.post.entity.type.PostStatus;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import static com.example.mdmggreal.ingameinfo.entity.QInGameInfo.inGameInfo;
 import static com.example.mdmggreal.member.entity.QMember.member;
 import static com.example.mdmggreal.post.entity.QPost.post;
+import static com.example.mdmggreal.post.entity.type.PostStatus.PROGRESS;
 import static com.example.mdmggreal.vote.entity.QVote.vote;
 
 @Repository
@@ -40,7 +42,8 @@ public class VoteQueryDSLRepository extends QuerydslRepositorySupport {
                 .on(vote.inGameInfo.id.eq(inGameInfo.id))
                 .leftJoin(post)
                 .on(inGameInfo.post.id.eq(post.id))
-                .where(post.id.eq(postId))
+                .where(post.id.eq(postId)
+                        .and(post.status.eq(PROGRESS)))
                 .groupBy(vote.memberId)
                 .fetch();
     }
