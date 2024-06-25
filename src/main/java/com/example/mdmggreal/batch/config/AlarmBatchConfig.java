@@ -46,7 +46,6 @@ public class AlarmBatchConfig extends DefaultBatchConfiguration {
             LocalDateTime fourteenDaysAgo = LocalDateTime.now().minusDays(14);
             postAlarmRepository.deleteByCreatedDateTimeBefore(fourteenDaysAgo);
             commentAlarmRepository.deleteByCreatedDateTimeBefore(fourteenDaysAgo);
-            System.out.println("한 달이 지난 알람이 삭제되었습니다.");
             return RepeatStatus.FINISHED;
         });
     }
