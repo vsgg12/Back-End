@@ -1,6 +1,5 @@
 package com.example.mdmggreal.alarm.entity;
 
-import com.example.mdmggreal.alarm.dto.AlarmDTO;
 import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.entity.Post;
@@ -34,11 +33,11 @@ public class PostAlarm extends BaseEntity {
     private Boolean isRead;
     private String alarmContents;
 
-    public static PostAlarm from(AlarmDTO alarmDTO, Member member, Post post) {
+    public static PostAlarm from(Member member, Post post) {
         return PostAlarm.builder()
                 .member(member)
+                .alarmContents("판결한 게시글 결과를 확인해보세요!")
                 .post(post)
-                .alarmContents(alarmDTO.getAlarmContents())
                 .isRead(FALSE)
                 .build();
 

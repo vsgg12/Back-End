@@ -7,12 +7,11 @@ import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
-import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,23 +26,32 @@ public class PostAlarmService {
                 .toList();
     }
 
+    public void addAlarm(Post post, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+        );
+        postAlarmRepository.save(PostAlarm.from(member, post));
+
+    }
+
     public void modifyAlarm(String mobile, Long alarmId) {
         Member member = getMember(mobile);
         PostAlarm postAlarm = postAlarmRepository.findById(alarmId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_ALARM)
         );
+        validatePermission(member, postAlarm);
+        postAlarm.editIsRead();
+    }
+
+    private void validatePermission(Member member, PostAlarm postAlarm) {
         if (!postAlarm.getMember().getId().equals(member.getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION);
         }
-
-        postAlarm.editIsRead();
     }
 
     private Member getMember(String mobile) {
         return memberRepository.findByMobile(mobile).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
+                () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
     }
-
-
 }
