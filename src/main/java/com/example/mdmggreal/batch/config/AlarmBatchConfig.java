@@ -5,7 +5,6 @@ import com.example.mdmggreal.alarm.repository.PostAlarmRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -27,7 +26,7 @@ public class AlarmBatchConfig extends DefaultBatchConfiguration {
     private final CommentAlarmRepository commentAlarmRepository;
 
     @Bean
-    public Job deleteOldAlarmsJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws DuplicateJobException {
+    public Job deleteOldAlarmsJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("deleteOldAlarmsJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(deleteOldAlarmsStep(jobRepository, transactionManager))
@@ -36,10 +35,9 @@ public class AlarmBatchConfig extends DefaultBatchConfiguration {
 
     @Bean
     public Step deleteOldAlarmsStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        Step step = new StepBuilder("deleteOldAlarmsStep", jobRepository)
+        return new StepBuilder("deleteOldAlarmsStep", jobRepository)
                 .tasklet(deleteOldAlarmsTasklet(), transactionManager)
                 .build();
-        return step;
     }
 
     @Bean

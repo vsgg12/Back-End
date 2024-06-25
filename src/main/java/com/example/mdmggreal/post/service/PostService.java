@@ -121,29 +121,6 @@ public class PostService {
         return postDTOS;
     }
 
-    public List<PostDTO> getPostsKeyword(String token, String keyWord) {
-        List<Post> posts = postRepositoryImpl.getPostsKeyword(keyWord);
-        List<PostDTO> postDTOS = new ArrayList<>();
-
-        posts.forEach(post -> {
-            MemberDTO from = MemberDTO.from(post.getMember());
-            List<Hashtag> listHashtagByPostId = hashtagRepositoryImpl.getListHashtagByPostId(post.getId());
-            boolean isVote = false;
-            List<InGameInfoResponse> inGameInfoResponses = inGameInfoRepository.findByPostId(post.getId()).stream().map(InGameInfoResponse::of).toList();
-
-            if (token != null) {
-
-                String mobile = JwtUtil.getMobile(token);
-                Member loginMember = getMember(mobile);
-                isVote = voteQueryDSLRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
-            }
-
-            postDTOS.add(PostDTO.of(from, post, listHashtagByPostId, inGameInfoResponses, isVote));
-        });
-
-        return postDTOS;
-    }
-
     private Post getPostById(Long postId) {
         return postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)

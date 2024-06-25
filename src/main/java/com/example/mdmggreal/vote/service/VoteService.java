@@ -9,8 +9,8 @@ import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.vote.dto.VoteAvgDTO;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.entity.Vote;
-import com.example.mdmggreal.vote.repository.VoteRepository;
 import com.example.mdmggreal.vote.repository.VoteQueryDSLRepository;
+import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

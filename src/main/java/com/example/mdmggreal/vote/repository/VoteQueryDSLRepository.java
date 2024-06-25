@@ -1,7 +1,6 @@
 package com.example.mdmggreal.vote.repository;
 
 
-import com.example.mdmggreal.post.entity.type.PostStatus;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;

@@ -8,7 +8,6 @@ import com.example.mdmggreal.vote.repository.VoteQueryDSLRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.DuplicateJobException;
 import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
@@ -31,7 +30,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     private final PostAlarmService postAlarmService;
 
     @Bean
-    public Job updatePostJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws DuplicateJobException {
+    public Job updatePostJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("updatePostJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(updatePostStep(jobRepository, transactionManager))
