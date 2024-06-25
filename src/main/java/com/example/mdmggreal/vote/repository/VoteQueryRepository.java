@@ -18,10 +18,10 @@ import static com.example.mdmggreal.vote.entity.QVote.vote;
 
 @Repository
 @Slf4j
-public class VoteQueryDSLRepository extends QuerydslRepositorySupport {
+public class VoteQueryRepository extends QuerydslRepositorySupport {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public VoteQueryDSLRepository(JPAQueryFactory jpaQueryFactory) {
+    public VoteQueryRepository(JPAQueryFactory jpaQueryFactory) {
         super(Vote.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }

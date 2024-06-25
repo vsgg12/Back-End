@@ -4,7 +4,7 @@ import com.example.mdmggreal.alarm.service.PostAlarmService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.entity.Vote;
-import com.example.mdmggreal.vote.repository.VoteQueryDSLRepository;
+import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostBatchConfig extends DefaultBatchConfiguration {
     private final PostRepository postRepository;
-    private final VoteQueryDSLRepository voteQueryDSLRepository;
+    private final VoteQueryRepository voteQueryRepository;
     private final PostAlarmService postAlarmService;
 
     @Bean
@@ -64,7 +64,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     }
 
     private void notifyVotes(Post post) {
-        List<Vote> voteList = voteQueryDSLRepository.getVoteListByPostId(post.getId());
+        List<Vote> voteList = voteQueryRepository.getVoteListByPostId(post.getId());
         if (!voteList.isEmpty()) {
             for (Vote vote : voteList) {
                 postAlarmService.addAlarm(post, vote.getMemberId());
