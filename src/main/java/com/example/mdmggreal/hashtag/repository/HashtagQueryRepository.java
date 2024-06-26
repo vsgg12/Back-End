@@ -13,10 +13,10 @@ import static com.example.mdmggreal.posthashtag.entity.QPostHashtag.postHashtag;
 
 @Repository
 @Slf4j
-public class HashtagRepositoryImpl extends QuerydslRepositorySupport {
+public class HashtagQueryRepository extends QuerydslRepositorySupport {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public HashtagRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+    public HashtagQueryRepository(JPAQueryFactory jpaQueryFactory) {
         super(Hashtag.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }
