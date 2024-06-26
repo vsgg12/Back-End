@@ -1,5 +1,6 @@
 package com.example.mdmggreal.comment.service;
 
+import com.example.mdmggreal.alarm.service.CommentAlarmService;
 import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.comment.entity.Comment;
@@ -9,7 +10,6 @@ import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
-import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import jakarta.transaction.Transactional;
@@ -31,6 +31,7 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final CommentDAO commentDAO;
+    private final CommentAlarmService commentAlarmService;
 
     @Transactional
     public void addComment(Long postId, CommentAddRequest request, String mobile) {
@@ -46,6 +47,7 @@ public class CommentService {
             Comment parent = commentRepository.findById(request.getParentId()).orElseThrow(
                     () -> new CustomException(INVALID_COMMENT)
             );
+            commentAlarmService.addAlarm(parent, request);
             child = Comment.of(post, member, parent, request);
         } else {
             child = Comment.of(post, member, request);
@@ -57,9 +59,6 @@ public class CommentService {
 
     @Transactional
     public List<CommentDTO> getCommentList(Long postId, String mobile) {
-        Member member = memberRepository.findByMobile(mobile).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
-        );
         List<Comment> list = commentDAO.getList(postId);
         List<CommentDTO> commentResponseDTOList = new ArrayList<>();
         Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();

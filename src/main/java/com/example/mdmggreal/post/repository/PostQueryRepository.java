@@ -2,7 +2,6 @@ package com.example.mdmggreal.post.repository;
 
 import com.example.mdmggreal.post.entity.Post;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +15,10 @@ import static com.example.mdmggreal.post.entity.QPost.post;
 
 @Repository
 @Slf4j
-public class PostRepositoryImpl extends QuerydslRepositorySupport {
+public class PostQueryRepository extends QuerydslRepositorySupport {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public PostRepositoryImpl(JPAQueryFactory jpaQueryFactory) {
+    public PostQueryRepository(JPAQueryFactory jpaQueryFactory) {
         super(Post.class);
         this.jpaQueryFactory = jpaQueryFactory;
     }

@@ -10,6 +10,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
+import static com.example.mdmggreal.post.entity.type.PostStatus.FINISHED;
 import static com.example.mdmggreal.post.entity.type.PostStatus.PROGRESS;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
@@ -39,6 +43,7 @@ public class Post extends BaseEntity {
     private String content;
     private String thumbnailURL;
     private Long viewCount;
+    private LocalDateTime endDateTime;
 
     public static Post of(PostAddRequest request, String thumbnailURL, String videoUrl, String content, Member member) {
         return Post.builder()
@@ -49,9 +54,13 @@ public class Post extends BaseEntity {
                 .status(PROGRESS)
                 .video(Video.of(videoUrl, request.type()))
                 .viewCount(0L)
+                .endDateTime(LocalDateTime.now().plusMonths(1).with(LocalTime.MIN))
                 .build();
     }
 
+    public void editStatus() {
+        this.status = FINISHED;
+    }
 
     public void addView() {
         this.viewCount = this.viewCount + 1;
