@@ -25,17 +25,15 @@ public class ImageController {
     public ResponseEntity<ImageUploadResponse> imageUpload(
             @RequestHeader(value = "Authorization") String token,
             @RequestPart(value = "file") List<MultipartFile> multipartFile) throws IOException {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<String> ImageUrlList = imageService.uploadImage(multipartFile, mobile);
+        Long memberId = JwtUtil.getMemberId(token);
+        List<String> ImageUrlList = imageService.uploadImage(multipartFile, memberId);
         return ResponseEntity.ok(ImageUploadResponse.from(ImageUrlList, HttpStatus.OK));
     }
 
     @DeleteMapping
     public ResponseEntity<BaseResponse> imageDelete(@RequestHeader(value = "Authorization") String token, @RequestBody ImageDeleteRequest request) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        imageService.deleteImage(request, mobile);
+        Long memberId = JwtUtil.getMemberId(token);
+        imageService.deleteImage(request, memberId);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
     }
 }

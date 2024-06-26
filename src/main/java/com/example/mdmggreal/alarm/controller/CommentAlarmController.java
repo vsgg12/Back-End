@@ -21,17 +21,15 @@ public class CommentAlarmController {
 
     @GetMapping
     public AlarmResponse CommentAlarmGet(@RequestHeader(value = "Authorization") String token) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<AlarmDTO> commentAlarmList = commentAlarmService.getCommentAlarmList(mobile);
+        Long memberId = JwtUtil.getMemberId(token);
+        List<AlarmDTO> commentAlarmList = commentAlarmService.getCommentAlarmList(memberId);
         return AlarmResponse.from(commentAlarmList, OK);
     }
 
     @PatchMapping("/{alarmId}")
     public BaseResponse CommentAlarmModify(@RequestHeader(value = "Authorization") String token, @PathVariable Long alarmId) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        commentAlarmService.modifyAlarm(mobile, alarmId);
+        Long memberId = JwtUtil.getMemberId(token);
+        commentAlarmService.modifyAlarm(memberId, alarmId);
 
         return BaseResponse.from(OK);
     }

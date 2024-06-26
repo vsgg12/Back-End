@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
+
 @RequiredArgsConstructor
 @Service
 public class PostService {
@@ -46,8 +48,8 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
 
     @Transactional
-    public void addPost(MultipartFile uploadVideos, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, String mobile) throws IOException {
-        Member member = getMember(mobile);
+    public void addPost(MultipartFile uploadVideos, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
+        Member member = getMemberByMemberId(memberId);
 
         String thumbnailUrl = s3Service.uploadImages(thumbnailImage);
         String videoUrl = postAddRequest.type() == VideoType.FILE ? s3Service.uploadVideo(uploadVideos) : postAddRequest.videoUrl();
@@ -75,8 +77,8 @@ public class PostService {
         return posts.stream().map(post -> createPostDTO(post, token)).collect(Collectors.toList());
     }
 
-    public List<PostDTO> getPostsByMember(String mobile) {
-        Member loginMember = getMember(mobile);
+    public List<PostDTO> getPostsByMember(Long memberId) {
+        Member loginMember = getMemberByMemberId(memberId);
         List<Post> posts = postQueryRepository.getPostsMember(loginMember.getId());
         return posts.stream().map(post -> createPostDTO(post, loginMember.getMobile())).collect(Collectors.toList());
     }
@@ -84,8 +86,8 @@ public class PostService {
     private PostDTO createPostDTO(Post post, String token) {
         boolean isVote = false;
         if (token != null) {
-            String mobile = JwtUtil.getMobile(token);
-            Member loginMember = getMember(mobile);
+            Long memberId = JwtUtil.getMemberId(token);
+            Member loginMember = getMemberByMemberId(memberId);
             isVote = voteQueryRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
         }
         List<Hashtag> hashtags = hashtagQueryRepository.getListHashtagByPostId(post.getId());
@@ -99,9 +101,9 @@ public class PostService {
         );
     }
 
-    private Member getMember(String mobile) {
-        return memberRepository.findByMobile(mobile).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+    private Member getMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(INVALID_USER_ID)
         );
     }
 }

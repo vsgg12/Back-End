@@ -23,10 +23,8 @@ public class AlarmController {
 
     @GetMapping
     public AlarmResponse alarmGet(@RequestHeader(value = "Authorization") String token) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<AlarmDTO> alarmList = alarmService.getAlarmList(mobile);
+        Long memberId = JwtUtil.getMemberId(token);
+        List<AlarmDTO> alarmList = alarmService.getAlarmList(memberId);
         return AlarmResponse.from(alarmList, OK);
     }
-
 }

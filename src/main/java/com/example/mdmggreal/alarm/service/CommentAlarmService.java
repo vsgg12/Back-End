@@ -28,15 +28,15 @@ public class CommentAlarmService {
     }
 
     @Transactional
-    public List<AlarmDTO> getCommentAlarmList(String mobile) {
-        Member member = getMember(mobile);
+    public List<AlarmDTO> getCommentAlarmList(Long memberId) {
+        Member member = getMemberByMemberId(memberId);
         return commentAlarmRepository.findByMemberId(member.getId()).stream()
                 .map(AlarmDTO::from)
                 .toList();
     }
 
-    public void modifyAlarm(String mobile, Long alarmId) {
-        Member member = getMember(mobile);
+    public void modifyAlarm(Long memberId, Long alarmId) {
+        Member member = getMemberByMemberId(memberId);
         CommentAlarm commentAlarm = commentAlarmRepository.findById(alarmId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_ALARM)
         );
@@ -48,11 +48,9 @@ public class CommentAlarmService {
 
     }
 
-    private Member getMember(String mobile) {
-        return memberRepository.findByMobile(mobile).orElseThrow(
+    private Member getMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(INVALID_USER_ID)
         );
     }
-
-
 }

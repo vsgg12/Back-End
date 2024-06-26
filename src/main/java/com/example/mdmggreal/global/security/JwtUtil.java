@@ -45,11 +45,7 @@ public class JwtUtil {
 
     public static String createToken(CustomUserInfoDto user, long expireTime) {
         Claims claims = Jwts.claims();
-        // 현재는 휴대전화번호 사용하지 않음. 추후 추가예정
-        // claims.put("mobile", user.getMobile());
         claims.put("memberId", user.getMemberId());
-        claims.put("email", user.getEmail());
-        claims.put("nickname", user.getNickname());
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenValidTime = now.plusSeconds(expireTime);
 
@@ -61,26 +57,12 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 삭제 예정
-    public static String getMobile(String token) {
+    public static Long getMemberId(String token) {
+        validateToken(token);
         if (token.split(" ").length > 1) {
             token = token.split(" ")[1].trim();
         }
-        return parseClaims(token).get("mobile", String.class);
-    }
-
-    public static String getNickname(String token) {
-        if (token.split(" ").length > 1) {
-            token = token.split(" ")[1].trim();
-        }
-        return parseClaims(token).get("nickname", String.class);
-    }
-
-    public static String getEmail(String token) {
-        if (token.split(" ").length > 1) {
-            token = token.split(" ")[1].trim();
-        }
-        return parseClaims(token).get("email", String.class);
+        return parseClaims(token).get("memberId", Long.class);
     }
 
     public static boolean validateToken(String token) {
@@ -100,7 +82,7 @@ public class JwtUtil {
         }
     }
 
-    public static Claims parseClaims(String token) {
+    private static Claims parseClaims(String token) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
