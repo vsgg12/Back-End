@@ -22,17 +22,15 @@ public class VoteController {
 
     @PostMapping("/vote")
     public ResponseEntity<BaseResponse> save(@RequestHeader(value = "Authorization") String token, @RequestBody List<VoteSaveDTO> voteDTOs, @PathVariable Long postId) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        voteService.saveVotes(voteDTOs, mobile, postId);
+        Long memberId = JwtUtil.getMemberId(token);
+        voteService.saveVotes(voteDTOs, memberId, postId);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<Post>> getVotedPostsByMemberId(@RequestHeader(value = "Authorization") String token) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<Post> votedPosts = voteService.getVotedPostsByMemberId(mobile);
+        Long memberId = JwtUtil.getMemberId(token);
+        List<Post> votedPosts = voteService.getVotedPostsByMemberId(memberId);
         return ResponseEntity.ok(votedPosts);
     }
 

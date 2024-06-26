@@ -32,9 +32,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 if (jwtUtil.validateToken(authentication)) {
                     String token = authentication.split(" ")[1].trim();
-                    String mobile = jwtUtil.getMobile(token);
+                    Long memberId  = JwtUtil.getMemberId(token);
 
-                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(mobile);
+                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(memberId.toString());
 
                     if (userDetails != null) {
                         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

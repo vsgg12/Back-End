@@ -32,11 +32,10 @@ public class PostController {
                                                    @RequestPart("thumbnailImage") MultipartFile thumbnailImage,
                                                    @RequestPart("postAddRequest") PostAddRequest postAddRequest
     ) throws IOException {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
+        Long memberId = JwtUtil.getMemberId(token);
         String content = new String(contentFile.getBytes(), StandardCharsets.UTF_8);
 
-        postService.addPost(uploadVideos, thumbnailImage, postAddRequest, content, mobile);
+        postService.addPost(uploadVideos, thumbnailImage, postAddRequest, content, memberId);
 
         return ResponseEntity.ok(PostAddResponse.of(HttpStatus.CREATED));
     }
@@ -55,9 +54,8 @@ public class PostController {
 
     @GetMapping("/users")
     public ResponseEntity<PostGetListResponse> postsGetByMember(@RequestHeader(value = "Authorization") String token) {
-        JwtUtil.validateToken(token);
-        String mobile = JwtUtil.getMobile(token);
-        List<PostDTO> posts = postService.getPostsByMember(mobile);
+        Long memberId = JwtUtil.getMemberId(token);
+        List<PostDTO> posts = postService.getPostsByMember(memberId);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 }

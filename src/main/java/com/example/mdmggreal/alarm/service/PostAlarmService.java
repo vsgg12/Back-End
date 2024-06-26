@@ -13,14 +13,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
+
 @Service
 @RequiredArgsConstructor
 public class PostAlarmService {
     private final PostAlarmRepository postAlarmRepository;
     private final MemberRepository memberRepository;
 
-    public List<AlarmDTO> getPostAlarmList(String mobile) {
-        Member member = getMember(mobile);
+    public List<AlarmDTO> getPostAlarmList(Long memberId) {
+        Member member = getMemberByMemberId(memberId);
         return postAlarmRepository.findByMemberId(member.getId()).stream()
                 .map(AlarmDTO::from)
                 .toList();
@@ -34,8 +36,8 @@ public class PostAlarmService {
 
     }
 
-    public void modifyAlarm(String mobile, Long alarmId) {
-        Member member = getMember(mobile);
+    public void modifyAlarm(Long memberId, Long alarmId) {
+        Member member = getMemberByMemberId(memberId);
         PostAlarm postAlarm = postAlarmRepository.findById(alarmId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_ALARM)
         );
@@ -49,9 +51,9 @@ public class PostAlarmService {
         }
     }
 
-    private Member getMember(String mobile) {
-        return memberRepository.findByMobile(mobile).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+    private Member getMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(INVALID_USER_ID)
         );
     }
 }
