@@ -27,7 +27,7 @@ public class OauthController {
     }
 
     // 네이버 인가코드, 상태값 받아서 로그인 시도
-    @GetMapping("/signin")
+    @PostMapping("/signin")
     public ResponseEntity<SignInResponse> naverSignin(@RequestBody SignInRequest request) {
         NaverLoginParams params = NaverLoginParams.builder()
                 .authorizationCode(request.getCode())
