@@ -1,6 +1,6 @@
 package com.example.mdmggreal.comment.dto.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +14,6 @@ public class CommentAddRequest {
 
     private Long parentId;
 
-    @NotNull(message = "댓글 내용을 작성해주세요")
+    @NotBlank(message = "댓글 내용을 작성해주세요.")
     private String content;
 }
