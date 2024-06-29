@@ -21,8 +21,11 @@ public class AlarmController {
 
     private final AlarmService alarmService;
 
+    /*
+    전체 알람 조회
+     */
     @GetMapping
-    public AlarmResponse alarmGet(@RequestHeader(value = "Authorization") String token) {
+    public AlarmResponse alarmListGet(@RequestHeader(value = "Authorization") String token) {
         Long memberId = JwtUtil.getMemberId(token);
         List<AlarmDTO> alarmList = alarmService.getAlarmList(memberId);
         return AlarmResponse.from(alarmList, OK);
