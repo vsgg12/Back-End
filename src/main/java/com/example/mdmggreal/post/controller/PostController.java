@@ -1,5 +1,7 @@
 package com.example.mdmggreal.post.controller;
 
+import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
@@ -33,6 +35,9 @@ public class PostController {
                                                    @RequestPart("postAddRequest") PostAddRequest postAddRequest
     ) throws IOException {
         Long memberId = JwtUtil.getMemberId(token);
+        if (uploadVideos == null || uploadVideos.isEmpty()) {
+            throw new CustomException(ErrorCode.VIDEO_REQUIRED);
+        }
         String content = new String(contentFile.getBytes(), StandardCharsets.UTF_8);
 
         postService.addPost(uploadVideos, thumbnailImage, postAddRequest, content, memberId);
