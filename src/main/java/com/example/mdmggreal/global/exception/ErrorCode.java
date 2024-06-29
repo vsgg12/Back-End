@@ -16,7 +16,7 @@ public enum ErrorCode {
     NICKNAME_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다."),
     INVALID_TOKEN(HttpStatus.NOT_FOUND, "유효하지 않은 토큰입니다."),
     NO_PERMISSION(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
-    EXPIRED_JWT_TOKEN(HttpStatus.BAD_REQUEST, "토큰이 만료되었습니다."),
+    EXPIRED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
     INVALID_JWT_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다."),
     UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "변조된 토큰입니다."),
     JWT_CLAIMS_EMPTY(HttpStatus.BAD_REQUEST, "토큰 정보가 없습니다."),
