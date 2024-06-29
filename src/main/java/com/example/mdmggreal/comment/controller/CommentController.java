@@ -31,9 +31,8 @@ public class CommentController {
     }
 
     @GetMapping
-    public ResponseEntity<CommentGetListResponse> commentGetList(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "postid") Long postId) {
-        Long memberId = JwtUtil.getMemberId(token);
-        List<CommentDTO> commentList = commentService.getCommentList(postId, memberId);
+    public ResponseEntity<CommentGetListResponse> commentGetList(@PathVariable(value = "postid") Long postId) {
+        List<CommentDTO> commentList = commentService.getCommentList(postId);
         return ResponseEntity.ok(CommentGetListResponse.from(commentList, HttpStatus.OK));
     }
 

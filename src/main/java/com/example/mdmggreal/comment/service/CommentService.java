@@ -58,7 +58,7 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentDTO> getCommentList(Long postId, Long memberId) {
+    public List<CommentDTO> getCommentList(Long postId) {
         List<Comment> list = commentDAO.getList(postId);
         List<CommentDTO> commentResponseDTOList = new ArrayList<>();
         Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
