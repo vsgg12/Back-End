@@ -37,12 +37,12 @@ public class OauthController {
     }
 
 // 네이버 인가코드, 상태값 받아서 로그인 시도 - 프론트 없이 테스트할 때 사용
-//    @GetMapping("/callback/naver")
-//    public ResponseEntity<SignInResponse> naverSigninTest(@RequestParam String code, @RequestParam String state) {
-//        NaverLoginParams params = NaverLoginParams.builder()
-//                .authorizationCode(code)
-//                .state(state)
-//                .build();
-//        return ResponseEntity.ok(oAuthLoginService.signIn(params));
-//    }
+    @GetMapping("/callback/naver")
+    public ResponseEntity<SignInResponse> naverSigninTest(@RequestParam String code, @RequestParam String state) {
+        NaverLoginParams params = NaverLoginParams.builder()
+                .authorizationCode(code)
+                .state(state)
+                .build();
+        return ResponseEntity.ok(oAuthLoginService.signIn(params));
+    }
 }
