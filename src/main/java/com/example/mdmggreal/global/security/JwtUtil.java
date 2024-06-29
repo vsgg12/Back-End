@@ -57,6 +57,20 @@ public class JwtUtil {
                 .compact();
     }
 
+    // 리프레시 토큰으로 새로운 토큰들 재발급
+    public AuthTokens refreshTokens(String refreshToken) {
+        try {
+            validateToken(refreshToken);
+            Long memberId = getMemberId(refreshToken);
+
+            // 새로운 액세스 토큰, 리프레시 토큰 생성
+            CustomUserInfoDto user = CustomUserInfoDto.of(memberId);
+            return createTokens(user);
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(EXPIRED_JWT_TOKEN);
+        }
+    }
+
     public static Long getMemberId(String token) {
         validateToken(token);
         if (token.split(" ").length > 1) {
