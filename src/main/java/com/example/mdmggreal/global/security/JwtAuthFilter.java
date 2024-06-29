@@ -28,11 +28,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String authentication = request.getHeader("Authorization");
 
             if (authentication != null || authentication.startsWith("Bearer ")) {
-                ;
-
-                if (jwtUtil.validateToken(authentication)) {
-                    String token = authentication.split(" ")[1].trim();
-                    Long memberId  = JwtUtil.getMemberId(token);
+                if (JwtUtil.validateToken(authentication)) {
+                    Long memberId  = JwtUtil.getMemberId(authentication);
 
                     UserDetails userDetails = customUserDetailsService.loadUserByUsername(memberId.toString());
 
