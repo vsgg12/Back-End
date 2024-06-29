@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
+
 @RequiredArgsConstructor
 @Service
 @Slf4j
@@ -21,18 +23,19 @@ public class ImageService {
     private final S3Service s3Service;
     private final MemberRepository memberRepository;
 
-    public List<String> uploadImage(List<MultipartFile> multipartFile, String mobile) throws IOException {
-        Member member = getMember(mobile);
+    public List<String> uploadImage(List<MultipartFile> multipartFile, Long memberId) throws IOException {
+        Member member = getMemberByMemberId(memberId);
         return s3Service.uploadImages(multipartFile);
     }
 
-    public void deleteImage(ImageDeleteRequest request, String mobile) {
-        Member member = getMember(mobile);
+    public void deleteImage(ImageDeleteRequest request, Long memberId) {
+        Member member = getMemberByMemberId(memberId);
         s3Service.delete(request);
     }
-    private Member getMember(String mobile) {
-        return memberRepository.findByMobile(mobile).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
+
+    private Member getMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(INVALID_USER_ID)
         );
     }
 }

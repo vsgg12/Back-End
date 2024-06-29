@@ -25,8 +25,8 @@ public class AlarmService {
     private final CommentAlarmRepository commentAlarmRepository;
 
 
-    public List<AlarmDTO> getAlarmList(String mobile) {
-        Member member = getMember(mobile);
+    public List<AlarmDTO> getAlarmList(Long memberId) {
+        Member member = getMemberByMemberId(memberId);
         List<AlarmDTO> alarmDTOList = new ArrayList<>();
 
         alarmDTOList.addAll(postAlarmRepository.findByMemberId(member.getId())
@@ -43,12 +43,9 @@ public class AlarmService {
 
     }
 
-
-    private Member getMember(String mobile) {
-        return memberRepository.findByMobile(mobile).orElseThrow(
+    private Member getMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(INVALID_USER_ID)
         );
     }
-
-
 }

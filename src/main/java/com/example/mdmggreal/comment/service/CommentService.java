@@ -34,8 +34,8 @@ public class CommentService {
     private final CommentAlarmService commentAlarmService;
 
     @Transactional
-    public void addComment(Long postId, CommentAddRequest request, String mobile) {
-        Member member = memberRepository.findByMobile(mobile).orElseThrow(
+    public void addComment(Long postId, CommentAddRequest request, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
         Post post = postRepository.findById(postId).orElseThrow(
@@ -58,7 +58,7 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentDTO> getCommentList(Long postId, String mobile) {
+    public List<CommentDTO> getCommentList(Long postId, Long memberId) {
         List<Comment> list = commentDAO.getList(postId);
         List<CommentDTO> commentResponseDTOList = new ArrayList<>();
         Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
@@ -74,8 +74,8 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteCommentList(Long postId, String mobile, Long commentId) {
-        Member member = memberRepository.findByMobile(mobile).orElseThrow(
+    public void deleteCommentList(Long postId, Long memberId, Long commentId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
         Comment comment = commentDAO.findCommentByIdWithParent(commentId)
