@@ -16,10 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
 
@@ -43,7 +40,6 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)
         );
-
         Comment addedComment;
 
         if (request.getParentId() == null) { // 댓글 작성
@@ -54,12 +50,15 @@ public class CommentService {
             }
         } else { // 대댓글 작성
             Comment parentComment = commentRepository.findById(request.getParentId())
-                    .orElseThrow(
-                            () -> new CustomException(INVALID_COMMENT)
-                    );
+                    .orElseThrow(() -> new CustomException(INVALID_COMMENT));
+
+            if (!post.getId().equals(parentComment.getPost().getId())) {
+                throw new CustomException(ErrorCode.INVALID_PARENT_ID);
+            }
+
             addedComment = Comment.of(post, commentedMember, parentComment, request);
 
-            if(!memberId.equals(parentComment.getMember().getId())) { // 대댓글 작성자와 부모댓글 작성자가 다른 경우만 알람 생성
+            if (!memberId.equals(parentComment.getMember().getId())) { // 대댓글 작성자와 부모댓글 작성자가 다른 경우만 알람 생성
                 commentAlarmService.addChildCommentAlarm(addedComment, parentComment, commentedMember.getNickname());
             }
         }
