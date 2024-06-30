@@ -48,7 +48,7 @@ public class CommentAlarm extends BaseEntity {
         alarmContents.append(commentedNickname);
         if (comment.getParent() == null) {
             alarmContents.append("님이 글에 댓글을 남겼습니다.");
-        } else {;
+        } else {
             alarmContents.append("님이 글에 답글을 남겼습니다.");
         }
 
