@@ -6,6 +6,7 @@ import com.example.mdmggreal.comment.dto.response.CommentGetListResponse;
 import com.example.mdmggreal.comment.service.CommentService;
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +23,12 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<BaseResponse> commentAdd(@RequestHeader(value = "Authorization") String token,
-                                                   @PathVariable(value = "postid") Long postId, @RequestBody CommentAddRequest request
+                                                   @PathVariable(value = "postid") Long postId,
+                                                   @RequestBody @Valid CommentAddRequest request
     ) {
         Long memberId = JwtUtil.getMemberId(token);
         commentService.addComment(postId, request, memberId);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.CREATED));
-
     }
 
     @GetMapping
