@@ -34,6 +34,7 @@ public enum ErrorCode {
     // 댓글
     INVALID_COMMENT(HttpStatus.BAD_REQUEST, "부모 댓글이 없습니다."),
     COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다"),
+    INVALID_PARENT_ID(HttpStatus.BAD_REQUEST, "postId에 맞는 parentId인지 확인해주세요."),
 
     // 해시태그
     HASHTAGNAME_NOT_MATCH(HttpStatus.BAD_REQUEST, "해시태그 이름이 일치하지 않습니다."),
