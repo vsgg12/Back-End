@@ -28,32 +28,44 @@ import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
+
     private final CommentDAO commentDAO;
+
     private final CommentAlarmService commentAlarmService;
 
     @Transactional
     public void addComment(Long postId, CommentAddRequest request, Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
+        Member commentedMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)
         );
-        Comment child = null;
 
-        if (request.getParentId() != null && !request.getParentId().equals("")) {
-            Comment parent = commentRepository.findById(request.getParentId()).orElseThrow(
-                    () -> new CustomException(INVALID_COMMENT)
-            );
-            commentAlarmService.addAlarm(parent, request);
-            child = Comment.of(post, member, parent, request);
-        } else {
-            child = Comment.of(post, member, request);
+        Comment addedComment;
+
+        if (request.getParentId() == null) { // 댓글 작성
+            addedComment = Comment.of(post, commentedMember, request);
+
+            if (!memberId.equals(post.getMember().getId())) { // 댓글 작성자와 글 작성자가 다른 경우만 알람 생성
+                commentAlarmService.addCommentAlarm(addedComment, commentedMember.getNickname());
+            }
+        } else { // 대댓글 작성
+            Comment parentComment = commentRepository.findById(request.getParentId())
+                    .orElseThrow(
+                            () -> new CustomException(INVALID_COMMENT)
+                    );
+            addedComment = Comment.of(post, commentedMember, parentComment, request);
+
+            if(!memberId.equals(parentComment.getMember().getId())) { // 대댓글 작성자와 부모댓글 작성자가 다른 경우만 알람 생성
+                commentAlarmService.addChildCommentAlarm(addedComment, parentComment, commentedMember.getNickname());
+            }
         }
-        if (child != null) {
-            commentRepository.save(child);
+
+        if (addedComment != null) {
+            commentRepository.save(addedComment);
         }
     }
 
