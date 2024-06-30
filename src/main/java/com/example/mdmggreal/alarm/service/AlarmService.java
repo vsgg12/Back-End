@@ -24,7 +24,6 @@ public class AlarmService {
     private final MemberRepository memberRepository;
     private final CommentAlarmRepository commentAlarmRepository;
 
-
     public List<AlarmDTO> getAlarmList(Long memberId) {
         Member member = getMemberByMemberId(memberId);
         List<AlarmDTO> alarmDTOList = new ArrayList<>();
@@ -38,9 +37,10 @@ public class AlarmService {
                 .toList());
 
         return alarmDTOList.stream()
-                .sorted(Comparator.comparing(AlarmDTO::getCreatedDateTime).reversed())
+                .sorted(Comparator  // 정렬 1순위 : 안 읽은 순, 2순위 : 최근 순
+                        .comparing(AlarmDTO::getIsRead)
+                        .thenComparing(AlarmDTO::getCreatedDateTime, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
-
     }
 
     private Member getMemberByMemberId(Long memberId) {

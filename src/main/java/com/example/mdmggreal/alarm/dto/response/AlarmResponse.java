@@ -12,13 +12,13 @@ import java.util.List;
 @Getter
 @SuperBuilder
 public class AlarmResponse extends BaseResponse {
-    private List<AlarmDTO> alarmDTOList;
+    private List<AlarmDTO> alarmList;
 
     public static AlarmResponse from(List<AlarmDTO> alarmDTOList, HttpStatus status) {
         return AlarmResponse.builder()
                 .resultCode(status.value())
                 .resultMsg(status.name())
-                .alarmDTOList(alarmDTOList)
+                .alarmList(alarmDTOList)
                 .build();
     }
 }
