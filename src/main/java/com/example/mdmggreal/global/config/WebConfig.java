@@ -19,7 +19,9 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://vsgg.co.kr:3000",
                         "https://www.vsgg.co.kr:3000",
                         "https://vsgg.co.kr",
-                        "https://www.vsgg.co.kr"
+                        "https://www.vsgg.co.kr",
+                        "http://vsgg.co.kr",
+                        "http://13.209.9.40"
                 )   // 허용할 출처
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH") // 허용할 HTTP method
                 .allowedHeaders("*")  // 모든 헤더 허용
