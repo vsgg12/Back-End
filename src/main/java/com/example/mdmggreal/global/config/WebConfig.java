@@ -13,7 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000",
                         "https://vsgg.co.kr",
-                        "https://www.vsgg.co.kr"
+                        "https://www.vsgg.co.kr",
+                        "http://vsgg.co.kr",
+                        "vsgg.co.kr"
                 )   // 허용할 출처
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // 허용할 HTTP method
                 .allowedHeaders("*")  // 모든 헤더 허용
