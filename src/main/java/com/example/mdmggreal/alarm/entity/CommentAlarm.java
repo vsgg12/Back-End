@@ -17,6 +17,9 @@ import static java.lang.Boolean.FALSE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+// 댓글 알람 종류
+// 1. 사용자의 게시글에 댓글이 달리는 경우
+// 2. 사용자의 댓글에 대댓글이 달리는 경우
 public class CommentAlarm extends BaseEntity {
 
     @Id
@@ -24,25 +27,37 @@ public class CommentAlarm extends BaseEntity {
     @Column(name = "alarm_id")
     private Long id;
 
+    // 알람을 받는 사용자
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
+    // 달린 댓글/대댓글
     @ManyToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
+    // 알림 읽음 여부
     private Boolean isRead;
+
+    // 알림 내용
     private String alarmContents;
 
-    public static CommentAlarm from(Comment comment, CommentAddRequest request) {
-        return CommentAlarm.builder()
-                .member(comment.getMember())
-                .comment(comment)
-                .alarmContents(request.getContent())
-                .isRead(FALSE)
-                .build();
+    public static CommentAlarm from(Comment comment, String commentedNickname, Member alarmedMember) {
+        StringBuilder alarmContents = new StringBuilder();
+        alarmContents.append(commentedNickname);
+        if (comment.getParent() == null) {
+            alarmContents.append("님이 글에 댓글을 남겼습니다.");
+        } else {;
+            alarmContents.append("님이 글에 답글을 남겼습니다.");
+        }
 
+        return CommentAlarm.builder()
+                .member(alarmedMember)
+                .comment(comment)
+                .isRead(FALSE)
+                .alarmContents(alarmContents.toString())
+                .build();
     }
 
     public void editIsRead() {
