@@ -19,11 +19,19 @@ import static com.example.mdmggreal.alarm.entity.type.AlarmType.POST;
 @AllArgsConstructor
 public class AlarmDTO {
     private Long alarmId;
+
     private String alarmContents;
-    private Long postId;
-    private Long commentId;
+
     private AlarmType alarmType;
+
+    // 게시글/댓글 알람과 관련된 게시글의 ID
+    private Long postId;
+
+    // 댓글/대댓글 알람일 경우 해당 댓글/대댓글의 내용
+    private String commentContent;
+
     private Boolean isRead;
+
     private LocalDateTime createdDateTime;
 
     public static AlarmDTO from(PostAlarm postAlarm) {
@@ -37,11 +45,12 @@ public class AlarmDTO {
                 .build();
     }
 
-    public static AlarmDTO from(CommentAlarm commentAlarm) {
+    public static AlarmDTO of(CommentAlarm commentAlarm, Long postId) {
         return AlarmDTO.builder()
                 .alarmId(commentAlarm.getId())
                 .alarmContents(commentAlarm.getAlarmContents())
-                .commentId(commentAlarm.getComment().getId())
+                .postId(postId)
+                .commentContent(commentAlarm.getComment().getContent())
                 .alarmType(COMMENT)
                 .isRead(commentAlarm.getIsRead())
                 .createdDateTime(commentAlarm.getCreatedDateTime())

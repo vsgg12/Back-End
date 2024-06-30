@@ -48,7 +48,7 @@ public class Comment extends BaseEntity {
     @Column(nullable = false)
     private Boolean isDeleted;
 
-
+    // 대댓글 생성
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
         return Comment.builder()
                 .content(request.getContent())
@@ -59,6 +59,7 @@ public class Comment extends BaseEntity {
                 .build();
     }
 
+    // 댓글 생성
     public static Comment of(Post post, Member member, CommentAddRequest request) {
         return Comment.builder()
                 .content(request.getContent())
