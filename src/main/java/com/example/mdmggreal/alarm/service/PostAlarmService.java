@@ -1,6 +1,5 @@
 package com.example.mdmggreal.alarm.service;
 
-import com.example.mdmggreal.alarm.dto.AlarmDTO;
 import com.example.mdmggreal.alarm.entity.PostAlarm;
 import com.example.mdmggreal.alarm.repository.PostAlarmRepository;
 import com.example.mdmggreal.global.exception.CustomException;
@@ -11,8 +10,6 @@ import com.example.mdmggreal.post.entity.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 
 @Service
@@ -20,13 +17,6 @@ import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 public class PostAlarmService {
     private final PostAlarmRepository postAlarmRepository;
     private final MemberRepository memberRepository;
-
-    public List<AlarmDTO> getPostAlarmList(Long memberId) {
-        Member member = getMemberByMemberId(memberId);
-        return postAlarmRepository.findByMemberId(member.getId()).stream()
-                .map(AlarmDTO::from)
-                .toList();
-    }
 
     public void addAlarm(Post post, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(

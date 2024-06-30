@@ -1,6 +1,5 @@
 package com.example.mdmggreal.alarm.service;
 
-import com.example.mdmggreal.alarm.dto.AlarmDTO;
 import com.example.mdmggreal.alarm.entity.CommentAlarm;
 import com.example.mdmggreal.alarm.repository.CommentAlarmRepository;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
@@ -9,11 +8,8 @@ import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 
@@ -25,14 +21,6 @@ public class CommentAlarmService {
 
     public void addAlarm(Comment comment, CommentAddRequest request) {
         commentAlarmRepository.save(CommentAlarm.from(comment, request));
-    }
-
-    @Transactional
-    public List<AlarmDTO> getCommentAlarmList(Long memberId) {
-        Member member = getMemberByMemberId(memberId);
-        return commentAlarmRepository.findByMemberId(member.getId()).stream()
-                .map(AlarmDTO::from)
-                .toList();
     }
 
     public void modifyAlarm(Long memberId, Long alarmId) {

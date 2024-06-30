@@ -30,7 +30,7 @@ public class AlarmDTO {
         return AlarmDTO.builder()
                 .alarmId(postAlarm.getId())
                 .alarmContents(postAlarm.getAlarmContents())
-                .postId(postAlarm.getId())
+                .postId(postAlarm.getPost().getId())
                 .alarmType(POST)
                 .isRead(postAlarm.getIsRead())
                 .createdDateTime(postAlarm.getCreatedDateTime())
@@ -41,11 +41,10 @@ public class AlarmDTO {
         return AlarmDTO.builder()
                 .alarmId(commentAlarm.getId())
                 .alarmContents(commentAlarm.getAlarmContents())
-                .postId(commentAlarm.getId())
+                .commentId(commentAlarm.getComment().getId())
                 .alarmType(COMMENT)
                 .isRead(commentAlarm.getIsRead())
                 .createdDateTime(commentAlarm.getCreatedDateTime())
                 .build();
     }
-
 }

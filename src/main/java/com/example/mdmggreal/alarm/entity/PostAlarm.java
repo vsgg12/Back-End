@@ -40,9 +40,7 @@ public class PostAlarm extends BaseEntity {
                 .post(post)
                 .isRead(FALSE)
                 .build();
-
     }
-
 
     public void editIsRead() {
         this.isRead = true;
