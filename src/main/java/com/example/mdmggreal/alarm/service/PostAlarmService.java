@@ -7,6 +7,7 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.post.entity.Post;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,15 @@ public class PostAlarmService {
     private final PostAlarmRepository postAlarmRepository;
     private final MemberRepository memberRepository;
 
-    public void addAlarm(Post post, Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
+    @Transactional
+    public void addAlarm(Post post, Long votedMemberId) {
+        Member votedMember = memberRepository.findById(votedMemberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
-        postAlarmRepository.save(PostAlarm.from(member, post));
+        Member postedMember = post.getMember();
 
+        postAlarmRepository.save(PostAlarm.ofVotedMember(votedMember, post));
+        postAlarmRepository.save(PostAlarm.ofPostedMember(postedMember, post));
     }
 
     public void modifyAlarm(Long memberId, Long alarmId) {
