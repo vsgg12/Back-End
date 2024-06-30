@@ -49,21 +49,21 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
         return (contribution, chunkContext) -> {
             LocalDateTime now = LocalDateTime.now();
             List<Post> postList = postRepository.findByEndDateTimeBefore(now);
-            processPosts(postList);
+            processPostsAfterEndDate(postList);
             return RepeatStatus.FINISHED;
         };
     }
 
-    private void processPosts(List<Post> postList) {
+    private void processPostsAfterEndDate(List<Post> postList) {
         if (!postList.isEmpty()) {
             for (Post post : postList) {
                 post.editStatus();
-                notifyVotes(post);
+                addPostAlarm(post);
             }
         }
     }
 
-    private void notifyVotes(Post post) {
+    private void addPostAlarm(Post post) {
         List<Vote> voteList = voteQueryRepository.getVoteListByPostId(post.getId());
         if (!voteList.isEmpty()) {
             for (Vote vote : voteList) {

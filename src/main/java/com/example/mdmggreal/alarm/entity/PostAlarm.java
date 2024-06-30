@@ -33,10 +33,19 @@ public class PostAlarm extends BaseEntity {
     private Boolean isRead;
     private String alarmContents;
 
-    public static PostAlarm from(Member member, Post post) {
+    public static PostAlarm ofVotedMember(Member votedMember, Post post) {
         return PostAlarm.builder()
-                .member(member)
-                .alarmContents("판결한 게시글 결과를 확인해보세요!")
+                .member(votedMember)
+                .alarmContents(votedMember.getNickname() + "님이 참여한 게시글의 판결 결과를 확인하세요!")
+                .post(post)
+                .isRead(FALSE)
+                .build();
+    }
+
+    public static PostAlarm ofPostedMember(Member postedMember, Post post) {
+        return PostAlarm.builder()
+                .member(postedMember)
+                .alarmContents(postedMember.getNickname() + "님이 작성한 게시글의 판결 결과를 확인하세요!")
                 .post(post)
                 .isRead(FALSE)
                 .build();
