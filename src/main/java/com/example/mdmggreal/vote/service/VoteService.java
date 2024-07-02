@@ -16,6 +16,7 @@ import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,9 @@ public class VoteService {
     private final InGameInfoQueryRepository inGameInfoQueryRepository;
     private final InGameInfoRepository inGameInfoRepository;
 
-    public List<Vote> saveVotes(List<VoteSaveDTO> voteSaveDTOS, Long memberId, Long postId) {
+
+    @Transactional
+    public void saveVotes(List<VoteSaveDTO> voteSaveDTOS, Long memberId, Long postId) {
         Member member = getMemberById(memberId);
         validateVoteExistence(postId, member);
         validateInGameInfoId(postId, voteSaveDTOS);
@@ -51,7 +54,7 @@ public class VoteService {
             inGameInfo.updateAverageRatio(averageRatioByPostId);
         }
 
-        return voteRepository.saveAll(votes);
+        voteRepository.saveAll(votes);
     }
 
         private void validateInGameInfoId(Long postId, List<VoteSaveDTO> voteSaveDTOS) {
@@ -63,6 +66,7 @@ public class VoteService {
             }
         }
 
+    @Transactional(readOnly = true)
     public List<VoteAvgDTO> getChampionNamesWithAverageRatioByPostId(Long postId) {
         List<Object[]> results = voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
         return results.stream()
@@ -70,6 +74,7 @@ public class VoteService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<Post> getVotedPostsByMemberId(Long memberId) {
         Member member = getMemberById(memberId);
         return voteRepository.findByMemberId(member.getId()).stream()
