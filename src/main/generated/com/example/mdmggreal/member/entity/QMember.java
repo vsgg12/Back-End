@@ -33,6 +33,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final NumberPath<Integer> joinedResult = createNumber("joinedResult", Integer.class);
+
     public final StringPath mobile = createString("mobile");
 
     //inherited
@@ -43,6 +45,8 @@ public class QMember extends EntityPathBase<Member> {
     public final EnumPath<com.example.mdmggreal.member.type.OAuthProvider> oAuthProvider = createEnum("oAuthProvider", com.example.mdmggreal.member.type.OAuthProvider.class);
 
     public final NumberPath<Integer> point = createNumber("point", Integer.class);
+
+    public final NumberPath<Integer> predictedResult = createNumber("predictedResult", Integer.class);
 
     public final StringPath profileImage = createString("profileImage");
 

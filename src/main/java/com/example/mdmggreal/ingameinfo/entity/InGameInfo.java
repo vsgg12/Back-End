@@ -32,6 +32,7 @@ public class InGameInfo extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+    private Double averageRatio;
 
 
     public static InGameInfo of(InGameInfoRequest request, Post post) {
@@ -49,4 +50,7 @@ public class InGameInfo extends BaseEntity {
     }
 
 
+    public void updateAverageRatio(Double averageRatioByPostId) {
+        this.averageRatio = averageRatioByPostId;
+    }
 }
