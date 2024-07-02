@@ -1,6 +1,7 @@
 package com.example.mdmggreal.batch.config;
 
 import com.example.mdmggreal.alarm.service.PostAlarmService;
+import com.example.mdmggreal.ingameinfo.service.InGameInfoService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.entity.Vote;
@@ -28,6 +29,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     private final PostRepository postRepository;
     private final VoteQueryRepository voteQueryRepository;
     private final PostAlarmService postAlarmService;
+    private final InGameInfoService inGameInfoService;
 
     @Bean
     public Job updatePostJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
@@ -55,21 +57,15 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     }
 
     private void processPostsAfterEndDate(List<Post> postList) {
-        if (!postList.isEmpty()) {
-            for (Post post : postList) {
-                post.editStatus();
-                addPostAlarm(post);
-            }
-        }
+        postList.forEach(post -> {
+            post.editStatus();
+            addPostAlarms(post);
+            inGameInfoService.processInGameInfoByPostId(post.getId());
+        });
     }
 
-    private void addPostAlarm(Post post) {
+    private void addPostAlarms(Post post) {
         List<Vote> voteList = voteQueryRepository.getVoteListByPostId(post.getId());
-        if (!voteList.isEmpty()) {
-            for (Vote vote : voteList) {
-                postAlarmService.addAlarm(post, vote.getMemberId());
-            }
-        }
-
+        voteList.forEach(vote -> postAlarmService.addAlarm(post, vote.getMemberId()));
     }
 }
