@@ -30,6 +30,7 @@ public enum ErrorCode {
 
     // 투표
     VOTE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 투표한 게시글 입니다."),
+    NO_PERMISSION_TO_VIEW_RESULT(HttpStatus.UNAUTHORIZED, "투표 결과는 글 작성자와 투표 참여자만 조회할 수 있습니다."),
 
     // 댓글
     INVALID_COMMENT(HttpStatus.BAD_REQUEST, "부모 댓글이 없습니다."),

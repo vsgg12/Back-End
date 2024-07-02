@@ -34,6 +34,15 @@ public enum Tier {
         throw new IllegalArgumentException("No enum constant with name " + name);
     }
 
+    public static String fromTier(Tier tier) {
+        for (Tier t : Tier.values()) {
+            if (tier.equals(t)) {
+                return t.name;
+            }
+        }
+        throw new IllegalArgumentException("해당하는 티어가 없습니다. : " + tier);
+    }
+
     public static Tier getTier(Integer joinedResult, Integer predictedResult) {
         for (Tier tier : Tier.values()) {
             if (joinedResult >= tier.getJoinedResult() && predictedResult >= tier.getPredictedResult()) {
