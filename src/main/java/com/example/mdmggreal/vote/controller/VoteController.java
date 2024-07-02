@@ -3,7 +3,7 @@ package com.example.mdmggreal.vote.controller;
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.post.entity.Post;
-import com.example.mdmggreal.vote.dto.VoteAvgDTO;
+import com.example.mdmggreal.vote.dto.VoteResultResponse;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.service.VoteService;
 import lombok.AllArgsConstructor;
@@ -34,10 +34,12 @@ public class VoteController {
         return ResponseEntity.ok(votedPosts);
     }
 
-    @GetMapping("/avg")
-    public ResponseEntity<List<VoteAvgDTO>> getChampionAverages(@PathVariable Long postId) {
-        List<VoteAvgDTO> averageVotes = voteService.getChampionNamesWithAverageRatioByPostId(postId);
-        return ResponseEntity.ok(averageVotes);
+    @GetMapping("/result")
+    public ResponseEntity<VoteResultResponse> getVoteResult(@RequestHeader(value = "Authorization") String token,
+                                                            @PathVariable Long postId) {
+        Long memberId = JwtUtil.getMemberId(token);
+        VoteResultResponse response = voteService.getVoteResult(postId, memberId);
+        return ResponseEntity.ok(response);
     }
 
 }

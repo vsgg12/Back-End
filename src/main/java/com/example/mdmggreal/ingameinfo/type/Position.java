@@ -11,6 +11,7 @@ public enum Position {
     JUNGLE("정글"),
     ADCARRY("원딜"),
     SUPPORT("서폿");
+
     private String name;
 
     public static Position fromName(String name) {
@@ -20,5 +21,14 @@ public enum Position {
             }
         }
         throw new IllegalArgumentException("No enum constant with name " + name);
+    }
+
+    public static String fromPosition(Position position) {
+        for (Position po : Position.values()) {
+            if (position.equals(po)) {
+                return po.getName();
+            }
+        }
+        throw new IllegalArgumentException("해당되는 포지션이 없습니다. : " + position);
     }
 }
