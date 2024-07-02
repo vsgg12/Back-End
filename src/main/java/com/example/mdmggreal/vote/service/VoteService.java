@@ -5,7 +5,6 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoQueryRepository;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
-import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.ingameinfo.type.Position;
 import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.entity.Member;
@@ -17,16 +16,13 @@ import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.repository.VoteRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 import static com.example.mdmggreal.global.exception.ErrorCode.VOTE_ALREADY_EXISTS;
@@ -146,12 +142,6 @@ public class VoteService {
                 .build();
     }
 
-    private VoteAvgDTO convertToVoteAvgDTO(Object[] result) {
-        InGameInfo inGameInfo = (InGameInfo) result[0];
-        Double average = (Double) result[1];
-        return new VoteAvgDTO(
-                inGameInfo.getChampionName(), average, inGameInfo.getPosition(), inGameInfo.getTier());
-    }
 
     private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(
