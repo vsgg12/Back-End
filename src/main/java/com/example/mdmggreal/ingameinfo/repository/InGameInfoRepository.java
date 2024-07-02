@@ -11,5 +11,4 @@ public interface InGameInfoRepository extends JpaRepository<InGameInfo, Long> {
 
     List<InGameInfo> findByPostId(Long postId);
 
-    void findInGameInfoVoteMaxRatioByPostId(Long postId);
 }
