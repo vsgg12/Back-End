@@ -1,5 +1,8 @@
 package com.example.mdmggreal.global.security;
 
+import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.global.exception.ErrorResponseEntity;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,19 +31,38 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String authentication = request.getHeader("Authorization");
 
             if (authentication != null || authentication.startsWith("Bearer ")) {
-                if (JwtUtil.validateToken(authentication)) {
-                    Long memberId  = JwtUtil.getMemberId(authentication);
+                try {
+                    if (JwtUtil.validateToken(authentication)) {
+                        Long memberId  = JwtUtil.getMemberId(authentication);
 
-                    UserDetails userDetails = customUserDetailsService.loadUserByUsername(memberId.toString());
+                        UserDetails userDetails = customUserDetailsService.loadUserByUsername(memberId.toString());
 
-                    if (userDetails != null) {
-                        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                        if (userDetails != null) {
+                            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                        }
                     }
+                } catch (CustomException e) {
+                    setErrorResponse(response, e);
+                    return;
                 }
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    private void setErrorResponse(HttpServletResponse response, CustomException e) throws IOException {
+        response.setStatus(e.getErrorCode().getHttpStatus().value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        ErrorResponseEntity errorResponse = ErrorResponseEntity.builder()
+                .status(e.getErrorCode().getHttpStatus().value())
+                .code(e.getErrorCode().name())
+                .message(e.getErrorCode().getMessage())
+                .build();
+
+        response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 }
