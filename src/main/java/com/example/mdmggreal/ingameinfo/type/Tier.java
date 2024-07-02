@@ -17,6 +17,7 @@ public enum Tier {
     BRONZE("브론즈"),
     IRON("아이언"),
     UNRANK("언랭");
+
     private final String name;
 
 
@@ -27,5 +28,14 @@ public enum Tier {
             }
         }
         throw new IllegalArgumentException("No enum constant with name " + name);
+    }
+
+    public static String fromTier(Tier tier) {
+        for (Tier t : Tier.values()) {
+            if (tier.equals(t)) {
+                return t.name;
+            }
+        }
+        throw new IllegalArgumentException("해당하는 티어가 없습니다. : " + tier);
     }
 }
