@@ -40,7 +40,8 @@ public enum ErrorCode {
     HASHTAGNAME_NOT_MATCH(HttpStatus.BAD_REQUEST, "해시태그 이름이 일치하지 않습니다."),
 
     // 알람
-    INVALID_ALARM(HttpStatus.BAD_REQUEST, "존재하지 않는 알람입니다." );
+    INVALID_ALARM(HttpStatus.BAD_REQUEST, "존재하지 않는 알람입니다." ),
+    NOT_MATCH_IN_GAME_INFO(HttpStatus.BAD_REQUEST, "게시글에 해당하는 인게임 정보가 아닙니다." );
 
     private final HttpStatus httpStatus;
     private final String message;

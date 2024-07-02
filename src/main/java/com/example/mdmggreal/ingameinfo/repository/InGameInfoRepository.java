@@ -11,4 +11,5 @@ public interface InGameInfoRepository extends JpaRepository<InGameInfo, Long> {
 
     List<InGameInfo> findByPostId(Long postId);
 
+    boolean existsByIdAndPostId(Long inGameInfoId, Long postId);
 }

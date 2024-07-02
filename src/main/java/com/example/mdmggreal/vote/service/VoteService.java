@@ -1,6 +1,7 @@
 package com.example.mdmggreal.vote.service;
 
 import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoQueryRepository;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
@@ -37,6 +38,8 @@ public class VoteService {
     public List<Vote> saveVotes(List<VoteSaveDTO> voteSaveDTOS, Long memberId, Long postId) {
         Member member = getMemberById(memberId);
         validateVoteExistence(postId, member);
+        validateInGameInfoId(postId, voteSaveDTOS);
+
 
         updateMemberAfterVote(member);
         List<Vote> votes = convertToVoteEntities(voteSaveDTOS, memberId);
@@ -50,6 +53,15 @@ public class VoteService {
 
         return voteRepository.saveAll(votes);
     }
+
+        private void validateInGameInfoId(Long postId, List<VoteSaveDTO> voteSaveDTOS) {
+            for (VoteSaveDTO voteSaveDTO : voteSaveDTOS) {
+                boolean exists = inGameInfoRepository.existsByIdAndPostId(voteSaveDTO.getIngameInfoId(), postId);
+                if (!exists) {
+                    throw new CustomException(ErrorCode.NOT_MATCH_IN_GAME_INFO);
+                }
+            }
+        }
 
     public List<VoteAvgDTO> getChampionNamesWithAverageRatioByPostId(Long postId) {
         List<Object[]> results = voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
