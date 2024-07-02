@@ -115,7 +115,7 @@ public class Member extends BaseEntity {
     }
 
     public void editJoinedResult() {
-        this.predictedResult += 1;
+        this.joinedResult += 1;
     }
 
     public void updateTier(Tier tier) {
