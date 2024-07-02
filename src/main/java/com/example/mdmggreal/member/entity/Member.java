@@ -2,7 +2,6 @@ package com.example.mdmggreal.member.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.ingameinfo.type.Tier;
-import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.dto.request.SignUpRequest;
 import com.example.mdmggreal.member.type.Agree;
 import com.example.mdmggreal.member.type.OAuthProvider;
@@ -29,11 +28,15 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
-    /** 이메일  */
+    /**
+     * 이메일
+     */
     @Column(nullable = false)
     private String email;
 
-    /** 닉네임  */
+    /**
+     * 닉네임
+     */
     @Column(nullable = false)
     private String nickname;
 
@@ -43,43 +46,45 @@ public class Member extends BaseEntity {
      */
     private String mobile;
 
-    /** 프로필사진  */
+    /**
+     * 프로필사진
+     */
     @Column(nullable = false)
     private String profileImage;
 
-    /** 티어  */
+    /**
+     * 티어
+     */
     private Tier tier;
 
-    /** 인증 */
+    /**
+     * 인증
+     */
     @Enumerated(STRING)
     private Role role;
 
-    /** 포인트  */
+    /**
+     * 포인트
+     */
     private Integer point;
 
     @Embedded
     private Agree agree;
 
-    /** SNS 가입 경로  */
+    /**
+     * 맞춘 판결 수
+     */
+    private Integer predictedResult;
+    /**
+     * 참여한 판결 수
+     */
+    private Integer joinedResult;
+
+    /**
+     * SNS 가입 경로
+     */
     private OAuthProvider oAuthProvider;
 
-    public static Member from(MemberDTO memberDTO) {
-        return Member.builder()
-                .email(memberDTO.getEmail())
-                .nickname(memberDTO.getNickname())
-                .mobile(memberDTO.getMobile())
-                .profileImage(memberDTO.getProfileImage())
-                .agree(Agree.builder()
-                        .agreeAge(memberDTO.isAgreeAge())
-                        .agreeTerms(memberDTO.isAgreeTerms())
-                        .agreePrivacy(memberDTO.isAgreePrivacy())
-                        .agreePromotion(memberDTO.isAgreePromotion())
-                        .build())
-                .role(USER)
-                .tier(Tier.IRON)
-                .oAuthProvider(NAVER)
-                .build();
-    }
 
     /**
      * 네이버 로그인
@@ -99,6 +104,21 @@ public class Member extends BaseEntity {
                 .role(USER)
                 .tier(Tier.IRON)
                 .oAuthProvider(NAVER)
+                .predictedResult(0)
+                .joinedResult(0)
+                .point(0)
                 .build();
+    }
+
+    public void editPredictedResult() {
+        this.predictedResult += 1;
+    }
+
+    public void editJoinedResult() {
+        this.joinedResult += 1;
+    }
+
+    public void updateTier(Tier tier) {
+        this.tier = tier;
     }
 }

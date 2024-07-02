@@ -2,7 +2,6 @@ package com.example.mdmggreal.vote.controller;
 
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
-import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.vote.dto.VoteResultResponse;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.service.VoteService;
@@ -25,13 +24,6 @@ public class VoteController {
         Long memberId = JwtUtil.getMemberId(token);
         voteService.saveVotes(voteDTOs, memberId, postId);
         return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
-    }
-
-    @GetMapping("/users")
-    public ResponseEntity<List<Post>> getVotedPostsByMemberId(@RequestHeader(value = "Authorization") String token) {
-        Long memberId = JwtUtil.getMemberId(token);
-        List<Post> votedPosts = voteService.getVotedPostsByMemberId(memberId);
-        return ResponseEntity.ok(votedPosts);
     }
 
     @GetMapping("/result")
