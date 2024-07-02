@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Long> {
@@ -18,5 +19,7 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     List<Object[]> findChampionNamesWithAverageRatioByPostId(@Param("postId") Long postId);
 
     List<Vote> findByMemberId(Long memberId);
+
+    Optional<Vote> findByMemberIdAndInGameInfoId(Long memberId, Long inGameInfoId);
 }
 
