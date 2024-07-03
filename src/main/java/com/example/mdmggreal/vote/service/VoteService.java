@@ -24,8 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
-import static com.example.mdmggreal.global.exception.ErrorCode.VOTE_ALREADY_EXISTS;
+import static com.example.mdmggreal.global.exception.ErrorCode.*;
 import static com.example.mdmggreal.vote.dto.VoteResultResponse.InGameInfoResult;
 
 @Service
@@ -39,34 +38,24 @@ public class VoteService {
     private final InGameInfoQueryRepository inGameInfoQueryRepository;
     private final InGameInfoRepository inGameInfoRepository;
 
-
     @Transactional
     public void saveVotes(List<VoteSaveDTO> voteSaveDTOS, Long memberId, Long postId) {
         Member member = getMemberById(memberId);
-        validateVoteExistence(postId, member);
-        validateInGameInfoId(postId, voteSaveDTOS);
+        List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
+        validateVoteExistence(postId, member);
+        validateInGameInfoId(postId, inGameInfoList, voteSaveDTOS);
+        validateVotesTotalValue(voteSaveDTOS);
 
         updateMemberAfterVote(member);
         List<Vote> votes = convertToVoteEntities(voteSaveDTOS, memberId);
 
-
-        List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
         for (InGameInfo inGameInfo : inGameInfoList) {
             Double averageRatioByPostId = inGameInfoQueryRepository.getAverageRatioByPostId(inGameInfo.getId());
             inGameInfo.updateAverageRatio(averageRatioByPostId);
         }
 
         voteRepository.saveAll(votes);
-    }
-
-    private void validateInGameInfoId(Long postId, List<VoteSaveDTO> voteSaveDTOS) {
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOS) {
-            boolean exists = inGameInfoRepository.existsByIdAndPostId(voteSaveDTO.getIngameInfoId(), postId);
-            if (!exists) {
-                throw new CustomException(ErrorCode.NOT_MATCH_IN_GAME_INFO);
-            }
-        }
     }
 
     @Transactional(readOnly = true)
@@ -109,12 +98,31 @@ public class VoteService {
         return VoteResultResponse.from(postId, inGameInfoResults, HttpStatus.OK);
     }
 
-
-
     private void validateVoteExistence(Long postId, Member member) {
         if (voteQueryRepository.existsVoteByMemberId(postId, member.getId())) {
             throw new CustomException(VOTE_ALREADY_EXISTS);
         }
+    }
+
+    private void validateInGameInfoId(Long postId, List<InGameInfo> inGameInfoList, List<VoteSaveDTO> voteSaveDTOS) {
+        for (VoteSaveDTO voteSaveDTO : voteSaveDTOS) {
+            boolean exists = inGameInfoRepository.existsByIdAndPostId(voteSaveDTO.getIngameInfoId(), postId);
+            if (!exists) {
+                throw new CustomException(NOT_MATCH_IN_GAME_INFO);
+            }
+        }
+
+        if (inGameInfoList.size() != voteSaveDTOS.size()) {
+            throw new CustomException(ALL_IN_GAME_INFO_VOTE_REQUIRED);
+        }
+    }
+
+    private void validateVotesTotalValue(List<VoteSaveDTO> voteSaveDTOS) {
+        int sum = 0;
+        for (VoteSaveDTO voteSaveDTO : voteSaveDTOS) {
+            sum += voteSaveDTO.getRatio();
+        }
+        if (sum != 10) throw new CustomException(VOTES_TOTAL_VALUE_MUST_BE_TEN);
     }
 
     private void updateMemberAfterVote(Member member) {
@@ -141,7 +149,6 @@ public class VoteService {
                 .inGameInfo(inGameInfo)
                 .build();
     }
-
 
     private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(
