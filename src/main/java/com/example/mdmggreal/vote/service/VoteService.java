@@ -118,10 +118,9 @@ public class VoteService {
     }
 
     private void validateVotesTotalValue(List<VoteSaveDTO> voteSaveDTOS) {
-        int sum = 0;
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOS) {
-            sum += voteSaveDTO.getRatio();
-        }
+        long sum = voteSaveDTOS.stream()
+                .mapToLong(VoteSaveDTO::getRatio)
+                .sum();
         if (sum != 10) throw new CustomException(VOTES_TOTAL_VALUE_MUST_BE_TEN);
     }
 
