@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QCommentAlarm is a Querydsl query type for CommentAlarm
+ * QCommentAlarm is a Querydsl query videoType for CommentAlarm
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QCommentAlarm extends EntityPathBase<CommentAlarm> {

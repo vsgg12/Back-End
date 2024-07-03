@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QInGameInfo is a Querydsl query type for InGameInfo
+ * QInGameInfo is a Querydsl query videoType for InGameInfo
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QInGameInfo extends EntityPathBase<InGameInfo> {
