@@ -102,7 +102,7 @@ public class Member extends BaseEntity {
                         .agreePromotion(request.getAgrees().isAgreePromotion())
                         .build())
                 .role(USER)
-                .tier(Tier.IRON)
+                .tier(Tier. UNRANK)
                 .oAuthProvider(NAVER)
                 .predictedResult(0)
                 .joinedResult(0)
@@ -120,5 +120,17 @@ public class Member extends BaseEntity {
 
     public void updateTier(Tier tier) {
         this.tier = tier;
+    }
+
+    public void rewardPointByComment(int point) {
+        this.point += point;
+    }
+
+    public void rewardPointByJoinedResult(Integer point) {
+        this.point += point;
+    }
+
+    public void rewardPointByPostCreation(Integer point) {
+        this.point += point;
     }
 }
