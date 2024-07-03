@@ -52,7 +52,7 @@ public class Post extends BaseEntity {
                 .content(content)
                 .thumbnailURL(thumbnailURL)
                 .status(PROGRESS)
-                .video(Video.of(videoUrl, request.type()))
+                .video(Video.of(videoUrl, request.videoType()))
                 .viewCount(0L)
                 .endDateTime(LocalDateTime.now().plusMonths(1).with(LocalTime.MIN))
                 .build();

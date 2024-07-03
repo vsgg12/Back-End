@@ -10,7 +10,7 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QHashtag is a Querydsl query type for Hashtag
+ * QHashtag is a Querydsl query videoType for Hashtag
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QHashtag extends EntityPathBase<Hashtag> {

@@ -26,10 +26,15 @@ public enum ErrorCode {
 
     // 게시글
     INVALID_POST(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글 입니다."),
-    VIDEO_REQUIRED(HttpStatus.BAD_REQUEST, "영상을 첨부해주세요."),
+    VIDEO_REQUIRED(HttpStatus.BAD_REQUEST, "영상링크 또는 파일을 첨부해주세요."),
+    VIDEO_LINK_REQUIRED(HttpStatus.BAD_REQUEST, "영상링크를 첨부해주세요."),
+    VIDEO_FILE_REQUIRED(HttpStatus.BAD_REQUEST, "영상파일을 첨부해주세요."),
+
 
     // 투표
     VOTE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 투표한 게시글 입니다."),
+    VOTES_TOTAL_VALUE_MUST_BE_TEN(HttpStatus.BAD_REQUEST, "모든 투표값의 합은 10이어야합니다."),
+    ALL_IN_GAME_INFO_VOTE_REQUIRED(HttpStatus.BAD_REQUEST, "게시글의 모든 투표 항목에 투표해주세요."),
     NO_PERMISSION_TO_VIEW_RESULT(HttpStatus.UNAUTHORIZED, "투표 결과는 글 작성자와 투표 참여자만 조회할 수 있습니다."),
 
     // 댓글
@@ -41,9 +46,8 @@ public enum ErrorCode {
     HASHTAGNAME_NOT_MATCH(HttpStatus.BAD_REQUEST, "해시태그 이름이 일치하지 않습니다."),
 
     // 알람
-    INVALID_ALARM(HttpStatus.BAD_REQUEST, "존재하지 않는 알람입니다." ),
-    NOT_MATCH_IN_GAME_INFO(HttpStatus.BAD_REQUEST, "게시글에 해당하는 인게임 정보가 아닙니다." );
-
+    INVALID_ALARM(HttpStatus.BAD_REQUEST, "존재하지 않는 알람입니다."),
+    NOT_MATCH_IN_GAME_INFO(HttpStatus.BAD_REQUEST, "게시글에 해당하는 인게임 정보가 아닙니다.");
     private final HttpStatus httpStatus;
     private final String message;
-}
+    }
