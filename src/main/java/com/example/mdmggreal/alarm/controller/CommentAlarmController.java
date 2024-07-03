@@ -16,7 +16,7 @@ public class CommentAlarmController {
     private final CommentAlarmService commentAlarmService;
 
     @PatchMapping("/{alarmId}")
-    public BaseResponse CommentAlarmModify(@RequestHeader(value = "Authorization") String token, @PathVariable Long alarmId) {
+    public BaseResponse commentAlarmModify(@RequestHeader(value = "Authorization") String token, @PathVariable Long alarmId) {
         Long memberId = JwtUtil.getMemberId(token);
         commentAlarmService.modifyAlarm(memberId, alarmId);
 
