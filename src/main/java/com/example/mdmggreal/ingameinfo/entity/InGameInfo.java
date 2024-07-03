@@ -42,6 +42,7 @@ public class InGameInfo extends BaseEntity {
                 .tier(Tier.fromName(request.tier()))
                 .position(Position.fromName(request.position()))
                 .post(post)
+                .averageRatio(0.0)
                 .build();
     }
 
