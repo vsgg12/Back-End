@@ -39,16 +39,16 @@ public class VoteService {
     private final InGameInfoRepository inGameInfoRepository;
 
     @Transactional
-    public void saveVotes(List<VoteSaveDTO> voteSaveDTOS, Long memberId, Long postId) {
+    public void saveVotes(List<VoteSaveDTO> voteSaveDTOs, Long memberId, Long postId) {
         Member member = getMemberById(memberId);
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
         validateVoteExistence(postId, member);
-        validateInGameInfoId(postId, inGameInfoList, voteSaveDTOS);
-        validateVotesTotalValue(voteSaveDTOS);
+        validateInGameInfoId(postId, inGameInfoList, voteSaveDTOs);
+        validateVotesTotalValue(voteSaveDTOs);
 
         updateMemberAfterVote(member);
-        List<Vote> votes = convertToVoteEntities(voteSaveDTOS, memberId);
+        List<Vote> votes = convertToVoteEntities(voteSaveDTOs, memberId);
 
         for (InGameInfo inGameInfo : inGameInfoList) {
             Double averageRatioByPostId = inGameInfoQueryRepository.getAverageRatioByPostId(inGameInfo.getId());
@@ -104,21 +104,21 @@ public class VoteService {
         }
     }
 
-    private void validateInGameInfoId(Long postId, List<InGameInfo> inGameInfoList, List<VoteSaveDTO> voteSaveDTOS) {
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOS) {
+    private void validateInGameInfoId(Long postId, List<InGameInfo> inGameInfoList, List<VoteSaveDTO> voteSaveDTOs) {
+        for (VoteSaveDTO voteSaveDTO : voteSaveDTOs) {
             boolean exists = inGameInfoRepository.existsByIdAndPostId(voteSaveDTO.getIngameInfoId(), postId);
             if (!exists) {
                 throw new CustomException(NOT_MATCH_IN_GAME_INFO);
             }
         }
 
-        if (inGameInfoList.size() != voteSaveDTOS.size()) {
+        if (inGameInfoList.size() != voteSaveDTOs.size()) {
             throw new CustomException(ALL_IN_GAME_INFO_VOTE_REQUIRED);
         }
     }
 
-    private void validateVotesTotalValue(List<VoteSaveDTO> voteSaveDTOS) {
-        long sum = voteSaveDTOS.stream()
+    private void validateVotesTotalValue(List<VoteSaveDTO> voteSaveDTOs) {
+        long sum = voteSaveDTOs.stream()
                 .mapToLong(VoteSaveDTO::getRatio)
                 .sum();
         if (sum != 10) throw new CustomException(VOTES_TOTAL_VALUE_MUST_BE_TEN);
@@ -130,9 +130,9 @@ public class VoteService {
         member.updateTier(tier);
     }
 
-    private List<Vote> convertToVoteEntities(List<VoteSaveDTO> voteSaveDTOS, Long memberId) {
+    private List<Vote> convertToVoteEntities(List<VoteSaveDTO> voteSaveDTOs, Long memberId) {
         List<Vote> voteList = new ArrayList<>();
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOS) {
+        for (VoteSaveDTO voteSaveDTO : voteSaveDTOs) {
             voteList.add(convertToEntity(voteSaveDTO, memberId));
         }
 
