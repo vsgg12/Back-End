@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QPostHashtag is a Querydsl query type for PostHashtag
+ * QPostHashtag is a Querydsl query videoType for PostHashtag
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QPostHashtag extends EntityPathBase<PostHashtag> {

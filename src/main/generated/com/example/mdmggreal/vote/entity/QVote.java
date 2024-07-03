@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QVote is a Querydsl query type for Vote
+ * QVote is a Querydsl query videoType for Vote
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QVote extends EntityPathBase<Vote> {

@@ -47,17 +47,22 @@ public class PostService {
     private final HashtagRepository hashtagRepository;
 
     @Transactional
-    public void addPost(MultipartFile uploadVideos, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
+    public void addPost(MultipartFile videoFile, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
         Member member = getMemberByMemberId(memberId);
+        String thumbnailUrl;
+        if (thumbnailImage == null || thumbnailImage.isEmpty()) {
+            thumbnailUrl = createThumbnailImageFromVideo(videoFile);
+        } else {
+            thumbnailUrl = s3Service.uploadImages(thumbnailImage);
+        }
 
-        String thumbnailUrl = s3Service.uploadImages(thumbnailImage);
-        String videoUrl = postAddRequest.type() == VideoType.FILE ? s3Service.uploadVideo(uploadVideos) : postAddRequest.videoUrl();
+        String videoUrl = postAddRequest.videoType() == VideoType.FILE ? s3Service.uploadVideo(videoFile) : postAddRequest.videoLink();
 
         Post post = postRepository.save(Post.of(postAddRequest, thumbnailUrl, videoUrl, content, member));
 
         postAddRequest.inGameInfoRequests().forEach(inGameInfo -> inGameInfoRepository.save(InGameInfo.of(inGameInfo, post)));
         postAddRequest.hashtag().forEach(name -> {
-            if(hashtagRepository.findByName(name).isPresent()) {
+            if (hashtagRepository.findByName(name).isPresent()) {
                 Hashtag hashtag = hashtagRepository.findByName(name).get();
                 postHashtagRepository.save(PostHashtag.of(post, hashtag));
             } else {
@@ -85,6 +90,13 @@ public class PostService {
         Member loginMember = getMemberByMemberId(memberId);
         List<Post> posts = postQueryRepository.getPostsMember(loginMember.getId());
         return posts.stream().map(post -> createPostDTO(post, loginMember.getMobile())).toList();
+    }
+
+    /*
+    todo 비디오 파일을 이용한 썸네일 추출기능
+     */
+    private String createThumbnailImageFromVideo(MultipartFile videoFile) {
+        return null;
     }
 
     private PostDTO createPostDTO(Post post, String token) {

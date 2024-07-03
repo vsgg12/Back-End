@@ -10,7 +10,7 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QAgree is a Querydsl query type for Agree
+ * QAgree is a Querydsl query videoType for Agree
  */
 @Generated("com.querydsl.codegen.DefaultEmbeddableSerializer")
 public class QAgree extends BeanPath<Agree> {
