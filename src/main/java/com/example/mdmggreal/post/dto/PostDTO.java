@@ -1,7 +1,7 @@
 package com.example.mdmggreal.post.dto;
 
 import com.example.mdmggreal.hashtag.entity.Hashtag;
-import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoResponse;
+import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.entity.Video;
@@ -30,10 +30,10 @@ public class PostDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<Hashtag> hashtagList;
-    private List<InGameInfoResponse> inGameInfoList;
+    private List<InGameInfoDTO> inGameInfoList;
     private Boolean isVote;
 
-    public static PostDTO of(MemberDTO memberDTO, Post post, List<Hashtag> hashtagList, List<InGameInfoResponse> inGameInfoList, Boolean isVote) {
+    public static PostDTO of(MemberDTO memberDTO, Post post, List<Hashtag> hashtagList, List<InGameInfoDTO> inGameInfoList, Boolean isVote) {
 
         return PostDTO.builder()
                 .id(post.getId())

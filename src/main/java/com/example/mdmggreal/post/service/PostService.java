@@ -6,7 +6,7 @@ import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.hashtag.entity.Hashtag;
 import com.example.mdmggreal.hashtag.repository.HashtagQueryRepository;
 import com.example.mdmggreal.hashtag.repository.HashtagRepository;
-import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoResponse;
+import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.dto.MemberDTO;
@@ -107,8 +107,8 @@ public class PostService {
             isVote = voteQueryRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
         }
         List<Hashtag> hashtags = hashtagQueryRepository.getListHashtagByPostId(post.getId());
-        List<InGameInfoResponse> inGameInfoResponses = inGameInfoRepository.findByPostId(post.getId()).stream().map(InGameInfoResponse::of).toList();
-        return PostDTO.of(MemberDTO.from(post.getMember()), post, hashtags, inGameInfoResponses, isVote);
+        List<InGameInfoDTO> inGameInfoRespons = inGameInfoRepository.findByPostId(post.getId()).stream().map(InGameInfoDTO::of).toList();
+        return PostDTO.of(MemberDTO.from(post.getMember()), post, hashtags, inGameInfoRespons, isVote);
     }
 
     private Post getPostById(Long postId) {
