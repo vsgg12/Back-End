@@ -30,6 +30,7 @@ public class PostAlarmService {
         postAlarmRepository.save(PostAlarm.ofPostedMember(postedMember, post));
     }
 
+    @Transactional
     public void modifyAlarm(Long memberId, Long alarmId) {
         Member member = getMemberByMemberId(memberId);
         PostAlarm postAlarm = postAlarmRepository.findById(alarmId).orElseThrow(

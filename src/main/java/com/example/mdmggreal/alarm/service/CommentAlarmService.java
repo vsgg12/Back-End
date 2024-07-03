@@ -11,6 +11,7 @@ import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 
@@ -40,6 +41,7 @@ public class CommentAlarmService {
         commentAlarmRepository.save(CommentAlarm.from(addedComment, commentedNickname, alarmedMember));
     }
 
+    @Transactional
     public void modifyAlarm(Long memberId, Long alarmId) {
         Member member = getMemberByMemberId(memberId);
         CommentAlarm commentAlarm = commentAlarmRepository.findById(alarmId).orElseThrow(
@@ -50,7 +52,6 @@ public class CommentAlarmService {
         }
 
         commentAlarm.editIsRead();
-
     }
 
     private Member getMemberByMemberId(Long memberId) {
