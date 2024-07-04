@@ -1,7 +1,7 @@
 package com.example.mdmggreal.global.security;
 
 import com.example.mdmggreal.global.exception.CustomException;
-import com.example.mdmggreal.global.exception.ErrorResponseEntity;
+import com.example.mdmggreal.global.response.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -57,11 +57,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ErrorResponseEntity errorResponse = ErrorResponseEntity.builder()
-                .status(e.getErrorCode().getHttpStatus().value())
-                .code(e.getErrorCode().name())
-                .message(e.getErrorCode().getMessage())
-                .build();
+        BaseResponse errorResponse = BaseResponse.from(e.getErrorCode());
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }

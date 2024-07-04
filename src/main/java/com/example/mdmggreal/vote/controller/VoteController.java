@@ -6,11 +6,12 @@ import com.example.mdmggreal.vote.dto.VoteResultResponse;
 import com.example.mdmggreal.vote.dto.VoteSaveDTO;
 import com.example.mdmggreal.vote.service.VoteService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class VoteController {
     public ResponseEntity<BaseResponse> save(@RequestHeader(value = "Authorization") String token, @RequestBody List<VoteSaveDTO> voteDTOs, @PathVariable Long postId) {
         Long memberId = JwtUtil.getMemberId(token);
         voteService.saveVotes(voteDTOs, memberId, postId);
-        return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
+        return BaseResponse.toResponseEntity(OK);
     }
 
     @GetMapping("/result")

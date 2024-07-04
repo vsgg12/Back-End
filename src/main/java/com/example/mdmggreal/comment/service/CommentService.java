@@ -42,6 +42,7 @@ public class CommentService {
         );
         Comment addedComment;
 
+
         if (request.getParentId() == null) { // 댓글 작성
             addedComment = Comment.of(post, commentedMember, request);
 
@@ -66,7 +67,10 @@ public class CommentService {
         if (addedComment != null) {
             commentRepository.save(addedComment);
         }
+        rewardPoint(postId, commentedMember);
     }
+
+
 
     @Transactional
     public List<CommentDTO> getCommentList(Long postId) {
@@ -107,5 +111,12 @@ public class CommentService {
 
             return getDeletableAncestorComment(parent);
         return comment;
+    }
+    private void rewardPoint(Long postId, Member commentedMember) {
+        boolean isComment = commentRepository.existsByPostIdAndMemberId(postId, commentedMember.getId());
+        if (!isComment) {
+            commentedMember.rewardPointByComment(5);
+        }
+
     }
 }
