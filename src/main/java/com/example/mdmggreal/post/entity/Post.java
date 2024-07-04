@@ -1,6 +1,7 @@
 package com.example.mdmggreal.post.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.entity.type.PostStatus;
@@ -13,6 +14,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
 import static com.example.mdmggreal.post.entity.type.PostStatus.FINISHED;
 import static com.example.mdmggreal.post.entity.type.PostStatus.PROGRESS;
 import static jakarta.persistence.EnumType.STRING;
@@ -44,6 +47,8 @@ public class Post extends BaseEntity {
     private String thumbnailURL;
     private Long viewCount;
     private LocalDateTime endDateTime;
+    @Enumerated(STRING)
+    private BooleanEnum isDeleted;
 
     public static Post of(PostAddRequest request, String thumbnailURL, String videoUrl, String content, Member member) {
         return Post.builder()
@@ -55,6 +60,7 @@ public class Post extends BaseEntity {
                 .video(Video.of(videoUrl, request.videoType()))
                 .viewCount(0L)
                 .endDateTime(LocalDateTime.now().plusMonths(1).with(LocalTime.MIN))
+                .isDeleted(FALSE)
                 .build();
     }
 
@@ -67,4 +73,7 @@ public class Post extends BaseEntity {
     }
 
 
+    public void deleted() {
+        this.isDeleted = TRUE;
+    }
 }

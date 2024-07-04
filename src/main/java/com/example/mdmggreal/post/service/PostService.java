@@ -1,5 +1,6 @@
 package com.example.mdmggreal.post.service;
 
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.global.security.JwtUtil;
@@ -22,15 +23,16 @@ import com.example.mdmggreal.posthashtag.entity.PostHashtag;
 import com.example.mdmggreal.posthashtag.repository.PostHashtagRepository;
 import com.example.mdmggreal.s3.service.S3Service;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
+import static com.example.mdmggreal.global.exception.ErrorCode.NO_PERMISSION_TO_DELETE_POST;
 
 @RequiredArgsConstructor
 @Service
@@ -84,15 +86,27 @@ public class PostService {
         return createPostDTO(post, token);
     }
 
+    @Transactional(readOnly = true)
     public List<PostDTO> getPostsOrderByCreatedDateTime(String token, String orderBy, String keyword) {
         List<Post> posts = postQueryRepository.getPostList(orderBy, keyword);
         return posts.stream().map(post -> createPostDTO(post, token)).toList();
     }
 
+    @Transactional(readOnly = true)
     public List<PostDTO> getPostsByMember(Long memberId) {
         Member loginMember = getMemberByMemberId(memberId);
         List<Post> posts = postQueryRepository.getPostsMember(loginMember.getId());
         return posts.stream().map(post -> createPostDTO(post, loginMember.getMobile())).toList();
+    }
+
+    @Transactional
+    public void deletePost(Long postId, Long memberId) {
+        Member loginMember = getMemberByMemberId(memberId);
+        Post post = getPostById(postId);
+        if (!post.getMember().getId().equals(loginMember.getId())) {
+            throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
+        }
+        post.deleted();
     }
 
     /*
@@ -115,9 +129,13 @@ public class PostService {
     }
 
     private Post getPostById(Long postId) {
-        return postRepository.findById(postId).orElseThrow(
+        Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)
         );
+        if (post.getIsDeleted().equals(BooleanEnum.TRUE)) {
+            throw new CustomException(ErrorCode.INVALID_POST);
+        }
+        return post;
     }
 
     private Member getMemberByMemberId(Long memberId) {
@@ -125,6 +143,7 @@ public class PostService {
                 () -> new CustomException(INVALID_USER_ID)
         );
     }
+
     private void rewardPoint(Member member) {
         member.rewardPointByPostCreation(member.getTier().getPostCreationPoint());
     }

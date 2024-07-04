@@ -1,5 +1,6 @@
 package com.example.mdmggreal.post.repository;
 
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.post.entity.Post;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -46,6 +47,7 @@ public Predicate getPostListPredicate(String keyword) {
         predicate.and(post.content.containsIgnoreCase(keyword).or(
                 post.title.containsIgnoreCase(keyword)
         ));
+        predicate.and(post.isDeleted.eq(BooleanEnum.FALSE));
     }
 
     return predicate;
