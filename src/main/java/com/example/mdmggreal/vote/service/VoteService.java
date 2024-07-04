@@ -12,7 +12,8 @@ import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.dto.VoteResultResponse;
-import com.example.mdmggreal.vote.dto.VoteSaveDTO;
+import com.example.mdmggreal.vote.dto.VoteDTO;
+import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.repository.VoteRepository;
@@ -39,28 +40,27 @@ public class VoteService {
     private final InGameInfoRepository inGameInfoRepository;
 
     @Transactional
-    public void saveVotes(List<VoteSaveDTO> voteSaveDTOs, Long memberId, Long postId) {
+    public void saveVotes(VoteAddRequest voteAddRequests, Long memberId, Long postId) {
         Member member = getMemberById(memberId);
-        List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
         validateVoteExistence(postId, member);
-        validateInGameInfoId(postId, inGameInfoList, voteSaveDTOs);
-        validateVotesTotalValue(voteSaveDTOs);
+        updateMemberAfterVote(member);
+
+        voteAddRequests.getVoteList().forEach(voteDTO -> {
+                    validateInGameInfoId(postId, voteDTO.getIngameInfoId(), voteAddRequests.getVoteList());
+                    validateVotesTotalValue(voteAddRequests.getVoteList());
+                    InGameInfo inGameInfo = inGameInfoRepository.findById(voteDTO.getIngameInfoId()).orElseThrow(
+                            () -> new CustomException(INVALID_INGAME_INFO)
+                    );
+                    inGameInfo.updateAverageRatio(voteDTO.getRatio());
 
 
-        List<Vote> votes = convertToVoteEntities(voteSaveDTOs, memberId);
+                }
+        );
 
-        for (InGameInfo inGameInfo : inGameInfoList) {
-            Double averageRatioByPostId = inGameInfoQueryRepository.getAverageRatioByPostId(inGameInfo.getId());
-            inGameInfo.updateAverageRatio(averageRatioByPostId);
-        }
 
         voteRepository.saveAll(votes);
-        updateMemberAfterVote(member);
-        rewardPoint(member);
     }
-
-
 
     @Transactional(readOnly = true)
     public VoteResultResponse getVoteResult(Long postId, Long memberId) {
@@ -87,7 +87,8 @@ public class VoteService {
 
         boolean hasPermission = false; // 투표 결과조회 권한 검사
         while (!hasPermission) {
-            if (memberId.equals(post.getMember().getId())) hasPermission = true; // 글 작성자가 조회한 경우
+            if (memberId.equals(post.getMember().getId()))
+                hasPermission = true; // 글 작성자가 조회한 경우
 
             for (InGameInfo inGameInfo : inGameInfos) { // 투표 참여자가 조회한 경우
                 if (voteRepository.findByMemberIdAndInGameInfoId(memberId, inGameInfo.getId()).isPresent()) {
@@ -96,7 +97,8 @@ public class VoteService {
                 }
             }
 
-            if (!hasPermission) throw new CustomException(ErrorCode.NO_PERMISSION_TO_VIEW_RESULT);
+            if (!hasPermission)
+                throw new CustomException(ErrorCode.NO_PERMISSION_TO_VIEW_RESULT);
         }
 
         return VoteResultResponse.from(postId, inGameInfoResults, HttpStatus.OK);
@@ -108,22 +110,20 @@ public class VoteService {
         }
     }
 
-    private void validateInGameInfoId(Long postId, List<InGameInfo> inGameInfoList, List<VoteSaveDTO> voteSaveDTOs) {
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOs) {
-            boolean exists = inGameInfoRepository.existsByIdAndPostId(voteSaveDTO.getIngameInfoId(), postId);
-            if (!exists) {
-                throw new CustomException(NOT_MATCH_IN_GAME_INFO);
-            }
+    private void validateInGameInfoId(Long postId, Long inGameInfoId, List<VoteDTO> voteAddRequests) {
+        boolean exists = inGameInfoRepository.existsByIdAndPostId(inGameInfoId, postId);
+        if (!exists) {
+            throw new CustomException(NOT_MATCH_IN_GAME_INFO);
         }
 
-        if (inGameInfoList.size() != voteSaveDTOs.size()) {
+        if (inGameInfoList.size() != voteAddRequests.size()) {
             throw new CustomException(ALL_IN_GAME_INFO_VOTE_REQUIRED);
         }
     }
 
-    private void validateVotesTotalValue(List<VoteSaveDTO> voteSaveDTOs) {
-        long sum = voteSaveDTOs.stream()
-                .mapToLong(VoteSaveDTO::getRatio)
+    private void validateVotesTotalValue(List<VoteDTO> voteAddRequests) {
+        long sum = voteAddRequests.stream()
+                .mapToLong(VoteDTO::getRatio)
                 .sum();
         if (sum != 10) throw new CustomException(VOTES_TOTAL_VALUE_MUST_BE_TEN);
     }
@@ -134,20 +134,20 @@ public class VoteService {
         member.updateTier(tier);
     }
 
-    private List<Vote> convertToVoteEntities(List<VoteSaveDTO> voteSaveDTOs, Long memberId) {
+    private List<Vote> convertToVoteEntities(List<VoteDTO> voteAddRequests, Long memberId) {
         List<Vote> voteList = new ArrayList<>();
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOs) {
-            voteList.add(convertToEntity(voteSaveDTO, memberId));
+        for (VoteDTO voteAddRequest : voteAddRequests) {
+            voteList.add(convertToEntity(voteAddRequest, memberId));
         }
 
         return voteList;
     }
 
-    private Vote convertToEntity(VoteSaveDTO voteSaveDTO, Long memberId) {
+    private Vote convertToEntity(VoteDTO voteDTO, Long memberId) {
         Member member = getMemberById(memberId);
-        InGameInfo inGameInfo = new InGameInfo(voteSaveDTO.getIngameInfoId());
+        InGameInfo inGameInfo = new InGameInfo(voteDTO.getIngameInfoId());
         return Vote.builder()
-                .ratio(voteSaveDTO.getRatio())
+                .ratio(voteDTO.getRatio())
                 .memberId(member.getId())
                 .inGameInfo(inGameInfo)
                 .build();
@@ -157,11 +157,5 @@ public class VoteService {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(INVALID_USER_ID)
         );
-    }
-
-    private void rewardPoint(Member member) {
-        if (member.getJoinedResult() / 3 == 0 && member.getJoinedResult() != 0) {
-            member.rewardPointByJoinedResult(member.getTier().getJoinedResultPoint());
-        }
     }
 }
