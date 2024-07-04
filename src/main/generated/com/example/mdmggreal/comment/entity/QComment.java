@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QComment is a Querydsl query videoType for Comment
+ * QComment is a Querydsl query type for Comment
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QComment extends EntityPathBase<Comment> {
@@ -33,7 +33,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isDeleted = createBoolean("isDeleted");
+    public final EnumPath<com.example.mdmggreal.global.entity.type.BooleanEnum> isDeleted = createEnum("isDeleted", com.example.mdmggreal.global.entity.type.BooleanEnum.class);
 
     public final com.example.mdmggreal.member.entity.QMember member;
 

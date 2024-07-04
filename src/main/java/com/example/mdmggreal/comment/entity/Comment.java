@@ -2,6 +2,7 @@ package com.example.mdmggreal.comment.entity;
 
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.global.entity.BaseEntity;
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.entity.Post;
 import jakarta.persistence.*;
@@ -9,11 +10,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -44,9 +46,10 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ColumnDefault("FALSE")
+
     @Column(nullable = false)
-    private Boolean isDeleted;
+    @Enumerated(STRING)
+    private BooleanEnum isDeleted;
 
     // 대댓글 생성
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
@@ -55,7 +58,7 @@ public class Comment extends BaseEntity {
                 .post(post)
                 .parent(comment)
                 .member(member)
-                .isDeleted(false)
+                .isDeleted(BooleanEnum.FALSE)
                 .build();
     }
 
@@ -65,11 +68,11 @@ public class Comment extends BaseEntity {
                 .content(request.getContent())
                 .post(post)
                 .member(member)
-                .isDeleted(false)
+                .isDeleted(BooleanEnum.FALSE)
                 .build();
     }
 
-    public void changeIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void delete() {
+        this.isDeleted = TRUE;
     }
 }

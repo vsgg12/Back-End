@@ -16,7 +16,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
 
@@ -71,7 +74,6 @@ public class CommentService {
     }
 
 
-
     @Transactional
     public List<CommentDTO> getCommentList(Long postId) {
         List<Comment> list = commentDAO.getList(postId);
@@ -89,29 +91,18 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteCommentList(Long postId, Long memberId, Long commentId) {
+    public void deleteComment(Long memberId, Long commentId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
         Comment comment = commentDAO.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> new CustomException(INVALID_COMMENT));
         if (!comment.getMember().getId().equals(member.getId())) {
-            throw new CustomException(ErrorCode.NO_PERMISSION);
+            throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        if (comment.getChildren().size() != 0) {
-            comment.changeIsDeleted(true);
-        } else {
-            commentRepository.delete(getDeletableAncestorComment(comment));
-        }
+        comment.delete();
     }
 
-    private Comment getDeletableAncestorComment(Comment comment) {
-        Comment parent = comment.getParent();
-        if (parent != null && parent.getChildren().size() == 1 && parent.getIsDeleted())
-
-            return getDeletableAncestorComment(parent);
-        return comment;
-    }
     private void rewardPoint(Long postId, Member commentedMember) {
         boolean isComment = commentRepository.existsByPostIdAndMemberId(postId, commentedMember.getId());
         if (!isComment) {
