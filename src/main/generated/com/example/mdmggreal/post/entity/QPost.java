@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QPost is a Querydsl query videoType for Post
+ * QPost is a Querydsl query type for Post
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QPost extends EntityPathBase<Post> {
@@ -32,6 +32,8 @@ public class QPost extends EntityPathBase<Post> {
     public final DateTimePath<java.time.LocalDateTime> endDateTime = createDateTime("endDateTime", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
+
+    public final EnumPath<com.example.mdmggreal.global.entity.type.BooleanEnum> isDeleted = createEnum("isDeleted", com.example.mdmggreal.global.entity.type.BooleanEnum.class);
 
     public final com.example.mdmggreal.member.entity.QMember member;
 
