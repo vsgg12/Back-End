@@ -68,7 +68,7 @@ public class PostController {
     public ResponseEntity<BaseResponse> postDelete(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
         Long memberId = JwtUtil.getMemberId(token);
         postService.deletePost(postId, memberId);
-        return ResponseEntity.ok(BaseResponse.from(OK));
+        return BaseResponse.toResponseEntity(OK);
     }
 
     private void checkVideoAttachment(MultipartFile videoFile, PostAddRequest postAddRequest) {
