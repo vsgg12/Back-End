@@ -1,5 +1,6 @@
 package com.example.mdmggreal.post.service;
 
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.global.security.JwtUtil;
@@ -102,7 +103,7 @@ public class PostService {
     public void deletePost(Long postId, Long memberId) {
         Member loginMember = getMemberByMemberId(memberId);
         Post post = getPostById(postId);
-        if(!post.getMember().getId().equals(loginMember.getId())) {
+        if (!post.getMember().getId().equals(loginMember.getId())) {
             throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
         }
         post.deleted();
@@ -128,9 +129,13 @@ public class PostService {
     }
 
     private Post getPostById(Long postId) {
-        return postRepository.findById(postId).orElseThrow(
+        Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)
         );
+        if (post.getIsDeleted().equals(BooleanEnum.TRUE)) {
+            throw new CustomException(ErrorCode.INVALID_POST);
+        }
+        return post;
     }
 
     private Member getMemberByMemberId(Long memberId) {
@@ -138,6 +143,7 @@ public class PostService {
                 () -> new CustomException(INVALID_USER_ID)
         );
     }
+
     private void rewardPoint(Member member) {
         member.rewardPointByPostCreation(member.getTier().getPostCreationPoint());
     }
