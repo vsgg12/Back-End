@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
 @RequestMapping("/api/image")
 @RequiredArgsConstructor
@@ -34,6 +36,6 @@ public class ImageController {
     public ResponseEntity<BaseResponse> imageDelete(@RequestHeader(value = "Authorization") String token, @RequestBody ImageDeleteRequest request) {
         Long memberId = JwtUtil.getMemberId(token);
         imageService.deleteImage(request, memberId);
-        return ResponseEntity.ok(BaseResponse.from(HttpStatus.OK));
+        return BaseResponse.toResponseEntity(OK);
     }
 }
