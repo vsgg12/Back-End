@@ -47,7 +47,7 @@ public class VoteService {
         validateInGameInfoId(postId, inGameInfoList, voteSaveDTOs);
         validateVotesTotalValue(voteSaveDTOs);
 
-        updateMemberAfterVote(member);
+
         List<Vote> votes = convertToVoteEntities(voteSaveDTOs, memberId);
 
         for (InGameInfo inGameInfo : inGameInfoList) {
@@ -56,7 +56,11 @@ public class VoteService {
         }
 
         voteRepository.saveAll(votes);
+        updateMemberAfterVote(member);
+        rewardPoint(member);
     }
+
+
 
     @Transactional(readOnly = true)
     public VoteResultResponse getVoteResult(Long postId, Long memberId) {
@@ -153,5 +157,11 @@ public class VoteService {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(INVALID_USER_ID)
         );
+    }
+
+    private void rewardPoint(Member member) {
+        if (member.getJoinedResult() / 3 == 0 && member.getJoinedResult() != 0) {
+            member.rewardPointByJoinedResult(member.getTier().getJoinedResultPoint());
+        }
     }
 }

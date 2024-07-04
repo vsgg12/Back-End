@@ -72,7 +72,10 @@ public class PostService {
             }
 
         });
+
+        rewardPoint(member);
     }
+
 
     @Transactional
     public PostDTO getPost(Long postId, String token) {
@@ -122,4 +125,8 @@ public class PostService {
                 () -> new CustomException(INVALID_USER_ID)
         );
     }
+    private void rewardPoint(Member member) {
+        member.rewardPointByPostCreation(member.getTier().getPostCreationPoint());
+    }
+
 }
