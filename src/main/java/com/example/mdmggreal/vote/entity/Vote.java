@@ -23,9 +23,7 @@ public class Vote extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name="member_id")
-    private Member member;
+    private Long memberId;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name="ingame_info_id")

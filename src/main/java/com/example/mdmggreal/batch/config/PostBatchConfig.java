@@ -66,6 +66,6 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
 
     private void addPostAlarms(Post post) {
         List<Vote> voteList = voteQueryRepository.getVoteListByPostId(post.getId());
-        voteList.forEach(vote -> postAlarmService.addAlarm(post, vote.getMember()));
+        voteList.forEach(vote -> postAlarmService.addAlarm(post, vote.getMemberId()));
     }
 }

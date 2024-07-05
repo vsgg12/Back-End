@@ -20,7 +20,8 @@ public class PostAlarmService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void addAlarm(Post post, Member votedMember) {
+    public void addAlarm(Post post, Long memberId) {
+        Member votedMember = getMemberByMemberId(memberId);
         Member postedMember = post.getMember();
 
         postAlarmRepository.save(PostAlarm.ofVotedMember(votedMember, post));
