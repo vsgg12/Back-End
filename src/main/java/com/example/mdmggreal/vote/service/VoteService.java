@@ -12,7 +12,7 @@ import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.dto.VoteResultResponse;
-import com.example.mdmggreal.vote.dto.VoteSaveDTO;
+import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.repository.VoteRepository;
@@ -27,6 +27,8 @@ import java.util.List;
 import static com.example.mdmggreal.global.exception.ErrorCode.*;
 import static com.example.mdmggreal.vote.dto.VoteResultResponse.InGameInfoResult;
 
+import com.example.mdmggreal.vote.dto.request.VoteAddRequest.VoteAddDTO;
+
 @Service
 @RequiredArgsConstructor
 public class VoteService {
@@ -39,28 +41,27 @@ public class VoteService {
     private final InGameInfoRepository inGameInfoRepository;
 
     @Transactional
-    public void saveVotes(List<VoteSaveDTO> voteSaveDTOs, Long memberId, Long postId) {
+    public void addVotes(VoteAddRequest request, Long memberId, Long postId) {
+        List<VoteAddDTO> voteAddDTOList = request.getVoteList();
         Member member = getMemberById(memberId);
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
+        // 클라이언트 요청 검증
         validateVoteExistence(postId, member);
-        validateInGameInfoId(postId, inGameInfoList, voteSaveDTOs);
-        validateVotesTotalValue(voteSaveDTOs);
+        validateInGameInfoId(inGameInfoList, voteAddDTOList);
+        validateVotesTotalValue(voteAddDTOList);
 
+        // 투표들 저장
+        List<Vote> savedVotes = convertToVoteEntities(voteAddDTOList, inGameInfoList, member);
+        voteRepository.saveAll(savedVotes);
 
-        List<Vote> votes = convertToVoteEntities(voteSaveDTOs, memberId);
-
-        for (InGameInfo inGameInfo : inGameInfoList) {
-            Double averageRatioByPostId = inGameInfoQueryRepository.getAverageRatioByPostId(inGameInfo.getId());
-            inGameInfo.updateAverageRatio(averageRatioByPostId);
-        }
-
-        voteRepository.saveAll(votes);
+        // Member 업데이트
         updateMemberAfterVote(member);
         rewardPoint(member);
+
+        // InGameInfo 업데이트
+        updateInGameInfoAverageRatio();
     }
-
-
 
     @Transactional(readOnly = true)
     public VoteResultResponse getVoteResult(Long postId, Long memberId) {
@@ -108,49 +109,47 @@ public class VoteService {
         }
     }
 
-    private void validateInGameInfoId(Long postId, List<InGameInfo> inGameInfoList, List<VoteSaveDTO> voteSaveDTOs) {
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOs) {
-            boolean exists = inGameInfoRepository.existsByIdAndPostId(voteSaveDTO.getIngameInfoId(), postId);
-            if (!exists) {
-                throw new CustomException(NOT_MATCH_IN_GAME_INFO);
+    private void validateInGameInfoId(List<InGameInfo> inGameInfoList, List<VoteAddDTO> voteAddDTOList) {
+        for (VoteAddDTO voteAddDTO : voteAddDTOList) {
+            boolean isMatchedInGameInfo = inGameInfoList.stream()
+                    .anyMatch(inGameInfo -> inGameInfo.getId().equals(voteAddDTO.getInGameInfoId()));
+            if (!isMatchedInGameInfo) {
+                throw new CustomException(ErrorCode.NOT_MATCH_IN_GAME_INFO);
             }
         }
 
-        if (inGameInfoList.size() != voteSaveDTOs.size()) {
+        if (inGameInfoList.size() != voteAddDTOList.size()) {
             throw new CustomException(ALL_IN_GAME_INFO_VOTE_REQUIRED);
         }
     }
 
-    private void validateVotesTotalValue(List<VoteSaveDTO> voteSaveDTOs) {
-        long sum = voteSaveDTOs.stream()
-                .mapToLong(VoteSaveDTO::getRatio)
-                .sum();
+    private void validateVotesTotalValue(List<VoteAddDTO> VoteAddDTOs) {
+        long sum = VoteAddDTOs.stream().mapToLong(VoteAddDTO::getRatio).sum();
         if (sum != 10) throw new CustomException(VOTES_TOTAL_VALUE_MUST_BE_TEN);
+    }
+
+    private List<Vote> convertToVoteEntities(List<VoteAddDTO> voteAddDTOList,
+                                             List<InGameInfo> inGameInfoList,
+                                             Member member) {
+        List<Vote> savedVotes = new ArrayList<>();
+        for (VoteAddDTO voteAddDTO : voteAddDTOList) {
+            Vote savedVote = Vote.builder()
+                    .member(member)
+                    .inGameInfo((InGameInfo) inGameInfoList.stream()
+                            .filter(inGameInfo -> inGameInfo.getId().equals(voteAddDTO.getInGameInfoId())))
+                    .ratio(voteAddDTO.getRatio())
+                    .build();
+            savedVotes.add(savedVote);
+        }
+        return savedVotes;
     }
 
     private void updateMemberAfterVote(Member member) {
         member.editJoinedResult();
         Tier tier = Tier.getTier(member.getJoinedResult(), member.getPredictedResult());
-        member.updateTier(tier);
-    }
-
-    private List<Vote> convertToVoteEntities(List<VoteSaveDTO> voteSaveDTOs, Long memberId) {
-        List<Vote> voteList = new ArrayList<>();
-        for (VoteSaveDTO voteSaveDTO : voteSaveDTOs) {
-            voteList.add(convertToEntity(voteSaveDTO, memberId));
+        if (!member.getTier().equals(tier)) {
+            member.updateTier(tier);
         }
-
-        return voteList;
-    }
-
-    private Vote convertToEntity(VoteSaveDTO voteSaveDTO, Long memberId) {
-        Member member = getMemberById(memberId);
-        InGameInfo inGameInfo = new InGameInfo(voteSaveDTO.getIngameInfoId());
-        return Vote.builder()
-                .ratio(voteSaveDTO.getRatio())
-                .memberId(member.getId())
-                .inGameInfo(inGameInfo)
-                .build();
     }
 
     private Member getMemberById(Long memberId) {
@@ -163,5 +162,8 @@ public class VoteService {
         if (member.getJoinedResult() / 3 == 0 && member.getJoinedResult() != 0) {
             member.rewardPointByJoinedResult(member.getTier().getJoinedResultPoint());
         }
+    }
+
+    private void updateInGameInfoAverageRatio() {
     }
 }

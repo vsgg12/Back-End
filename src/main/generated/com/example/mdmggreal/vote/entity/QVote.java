@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QVote is a Querydsl query videoType for Vote
+ * QVote is a Querydsl query type for Vote
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QVote extends EntityPathBase<Vote> {
@@ -31,12 +31,12 @@ public class QVote extends EntityPathBase<Vote> {
 
     public final com.example.mdmggreal.ingameinfo.entity.QInGameInfo inGameInfo;
 
-    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
+    public final com.example.mdmggreal.member.entity.QMember member;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifyDateTime = _super.modifyDateTime;
 
-    public final NumberPath<Long> ratio = createNumber("ratio", Long.class);
+    public final NumberPath<Integer> ratio = createNumber("ratio", Integer.class);
 
     public QVote(String variable) {
         this(Vote.class, forVariable(variable), INITS);
@@ -57,6 +57,7 @@ public class QVote extends EntityPathBase<Vote> {
     public QVote(Class<? extends Vote> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.inGameInfo = inits.isInitialized("inGameInfo") ? new com.example.mdmggreal.ingameinfo.entity.QInGameInfo(forProperty("inGameInfo"), inits.get("inGameInfo")) : null;
+        this.member = inits.isInitialized("member") ? new com.example.mdmggreal.member.entity.QMember(forProperty("member"), inits.get("member")) : null;
     }
 
 }
