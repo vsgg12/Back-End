@@ -3,7 +3,6 @@ package com.example.mdmggreal.post.service;
 import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
-import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.hashtag.entity.Hashtag;
 import com.example.mdmggreal.hashtag.repository.HashtagQueryRepository;
 import com.example.mdmggreal.hashtag.repository.HashtagRepository;
@@ -23,13 +22,16 @@ import com.example.mdmggreal.posthashtag.entity.PostHashtag;
 import com.example.mdmggreal.posthashtag.repository.PostHashtagRepository;
 import com.example.mdmggreal.s3.service.S3Service;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
+import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 import static com.example.mdmggreal.global.exception.ErrorCode.NO_PERMISSION_TO_DELETE_POST;
@@ -47,6 +49,7 @@ public class PostService {
     private final PostQueryRepository postQueryRepository;
     private final VoteQueryRepository voteQueryRepository;
     private final HashtagRepository hashtagRepository;
+    private final VoteRepository voteRepository;
 
     @Transactional
     public void addPost(MultipartFile videoFile, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
@@ -80,23 +83,23 @@ public class PostService {
 
 
     @Transactional
-    public PostDTO getPost(Long postId, String token) {
+    public PostDTO getPost(Long postId, Long memberId) {
         Post post = getPostById(postId);
         post.addView();
-        return createPostDTO(post, token);
+        return createPostDTO(post, memberId);
     }
 
     @Transactional(readOnly = true)
-    public List<PostDTO> getPostsOrderByCreatedDateTime(String token, String orderBy, String keyword) {
+    public List<PostDTO> getPostsOrderByCreatedDateTime(Long memberId, String orderBy, String keyword) {
         List<Post> posts = postQueryRepository.getPostList(orderBy, keyword);
-        return posts.stream().map(post -> createPostDTO(post, token)).toList();
+        return posts.stream().map(post -> createPostDTO(post, memberId)).toList();
     }
 
     @Transactional(readOnly = true)
     public List<PostDTO> getPostsByMember(Long memberId) {
         Member loginMember = getMemberByMemberId(memberId);
         List<Post> posts = postQueryRepository.getPostsMember(loginMember.getId());
-        return posts.stream().map(post -> createPostDTO(post, loginMember.getMobile())).toList();
+        return posts.stream().map(post -> createPostDTO(post, loginMember.getId())).toList();
     }
 
     @Transactional
@@ -116,10 +119,9 @@ public class PostService {
         return null;
     }
 
-    private PostDTO createPostDTO(Post post, String token) {
+    private PostDTO createPostDTO(Post post, Long memberId) {
         boolean isVote = false;
-        if (token != null) {
-            Long memberId = JwtUtil.getMemberId(token);
+        if (memberId != null) {
             Member loginMember = getMemberByMemberId(memberId);
             isVote = voteQueryRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
         }

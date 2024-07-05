@@ -47,13 +47,21 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostGetResponse> postGet(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
-        PostDTO post = postService.getPost(postId, token);
+        Long memberId = null;
+        if (token != null && !token.isEmpty()) {
+            memberId = JwtUtil.getMemberId(token);
+        }
+        PostDTO post = postService.getPost(postId, memberId);
         return ResponseEntity.ok(PostGetResponse.from(OK, post));
     }
 
     @GetMapping
     public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization", required = false) String token, @RequestParam("orderby") String orderBy, @RequestParam("keyword") String keyWord) {
-        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(token, orderBy, keyWord);
+        Long memberId = null;
+        if (token != null && !token.isEmpty()) {
+            memberId = JwtUtil.getMemberId(token);
+        }
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(memberId, orderBy, keyWord);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
