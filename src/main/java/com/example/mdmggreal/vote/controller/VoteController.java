@@ -27,12 +27,4 @@ public class VoteController {
         return BaseResponse.toResponseEntity(OK);
     }
 
-    @GetMapping("/result")
-    public ResponseEntity<VoteResultResponse> getVoteResult(@RequestHeader(value = "Authorization") String token,
-                                                            @PathVariable Long postId) {
-        Long memberId = JwtUtil.getMemberId(token);
-        VoteResultResponse response = voteService.getVoteResult(postId, memberId);
-        return ResponseEntity.ok(response);
-    }
-
 }

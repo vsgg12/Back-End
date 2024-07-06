@@ -57,46 +57,6 @@ public class VoteService {
         rewardPoint(member);
     }
 
-    @Transactional(readOnly = true)
-    public VoteResultResponse getVoteResult(Long postId, Long memberId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST));
-
-        List<Object[]> results = voteRepository.findChampionNamesWithAverageRatioByPostId(postId);
-        List<InGameInfo> inGameInfos = new ArrayList<>();
-        List<InGameInfoResult> inGameInfoResults = new ArrayList<>();
-
-        for (Object[] result : results) {
-            InGameInfo inGameInfo = (InGameInfo) result[0];
-            Double average = (Double) result[1];
-
-            inGameInfos.add(inGameInfo);
-            inGameInfoResults.add(
-                    InGameInfoResult.builder()
-                            .championName(inGameInfo.getChampionName())
-                            .votedRatio(average)
-                            .position(Position.fromPosition(inGameInfo.getPosition()))
-                            .tier(Tier.fromTier(inGameInfo.getTier()))
-                            .build()
-            );
-        }
-
-        boolean hasPermission = false; // 투표 결과조회 권한 검사
-        while (!hasPermission) {
-            if (memberId.equals(post.getMember().getId())) hasPermission = true; // 글 작성자가 조회한 경우
-
-            for (InGameInfo inGameInfo : inGameInfos) { // 투표 참여자가 조회한 경우
-                if (voteRepository.findByMemberIdAndInGameInfoId(memberId, inGameInfo.getId()).isPresent()) {
-                    hasPermission = true;
-                    break;
-                }
-            }
-
-            if (!hasPermission) throw new CustomException(ErrorCode.NO_PERMISSION_TO_VIEW_RESULT);
-        }
-
-        return VoteResultResponse.from(postId, inGameInfoResults, HttpStatus.OK);
-    }
-
     private void validateVoteExistence(Long postId, Member member) {
         if (voteQueryRepository.existsVoteByMemberId(postId, member.getId())) {
             throw new CustomException(VOTE_ALREADY_EXISTS);
