@@ -5,27 +5,21 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoQueryRepository;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
-import com.example.mdmggreal.ingameinfo.type.Position;
 import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
-import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
-import com.example.mdmggreal.vote.dto.VoteResultResponse;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.*;
-import static com.example.mdmggreal.vote.dto.VoteResultResponse.InGameInfoResult;
 
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest.VoteAddDTO;
 
@@ -51,16 +45,16 @@ public class VoteService {
         validateInGameInfoId(inGameInfoList, voteAddDTOList);
         validateVotesTotalValue(voteAddDTOList);
 
-        // 투표들 저장
+        // InGameInfo 투표 총합 업데이트
+        increaseInGameInfoTotalRatio(inGameInfoList, voteAddDTOList);
+
+        // 투표 저장
         List<Vote> savedVotes = convertToVoteEntities(voteAddDTOList, inGameInfoList, member);
         voteRepository.saveAll(savedVotes);
 
         // Member 업데이트
         updateMemberAfterVote(member);
         rewardPoint(member);
-
-        // InGameInfo 업데이트
-        updateInGameInfoAverageRatio();
     }
 
     @Transactional(readOnly = true)
@@ -134,9 +128,9 @@ public class VoteService {
         List<Vote> savedVotes = new ArrayList<>();
         for (VoteAddDTO voteAddDTO : voteAddDTOList) {
             Vote savedVote = Vote.builder()
-                    .member(member)
-                    .inGameInfo((InGameInfo) inGameInfoList.stream()
-                            .filter(inGameInfo -> inGameInfo.getId().equals(voteAddDTO.getInGameInfoId())))
+                    .memberId(member.getId())
+                    .inGameInfo(inGameInfoList.stream()
+                            .filter(inGameInfo -> inGameInfo.getId().equals(voteAddDTO.getInGameInfoId())).findFirst().get())
                     .ratio(voteAddDTO.getRatio())
                     .build();
             savedVotes.add(savedVote);
@@ -164,6 +158,11 @@ public class VoteService {
         }
     }
 
-    private void updateInGameInfoAverageRatio() {
+    private void increaseInGameInfoTotalRatio(List<InGameInfo> inGameInfoList, List<VoteAddDTO> voteAddDTOList) {
+        for (InGameInfo inGameInfo : inGameInfoList) {
+            int votedRatio = voteAddDTOList.stream().filter(dto -> dto.getInGameInfoId().equals(inGameInfo.getId()))
+                    .findFirst().get().getRatio();
+            inGameInfo.increaseTotalRatio(votedRatio);
+        }
     }
 }

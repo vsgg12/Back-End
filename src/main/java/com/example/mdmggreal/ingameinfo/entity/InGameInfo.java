@@ -33,10 +33,7 @@ public class InGameInfo extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
-
-    @ColumnDefault("0.0")
-    private Double averageRatio;
-
+    private Long totalRatio;
 
     public static InGameInfo of(InGameInfoRequest request, Post post) {
         return InGameInfo.builder()
@@ -44,7 +41,11 @@ public class InGameInfo extends BaseEntity {
                 .tier(Tier.fromName(request.tier()))
                 .position(Position.fromName(request.position()))
                 .post(post)
-                .averageRatio(0.0)
+                .totalRatio(0L)
                 .build();
+    }
+
+    public void increaseTotalRatio(int newRatio) {
+        this.totalRatio += newRatio;
     }
 }

@@ -31,7 +31,7 @@ public class QVote extends EntityPathBase<Vote> {
 
     public final com.example.mdmggreal.ingameinfo.entity.QInGameInfo inGameInfo;
 
-    public final com.example.mdmggreal.member.entity.QMember member;
+    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifyDateTime = _super.modifyDateTime;
@@ -57,7 +57,6 @@ public class QVote extends EntityPathBase<Vote> {
     public QVote(Class<? extends Vote> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.inGameInfo = inits.isInitialized("inGameInfo") ? new com.example.mdmggreal.ingameinfo.entity.QInGameInfo(forProperty("inGameInfo"), inits.get("inGameInfo")) : null;
-        this.member = inits.isInitialized("member") ? new com.example.mdmggreal.member.entity.QMember(forProperty("member"), inits.get("member")) : null;
     }
 
 }

@@ -29,12 +29,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
 import static com.example.mdmggreal.global.exception.ErrorCode.NO_PERMISSION_TO_DELETE_POST;
+import static java.math.BigDecimal.ZERO;
+import static java.math.RoundingMode.CEILING;
 
 @RequiredArgsConstructor
 @Service
@@ -125,9 +127,54 @@ public class PostService {
             Member loginMember = getMemberByMemberId(memberId);
             isVote = voteQueryRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
         }
+
         List<Hashtag> hashtags = hashtagQueryRepository.getListHashtagByPostId(post.getId());
-        List<InGameInfoDTO> inGameInfoRespons = inGameInfoRepository.findByPostId(post.getId()).stream().map(InGameInfoDTO::of).toList();
-        return PostDTO.of(MemberDTO.from(post.getMember()), post, hashtags, inGameInfoRespons, isVote);
+
+        List<InGameInfoDTO> inGameInfoDTOList = createInGameInfoDTOList(post);
+
+        return PostDTO.of(MemberDTO.from(post.getMember()), post, hashtags, inGameInfoDTOList, isVote);
+    }
+
+    private List<InGameInfoDTO> createInGameInfoDTOList(Post post) {
+        List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(post.getId());
+        BigDecimal votedMembersCount = new BigDecimal(voteRepository.countByInGameInfoId(inGameInfoList.get(0).getId()).toString());
+
+        if (votedMembersCount.compareTo(ZERO) == 0) {
+            return inGameInfoList.stream().map(inGameInfo ->
+                    InGameInfoDTO.of(inGameInfo, 0.0)).toList();
+        }
+
+        HashMap<Long, BigDecimal> inGameInfoAverageRatioMap = new HashMap<>();
+        inGameInfoList.forEach((inGameInfo) -> {
+                    inGameInfoAverageRatioMap.put(inGameInfo.getId(),
+                            new BigDecimal(inGameInfo.getTotalRatio()).divide(votedMembersCount, 1, CEILING));
+                }
+        );
+
+        BigDecimal averageRatioSum = inGameInfoAverageRatioMap.values().stream().reduce(ZERO, BigDecimal::add);
+        BigDecimal ten = new BigDecimal(10);
+
+        if (averageRatioSum.compareTo(ten) != 0) {
+            BigDecimal sumMinusTen = averageRatioSum.subtract(ten);
+
+            if (sumMinusTen.compareTo(ZERO) > 0) {
+                BigDecimal minValue = inGameInfoAverageRatioMap.values().stream().min(BigDecimal::compareTo).orElseThrow();
+                Long minKey = inGameInfoAverageRatioMap.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(minValue)).toList().get(0).getKey();
+
+                inGameInfoAverageRatioMap.put(minKey, minValue.subtract(sumMinusTen));
+            }
+            if (sumMinusTen.compareTo(ZERO) < 0) {
+                BigDecimal maxValue = inGameInfoAverageRatioMap.values().stream().max(BigDecimal::compareTo).orElseThrow();
+                Long maxKey = inGameInfoAverageRatioMap.entrySet().stream()
+                        .filter(entry -> entry.getValue().equals(maxValue)).toList().get(0).getKey();
+
+                inGameInfoAverageRatioMap.put(maxKey, maxValue.add(sumMinusTen));
+            }
+        }
+
+        return inGameInfoList.stream().map(inGameInfo ->
+                InGameInfoDTO.of(inGameInfo, inGameInfoAverageRatioMap.get(inGameInfo.getId()).doubleValue())).toList();
     }
 
     private Post getPostById(Long postId) {
