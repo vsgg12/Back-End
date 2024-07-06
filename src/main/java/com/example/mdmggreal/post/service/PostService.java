@@ -152,10 +152,10 @@ public class PostService {
         );
 
         BigDecimal averageRatioSum = inGameInfoAverageRatioMap.values().stream().reduce(ZERO, BigDecimal::add);
-        BigDecimal ten = new BigDecimal(10);
+        final BigDecimal TEN = new BigDecimal(10);
 
-        if (averageRatioSum.compareTo(ten) != 0) {
-            BigDecimal sumMinusTen = averageRatioSum.subtract(ten);
+        if (averageRatioSum.compareTo(TEN) != 0) {
+            BigDecimal sumMinusTen = averageRatioSum.subtract(TEN);
 
             if (sumMinusTen.compareTo(ZERO) > 0) {
                 BigDecimal minValue = inGameInfoAverageRatioMap.values().stream().min(BigDecimal::compareTo).orElseThrow();
