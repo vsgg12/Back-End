@@ -122,7 +122,7 @@ public class VoteService {
         for (InGameInfo inGameInfo : inGameInfoList) {
             int votedRatio = voteAddDTOList.stream().filter(dto -> dto.getInGameInfoId().equals(inGameInfo.getId()))
                     .findFirst().get().getRatio();
-            inGameInfo.increaseTotalRatio(votedRatio);
+            inGameInfo.addTotalRatio(votedRatio);
         }
     }
 }

@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
@@ -45,7 +44,7 @@ public class InGameInfo extends BaseEntity {
                 .build();
     }
 
-    public void increaseTotalRatio(int newRatio) {
+    public void addTotalRatio(int newRatio) {
         this.totalRatio += newRatio;
     }
 }
