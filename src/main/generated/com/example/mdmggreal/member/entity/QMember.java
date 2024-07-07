@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QMember is a Querydsl query videoType for Member
+ * QMember is a Querydsl query type for Member
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QMember extends EntityPathBase<Member> {

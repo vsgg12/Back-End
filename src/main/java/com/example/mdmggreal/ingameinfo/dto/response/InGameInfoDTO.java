@@ -14,14 +14,13 @@ public class InGameInfoDTO {
     private String championName;
     private Double averageRatio;
 
-
-    public static InGameInfoDTO of(InGameInfo inGameInfo) {
+    public static InGameInfoDTO of(InGameInfo inGameInfo, Double averageRatio) {
         return InGameInfoDTO.builder()
                 .inGameInfoId(inGameInfo.getId())
                 .tier(inGameInfo.getTier().getName())
                 .position(inGameInfo.getPosition().getName())
                 .championName(inGameInfo.getChampionName())
-                .averageRatio(inGameInfo.getAverageRatio())
+                .averageRatio(averageRatio)
                 .build();
     }
 

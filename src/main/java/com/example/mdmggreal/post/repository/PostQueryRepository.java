@@ -1,5 +1,6 @@
 package com.example.mdmggreal.post.repository;
 
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.post.entity.Post;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -24,7 +25,6 @@ public class PostQueryRepository extends QuerydslRepositorySupport {
     }
 
     public List<Post> getPostList(String orderBy, String keyword) {
-
         if (orderBy.equals("view")) {
             return jpaQueryFactory.from(post)
                     .select(post)
@@ -38,18 +38,20 @@ public class PostQueryRepository extends QuerydslRepositorySupport {
                     .where(getPostListPredicate(keyword))
                     .fetch();
         }
-
-    }
-public Predicate getPostListPredicate(String keyword) {
-    BooleanBuilder predicate = new BooleanBuilder();
-    if (keyword != null && !keyword.isEmpty()) {
-        predicate.and(post.content.containsIgnoreCase(keyword).or(
-                post.title.containsIgnoreCase(keyword)
-        ));
     }
 
-    return predicate;
-}
+    public Predicate getPostListPredicate(String keyword) {
+        BooleanBuilder predicate = new BooleanBuilder();
+        if (keyword != null && !keyword.isEmpty()) {
+            predicate.and(post.content.containsIgnoreCase(keyword).or(
+                    post.title.containsIgnoreCase(keyword)
+            ));
+            predicate.and(post.isDeleted.eq(BooleanEnum.FALSE));
+        }
+
+        return predicate;
+    }
+
     public List<Post> getPostsMember(Long id) {
         return jpaQueryFactory.from(post)
                 .leftJoin(member)
@@ -60,7 +62,6 @@ public Predicate getPostListPredicate(String keyword) {
                 .fetch();
 
     }
-
 
     public List<Post> getPostsKeyword(String keyWord) {
         return jpaQueryFactory.from(post)

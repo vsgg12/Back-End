@@ -20,10 +20,8 @@ public class PostAlarmService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void addAlarm(Post post, Long votedMemberId) {
-        Member votedMember = memberRepository.findById(votedMemberId).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
-        );
+    public void addAlarm(Post post, Long memberId) {
+        Member votedMember = getMemberByMemberId(memberId);
         Member postedMember = post.getMember();
 
         postAlarmRepository.save(PostAlarm.ofVotedMember(votedMember, post));

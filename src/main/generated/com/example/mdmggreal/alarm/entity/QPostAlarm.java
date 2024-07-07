@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QPostAlarm is a Querydsl query videoType for PostAlarm
+ * QPostAlarm is a Querydsl query type for PostAlarm
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QPostAlarm extends EntityPathBase<PostAlarm> {

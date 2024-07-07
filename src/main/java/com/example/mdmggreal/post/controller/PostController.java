@@ -1,6 +1,7 @@
 package com.example.mdmggreal.post.controller;
 
 import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
@@ -46,13 +47,21 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostGetResponse> postGet(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
-        PostDTO post = postService.getPost(postId, token);
+        Long memberId = null;
+        if (token != null && !token.isEmpty()) {
+            memberId = JwtUtil.getMemberId(token);
+        }
+        PostDTO post = postService.getPost(postId, memberId);
         return ResponseEntity.ok(PostGetResponse.from(OK, post));
     }
 
     @GetMapping
     public ResponseEntity<PostGetListResponse> postsGetOrderByCreatedDateTime(@RequestHeader(value = "Authorization", required = false) String token, @RequestParam("orderby") String orderBy, @RequestParam("keyword") String keyWord) {
-        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(token, orderBy, keyWord);
+        Long memberId = null;
+        if (token != null && !token.isEmpty()) {
+            memberId = JwtUtil.getMemberId(token);
+        }
+        List<PostDTO> posts = postService.getPostsOrderByCreatedDateTime(memberId, orderBy, keyWord);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
@@ -61,6 +70,13 @@ public class PostController {
         Long memberId = JwtUtil.getMemberId(token);
         List<PostDTO> posts = postService.getPostsByMember(memberId);
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<BaseResponse> postDelete(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
+        Long memberId = JwtUtil.getMemberId(token);
+        postService.deletePost(postId, memberId);
+        return BaseResponse.toResponseEntity(OK);
     }
 
     private void checkVideoAttachment(MultipartFile videoFile, PostAddRequest postAddRequest) {
