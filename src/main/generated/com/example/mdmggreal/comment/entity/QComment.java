@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QComment is a Querydsl query videoType for Comment
+ * QComment is a Querydsl query type for Comment
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QComment extends EntityPathBase<Comment> {

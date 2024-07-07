@@ -10,7 +10,7 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QBaseEntity is a Querydsl query videoType for BaseEntity
+ * QBaseEntity is a Querydsl query type for BaseEntity
  */
 @Generated("com.querydsl.codegen.DefaultSupertypeSerializer")
 public class QBaseEntity extends EntityPathBase<BaseEntity> {

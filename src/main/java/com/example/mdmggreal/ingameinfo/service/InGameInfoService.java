@@ -26,13 +26,13 @@ public class InGameInfoService {
     }
 
     private void updateMembers(InGameInfo inGameInfo) {
-        List<Member> correctMembers = memberQueryRepository.getCorrectMember(inGameInfo.getId(), inGameInfo.getAverageRatio());
-        correctMembers.forEach(Member::editPredictedResult);
-
-        List<Member> joinedMembers = memberQueryRepository.getJoinedMember(inGameInfo.getId());
-        joinedMembers.forEach(member -> {
-            Tier tier = Tier.getTier(member.getJoinedResult(), member.getPredictedResult());
-            member.updateTier(tier);
-        });
+//        List<Member> correctMembers = memberQueryRepository.getCorrectMember(inGameInfo.getId(), inGameInfo.getAverageRatio());
+//        correctMembers.forEach(Member::editPredictedResult);
+//
+//        List<Member> joinedMembers = memberQueryRepository.getJoinedMember(inGameInfo.getId());
+//        joinedMembers.forEach(member -> {
+//            Tier tier = Tier.getTier(member.getJoinedResult(), member.getPredictedResult());
+//            member.updateTier(tier);
+//        });
     }
 }

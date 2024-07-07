@@ -24,8 +24,6 @@ public class QInGameInfo extends EntityPathBase<InGameInfo> {
 
     public final com.example.mdmggreal.global.entity.QBaseEntity _super = new com.example.mdmggreal.global.entity.QBaseEntity(this);
 
-    public final NumberPath<Double> averageRatio = createNumber("averageRatio", Double.class);
-
     public final StringPath championName = createString("championName");
 
     //inherited
@@ -41,6 +39,8 @@ public class QInGameInfo extends EntityPathBase<InGameInfo> {
     public final com.example.mdmggreal.post.entity.QPost post;
 
     public final EnumPath<com.example.mdmggreal.ingameinfo.type.Tier> tier = createEnum("tier", com.example.mdmggreal.ingameinfo.type.Tier.class);
+
+    public final NumberPath<Long> totalRatio = createNumber("totalRatio", Long.class);
 
     public QInGameInfo(String variable) {
         this(InGameInfo.class, forVariable(variable), INITS);
