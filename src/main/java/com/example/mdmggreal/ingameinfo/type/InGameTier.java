@@ -15,6 +15,7 @@ public enum InGameTier {
     GOLD("골드"),
     SILVER("실버"),
     BRONZE("브론즈"),
+    IRON("아이언"),
     UNRANK("언랭"),
     ;
     private final String name;
