@@ -125,9 +125,6 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-    public void editPredictedResult() {
-        this.predictedResult += 1;
-    }
 
     public void editJoinedResult() {
         this.joinedResult += 1;
