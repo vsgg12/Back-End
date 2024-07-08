@@ -24,7 +24,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final com.example.mdmggreal.global.entity.QBaseEntity _super = new com.example.mdmggreal.global.entity.QBaseEntity(this);
 
-    public final com.example.mdmggreal.member.type.QAgree agree;
+    public final QAgree agree;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDateTime = _super.createdDateTime;
@@ -72,7 +72,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public QMember(Class<? extends Member> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.agree = inits.isInitialized("agree") ? new com.example.mdmggreal.member.type.QAgree(forProperty("agree")) : null;
+        this.agree = inits.isInitialized("agree") ? new QAgree(forProperty("agree")) : null;
     }
 
 }
