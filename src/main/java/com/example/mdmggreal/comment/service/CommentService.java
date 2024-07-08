@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
+import static java.lang.Boolean.TRUE;
 
 @Service
 @RequiredArgsConstructor
@@ -97,7 +98,7 @@ public class CommentService {
         if (!comment.getMember().getId().equals(member.getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        comment.delete();
+        comment.changeIsDeleted(TRUE);
         /*
         todo 1.댓글 삭제시 포인트 롤백정책 정해질 경우 로직구현
          */
