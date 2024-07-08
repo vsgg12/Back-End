@@ -14,6 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
+import static com.example.mdmggreal.member.type.MemberTier.UNRANK;
 import static com.example.mdmggreal.member.type.OAuthProvider.NAVER;
 import static com.example.mdmggreal.member.type.Role.USER;
 import static jakarta.persistence.EnumType.STRING;
@@ -116,7 +117,7 @@ public class Member extends BaseEntity {
                         .agreePromotion(request.getAgrees().isAgreePromotion() ? TRUE : FALSE)
                         .build())
                 .role(USER)
-                .memberTier(MemberTier.UNRANK)
+                .memberTier(UNRANK)
                 .oAuthProvider(NAVER)
                 .predictedResult(0)
                 .joinedResult(0)
