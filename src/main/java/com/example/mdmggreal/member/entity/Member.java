@@ -11,7 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
+import static com.example.mdmggreal.ingameinfo.type.Tier.UNRANK;
 import static com.example.mdmggreal.member.type.OAuthProvider.NAVER;
 import static com.example.mdmggreal.member.type.Role.USER;
 import static jakarta.persistence.EnumType.STRING;
@@ -31,13 +33,13 @@ public class Member extends BaseEntity {
     /**
      * 이메일
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     /**
      * 닉네임
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     /**
@@ -55,36 +57,49 @@ public class Member extends BaseEntity {
     /**
      * 티어
      */
+    @Enumerated(STRING)
+    @Column(nullable = false)
     private Tier tier;
 
     /**
      * 인증
      */
     @Enumerated(STRING)
+    @Column(nullable = false)
     private Role role;
 
     /**
      * 포인트
      */
+    @Column(nullable = false)
+    @ColumnDefault("0")
     private Integer point;
 
+    /**
+     * 약관 동의 여부
+     */
     @Embedded
+    @Column(nullable = false)
     private Agree agree;
 
     /**
      * 맞춘 판결 수
      */
+    @ColumnDefault("0")
     private Integer predictedResult;
+
     /**
      * 참여한 판결 수
      */
+    @ColumnDefault("0")
     private Integer joinedResult;
 
     /**
      * SNS 가입 경로
      */
+    @Enumerated(STRING)
+    @Column(nullable = false)
     private OAuthProvider oAuthProvider;
-
 
     /**
      * 네이버 로그인
@@ -102,7 +117,7 @@ public class Member extends BaseEntity {
                         .agreePromotion(request.getAgrees().isAgreePromotion())
                         .build())
                 .role(USER)
-                .tier(Tier. UNRANK)
+                .tier(UNRANK)
                 .oAuthProvider(NAVER)
                 .predictedResult(0)
                 .joinedResult(0)

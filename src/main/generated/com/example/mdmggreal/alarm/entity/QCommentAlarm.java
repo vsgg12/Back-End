@@ -33,7 +33,7 @@ public class QCommentAlarm extends EntityPathBase<CommentAlarm> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isRead = createBoolean("isRead");
+    public final EnumPath<com.example.mdmggreal.global.entity.type.BooleanEnum> isRead = createEnum("isRead", com.example.mdmggreal.global.entity.type.BooleanEnum.class);
 
     public final com.example.mdmggreal.member.entity.QMember member;
 
