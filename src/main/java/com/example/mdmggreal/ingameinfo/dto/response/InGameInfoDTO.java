@@ -17,7 +17,7 @@ public class InGameInfoDTO {
     public static InGameInfoDTO of(InGameInfo inGameInfo, Double averageRatio) {
         return InGameInfoDTO.builder()
                 .inGameInfoId(inGameInfo.getId())
-                .tier(inGameInfo.getTier().getName())
+                .tier(inGameInfo.getInGameTier().getName())
                 .position(inGameInfo.getPosition().getName())
                 .championName(inGameInfo.getChampionName())
                 .averageRatio(averageRatio)

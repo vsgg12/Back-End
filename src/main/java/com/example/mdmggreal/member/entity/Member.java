@@ -1,7 +1,7 @@
 package com.example.mdmggreal.member.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
-import com.example.mdmggreal.ingameinfo.type.Tier;
+import com.example.mdmggreal.member.type.MemberTier;
 import com.example.mdmggreal.member.dto.request.SignUpRequest;
 import com.example.mdmggreal.member.type.Agree;
 import com.example.mdmggreal.member.type.OAuthProvider;
@@ -55,7 +55,7 @@ public class Member extends BaseEntity {
     /**
      * 티어
      */
-    private Tier tier;
+    private MemberTier memberTier;
 
     /**
      * 인증
@@ -102,7 +102,7 @@ public class Member extends BaseEntity {
                         .agreePromotion(request.getAgrees().isAgreePromotion())
                         .build())
                 .role(USER)
-                .tier(Tier. UNRANK)
+                .memberTier(MemberTier. UNRANK)
                 .oAuthProvider(NAVER)
                 .predictedResult(0)
                 .joinedResult(0)
@@ -118,8 +118,8 @@ public class Member extends BaseEntity {
         this.joinedResult += 1;
     }
 
-    public void updateTier(Tier tier) {
-        this.tier = tier;
+    public void updateTier(MemberTier memberTier) {
+        this.memberTier = memberTier;
     }
 
     public void rewardPointByComment(int point) {

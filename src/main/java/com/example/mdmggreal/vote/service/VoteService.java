@@ -5,11 +5,12 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoQueryRepository;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
-import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.type.MemberTier;
 import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
+import com.example.mdmggreal.vote.dto.request.VoteAddRequest.VoteAddDTO;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.repository.VoteRepository;
@@ -17,11 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.*;
-
-import com.example.mdmggreal.vote.dto.request.VoteAddRequest.VoteAddDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -100,9 +100,9 @@ public class VoteService {
 
     private void updateMemberAfterVote(Member member) {
         member.editJoinedResult();
-        Tier tier = Tier.getTier(member.getJoinedResult(), member.getPredictedResult());
-        if (!member.getTier().equals(tier)) {
-            member.updateTier(tier);
+        MemberTier memberTier = MemberTier.getTier(member.getJoinedResult(), member.getPredictedResult());
+        if (!member.getMemberTier().equals(memberTier)) {
+            member.updateTier(memberTier);
         }
     }
 
@@ -114,7 +114,7 @@ public class VoteService {
 
     private void rewardPoint(Member member) {
         if (member.getJoinedResult() / 3 == 0 && member.getJoinedResult() != 0) {
-            member.rewardPointByJoinedResult(member.getTier().getJoinedResultPoint());
+            member.rewardPointByJoinedResult(member.getMemberTier().getJoinedResultPoint());
         }
     }
 

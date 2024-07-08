@@ -2,14 +2,10 @@ package com.example.mdmggreal.ingameinfo.service;
 
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoQueryRepository;
-import com.example.mdmggreal.ingameinfo.type.Tier;
-import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberQueryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
