@@ -3,12 +3,10 @@ package com.example.mdmggreal.vote.service;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
-import com.example.mdmggreal.ingameinfo.repository.InGameInfoQueryRepository;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.member.type.MemberTier;
-import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest.VoteAddDTO;
 import com.example.mdmggreal.vote.entity.Vote;
@@ -30,8 +28,6 @@ public class VoteService {
     private final MemberRepository memberRepository;
     private final VoteRepository voteRepository;
     private final VoteQueryRepository voteQueryRepository;
-    private final PostRepository postRepository;
-    private final InGameInfoQueryRepository inGameInfoQueryRepository;
     private final InGameInfoRepository inGameInfoRepository;
 
     @Transactional
