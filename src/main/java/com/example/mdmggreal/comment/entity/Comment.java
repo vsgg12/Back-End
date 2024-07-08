@@ -48,10 +48,11 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ColumnDefault("FALSE")
-    @Column(nullable = false)
     @Enumerated(STRING)
+    @Column(nullable = false)
+    @ColumnDefault("'FALSE'")
     private BooleanEnum isDeleted;
+
 
     // 대댓글 생성
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
