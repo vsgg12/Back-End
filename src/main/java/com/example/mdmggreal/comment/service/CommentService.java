@@ -90,7 +90,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteCommentList(Long postId, Long memberId, Long commentId) {
+    public void deleteCommentList(Long memberId, Long commentId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
