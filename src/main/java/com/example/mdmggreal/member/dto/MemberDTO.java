@@ -1,6 +1,5 @@
 package com.example.mdmggreal.member.dto;
 
-import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.entity.Member;
 import lombok.*;
 
@@ -39,7 +38,7 @@ public class MemberDTO  {
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .mobile(member.getMobile())
-                .tier(member.getTier().getName())
+                .tier(member.getMemberTier().getName())
                 .build();
     }
 }

@@ -1,7 +1,7 @@
 package com.example.mdmggreal.member.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
-import com.example.mdmggreal.ingameinfo.type.Tier;
+import com.example.mdmggreal.member.type.MemberTier;
 import com.example.mdmggreal.member.dto.request.SignUpRequest;
 import com.example.mdmggreal.member.type.OAuthProvider;
 import com.example.mdmggreal.member.type.Role;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
-import static com.example.mdmggreal.ingameinfo.type.Tier.UNRANK;
+import static com.example.mdmggreal.member.type.MemberTier.UNRANK;
 import static com.example.mdmggreal.member.type.OAuthProvider.NAVER;
 import static com.example.mdmggreal.member.type.Role.USER;
 import static jakarta.persistence.EnumType.STRING;
@@ -60,7 +60,7 @@ public class Member extends BaseEntity {
      */
     @Enumerated(STRING)
     @Column(nullable = false)
-    private Tier tier;
+    private MemberTier memberTier;
 
     /**
      * 인증
@@ -117,7 +117,7 @@ public class Member extends BaseEntity {
                         .agreePromotion(request.getAgrees().isAgreePromotion() ? TRUE : FALSE)
                         .build())
                 .role(USER)
-                .tier(UNRANK)
+                .memberTier(UNRANK)
                 .oAuthProvider(NAVER)
                 .predictedResult(0)
                 .joinedResult(0)
@@ -125,16 +125,13 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-    public void editPredictedResult() {
-        this.predictedResult += 1;
-    }
 
     public void editJoinedResult() {
         this.joinedResult += 1;
     }
 
-    public void updateTier(Tier tier) {
-        this.tier = tier;
+    public void updateTier(MemberTier memberTier) {
+        this.memberTier = memberTier;
     }
 
     public void rewardPointByComment(int point) {

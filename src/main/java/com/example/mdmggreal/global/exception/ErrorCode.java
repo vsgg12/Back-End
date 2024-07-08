@@ -42,6 +42,7 @@ public enum ErrorCode {
     INVALID_COMMENT(HttpStatus.BAD_REQUEST, "부모 댓글이 없습니다."),
     COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다"),
     INVALID_PARENT_ID(HttpStatus.BAD_REQUEST, "postId에 맞는 parentId인지 확인해주세요."),
+    NO_PERMISSION_TO_DELETE_COMMENT(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
 
     // 해시태그
     HASHTAGNAME_NOT_MATCH(HttpStatus.BAD_REQUEST, "해시태그 이름이 일치하지 않습니다."),
@@ -51,4 +52,4 @@ public enum ErrorCode {
     NOT_MATCH_IN_GAME_INFO(HttpStatus.BAD_REQUEST, "게시글에 해당하는 인게임 정보가 아닙니다.");
     private final HttpStatus httpStatus;
     private final String message;
-    }
+}

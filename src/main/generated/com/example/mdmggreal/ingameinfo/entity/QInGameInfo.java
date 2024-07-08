@@ -31,14 +31,14 @@ public class QInGameInfo extends EntityPathBase<InGameInfo> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final EnumPath<com.example.mdmggreal.ingameinfo.type.InGameTier> inGameTier = createEnum("inGameTier", com.example.mdmggreal.ingameinfo.type.InGameTier.class);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifyDateTime = _super.modifyDateTime;
 
     public final EnumPath<com.example.mdmggreal.ingameinfo.type.Position> position = createEnum("position", com.example.mdmggreal.ingameinfo.type.Position.class);
 
     public final com.example.mdmggreal.post.entity.QPost post;
-
-    public final EnumPath<com.example.mdmggreal.ingameinfo.type.Tier> tier = createEnum("tier", com.example.mdmggreal.ingameinfo.type.Tier.class);
 
     public final NumberPath<Long> totalRatio = createNumber("totalRatio", Long.class);
 

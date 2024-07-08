@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,10 @@ public class Comment extends BaseEntity {
     private Member member;
 
     @Enumerated(STRING)
+    @Column(nullable = false)
+    @ColumnDefault("'FALSE'")
     private BooleanEnum isDeleted;
+
 
     // 대댓글 생성
     public static Comment of(Post post, Member member, Comment comment, CommentAddRequest request) {
