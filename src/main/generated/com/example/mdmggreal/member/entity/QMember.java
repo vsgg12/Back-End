@@ -35,6 +35,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Integer> joinedResult = createNumber("joinedResult", Integer.class);
 
+    public final EnumPath<com.example.mdmggreal.member.type.MemberTier> memberTier = createEnum("memberTier", com.example.mdmggreal.member.type.MemberTier.class);
+
     public final StringPath mobile = createString("mobile");
 
     //inherited
@@ -51,8 +53,6 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath profileImage = createString("profileImage");
 
     public final EnumPath<com.example.mdmggreal.member.type.Role> role = createEnum("role", com.example.mdmggreal.member.type.Role.class);
-
-    public final EnumPath<com.example.mdmggreal.ingameinfo.type.Tier> tier = createEnum("tier", com.example.mdmggreal.ingameinfo.type.Tier.class);
 
     public QMember(String variable) {
         this(Member.class, forVariable(variable), INITS);

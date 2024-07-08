@@ -194,7 +194,7 @@ public class PostService {
     }
 
     private void rewardPoint(Member member) {
-        member.rewardPointByPostCreation(member.getTier().getPostCreationPoint());
+        member.rewardPointByPostCreation(member.getMemberTier().getPostCreationPoint());
     }
 
 }

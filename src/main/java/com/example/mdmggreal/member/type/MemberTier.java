@@ -1,11 +1,11 @@
-package com.example.mdmggreal.ingameinfo.type;
+package com.example.mdmggreal.member.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Tier {
+public enum MemberTier {
     CHALLENGER("챌린저", 2000, 1200, 70, 75),
     GRANDMASTER("그랜드마스터", 1000, 600, 60, 65),
     MASTER("마스터", 500, 300, 50, 55),
@@ -27,28 +27,28 @@ public enum Tier {
 
 
 
-    public static Tier fromName(String name) {
-        for (Tier tier : Tier.values()) {
-            if (tier.getName().equalsIgnoreCase(name)) {
-                return tier;
+    public static MemberTier fromName(String name) {
+        for (MemberTier memberTier : MemberTier.values()) {
+            if (memberTier.getName().equalsIgnoreCase(name)) {
+                return memberTier;
             }
         }
         throw new IllegalArgumentException("No enum constant with name " + name);
     }
 
-    public static String fromTier(Tier tier) {
-        for (Tier t : Tier.values()) {
-            if (tier.equals(t)) {
+    public static String fromTier(MemberTier memberTier) {
+        for (MemberTier t : memberTier.values()) {
+            if (memberTier.equals(t)) {
                 return t.name;
             }
         }
-        throw new IllegalArgumentException("해당하는 티어가 없습니다. : " + tier);
+        throw new IllegalArgumentException("해당하는 티어가 없습니다. : " + memberTier);
     }
 
-    public static Tier getTier(Integer joinedResult, Integer predictedResult) {
-        for (Tier tier : Tier.values()) {
-            if (joinedResult >= tier.getJoinedResult() && predictedResult >= tier.getPredictedResult()) {
-                return tier;
+    public static MemberTier getTier(Integer joinedResult, Integer predictedResult) {
+        for (MemberTier memberTier : MemberTier.values()) {
+            if (joinedResult >= memberTier.getJoinedResult() && predictedResult >= memberTier.getPredictedResult()) {
+                return memberTier;
             }
         }
         throw new IllegalArgumentException("No tier found with the given results.");
