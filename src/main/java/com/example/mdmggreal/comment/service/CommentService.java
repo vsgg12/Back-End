@@ -117,8 +117,8 @@ public class CommentService {
 //    }
 
     private void rewardPoint(Long postId, Member commentedMember) {
-        boolean isCommentAuthor = commentRepository.existsByPostIdAndMemberId(postId, commentedMember.getId());
-        if (!isCommentAuthor) {
+        boolean isFirstCommentOnPost = commentRepository.existsByPostIdAndMemberId(postId, commentedMember.getId());
+        if (!isFirstCommentOnPost) {
             commentedMember.rewardPointByComment(5);
         }
 
