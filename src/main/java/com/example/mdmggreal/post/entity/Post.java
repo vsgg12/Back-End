@@ -40,13 +40,20 @@ public class Post extends BaseEntity {
 
     @Embedded
     private Video video;
+
     @Enumerated(STRING)
     private PostStatus status;
+
     private String title;
+
     private String content;
+
     private String thumbnailURL;
+
     private Long viewCount;
+
     private LocalDateTime endDateTime;
+
     @Enumerated(STRING)
     private BooleanEnum isDeleted;
 

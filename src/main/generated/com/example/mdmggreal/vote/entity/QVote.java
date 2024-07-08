@@ -11,7 +11,7 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QVote is a Querydsl query videoType for Vote
+ * QVote is a Querydsl query type for Vote
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QVote extends EntityPathBase<Vote> {
@@ -36,7 +36,7 @@ public class QVote extends EntityPathBase<Vote> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifyDateTime = _super.modifyDateTime;
 
-    public final NumberPath<Long> ratio = createNumber("ratio", Long.class);
+    public final NumberPath<Integer> ratio = createNumber("ratio", Integer.class);
 
     public QVote(String variable) {
         this(Vote.class, forVariable(variable), INITS);

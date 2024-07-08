@@ -71,7 +71,6 @@ public class CommentService {
         rewardPoint(postId, commentedMember);
     }
 
-
     @Transactional
     public List<CommentDTO> getCommentList(Long postId) {
         List<Comment> list = commentDAO.getList(postId);

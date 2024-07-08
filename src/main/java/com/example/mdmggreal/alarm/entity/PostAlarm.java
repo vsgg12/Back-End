@@ -1,6 +1,7 @@
 package com.example.mdmggreal.alarm.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.post.entity.Post;
 import jakarta.persistence.*;
@@ -9,7 +10,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static java.lang.Boolean.FALSE;
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Getter
@@ -30,7 +33,10 @@ public class PostAlarm extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
-    private Boolean isRead;
+
+    @Enumerated(STRING)
+    private BooleanEnum isRead;
+
     private String alarmContents;
 
     public static PostAlarm ofVotedMember(Member votedMember, Post post) {
@@ -52,6 +58,6 @@ public class PostAlarm extends BaseEntity {
     }
 
     public void editIsRead() {
-        this.isRead = true;
+        this.isRead = TRUE;
     }
 }

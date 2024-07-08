@@ -24,7 +24,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public final com.example.mdmggreal.global.entity.QBaseEntity _super = new com.example.mdmggreal.global.entity.QBaseEntity(this);
 
-    public final com.example.mdmggreal.member.type.QAgree agree;
+    public final QAgree agree;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDateTime = _super.createdDateTime;
@@ -34,6 +34,8 @@ public class QMember extends EntityPathBase<Member> {
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final NumberPath<Integer> joinedResult = createNumber("joinedResult", Integer.class);
+
+    public final EnumPath<com.example.mdmggreal.member.type.MemberTier> memberTier = createEnum("memberTier", com.example.mdmggreal.member.type.MemberTier.class);
 
     public final StringPath mobile = createString("mobile");
 
@@ -51,8 +53,6 @@ public class QMember extends EntityPathBase<Member> {
     public final StringPath profileImage = createString("profileImage");
 
     public final EnumPath<com.example.mdmggreal.member.type.Role> role = createEnum("role", com.example.mdmggreal.member.type.Role.class);
-
-    public final EnumPath<com.example.mdmggreal.ingameinfo.type.Tier> tier = createEnum("tier", com.example.mdmggreal.ingameinfo.type.Tier.class);
 
     public QMember(String variable) {
         this(Member.class, forVariable(variable), INITS);
@@ -72,7 +72,7 @@ public class QMember extends EntityPathBase<Member> {
 
     public QMember(Class<? extends Member> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.agree = inits.isInitialized("agree") ? new com.example.mdmggreal.member.type.QAgree(forProperty("agree")) : null;
+        this.agree = inits.isInitialized("agree") ? new QAgree(forProperty("agree")) : null;
     }
 
 }

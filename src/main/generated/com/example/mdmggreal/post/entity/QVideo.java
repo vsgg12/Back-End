@@ -10,7 +10,7 @@ import com.querydsl.core.types.Path;
 
 
 /**
- * QVideo is a Querydsl query videoType for Video
+ * QVideo is a Querydsl query type for Video
  */
 @Generated("com.querydsl.codegen.DefaultEmbeddableSerializer")
 public class QVideo extends BeanPath<Video> {

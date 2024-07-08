@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 import static com.example.mdmggreal.alarm.entity.type.AlarmType.COMMENT;
 import static com.example.mdmggreal.alarm.entity.type.AlarmType.POST;
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
 
 @Getter
 @Builder
@@ -40,7 +41,7 @@ public class AlarmDTO {
                 .alarmContents(postAlarm.getAlarmContents())
                 .postId(postAlarm.getPost().getId())
                 .alarmType(POST)
-                .isRead(postAlarm.getIsRead())
+                .isRead(postAlarm.getIsRead().equals(TRUE))
                 .createdDateTime(postAlarm.getCreatedDateTime())
                 .build();
     }
@@ -52,7 +53,7 @@ public class AlarmDTO {
                 .postId(postId)
                 .commentContent(commentAlarm.getComment().getContent())
                 .alarmType(COMMENT)
-                .isRead(commentAlarm.getIsRead())
+                .isRead(commentAlarm.getIsRead().equals(TRUE))
                 .createdDateTime(commentAlarm.getCreatedDateTime())
                 .build();
     }

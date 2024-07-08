@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -46,7 +47,7 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
+    @ColumnDefault("FALSE")
     @Column(nullable = false)
     @Enumerated(STRING)
     private BooleanEnum isDeleted;
@@ -58,7 +59,7 @@ public class Comment extends BaseEntity {
                 .post(post)
                 .parent(comment)
                 .member(member)
-                .isDeleted(BooleanEnum.FALSE)
+                .isDeleted(FALSE)
                 .build();
     }
 
@@ -68,11 +69,11 @@ public class Comment extends BaseEntity {
                 .content(request.getContent())
                 .post(post)
                 .member(member)
-                .isDeleted(BooleanEnum.FALSE)
+                .isDeleted(FALSE)
                 .build();
     }
 
-    public void delete() {
-        this.isDeleted = TRUE;
+    public void changeIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted ? TRUE : FALSE;
     }
 }
