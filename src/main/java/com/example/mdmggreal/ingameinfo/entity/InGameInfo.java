@@ -25,13 +25,19 @@ public class InGameInfo extends BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "in_game_info_id")
     private Long id;
+
     private String championName;
+
     @Enumerated(STRING)
     private Tier tier;
+
+    @Enumerated(STRING)
     private Position position;
+
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
     private Long totalRatio;
 
     public static InGameInfo of(InGameInfoRequest request, Post post) {

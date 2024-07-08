@@ -2,6 +2,7 @@ package com.example.mdmggreal.alarm.entity;
 
 import com.example.mdmggreal.comment.entity.Comment;
 import com.example.mdmggreal.global.entity.BaseEntity;
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static java.lang.Boolean.FALSE;
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Getter
@@ -37,7 +40,8 @@ public class CommentAlarm extends BaseEntity {
     private Comment comment;
 
     // 알림 읽음 여부
-    private Boolean isRead;
+    @Enumerated(STRING)
+    private BooleanEnum isRead;
 
     // 알림 내용
     private String alarmContents;
@@ -60,7 +64,7 @@ public class CommentAlarm extends BaseEntity {
     }
 
     public void editIsRead() {
-        this.isRead = true;
+        this.isRead = TRUE;
     }
 
 }
