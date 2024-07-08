@@ -2,6 +2,7 @@ package com.example.mdmggreal.member.type;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
+import com.example.mdmggreal.member.entity.Agree;
 import com.querydsl.core.types.dsl.*;
 
 import com.querydsl.core.types.PathMetadata;

@@ -3,7 +3,6 @@ package com.example.mdmggreal.member.entity;
 import com.example.mdmggreal.global.entity.BaseEntity;
 import com.example.mdmggreal.ingameinfo.type.Tier;
 import com.example.mdmggreal.member.dto.request.SignUpRequest;
-import com.example.mdmggreal.member.type.Agree;
 import com.example.mdmggreal.member.type.OAuthProvider;
 import com.example.mdmggreal.member.type.Role;
 import jakarta.persistence.*;
@@ -11,7 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
+import static com.example.mdmggreal.ingameinfo.type.Tier.UNRANK;
 import static com.example.mdmggreal.member.type.OAuthProvider.NAVER;
 import static com.example.mdmggreal.member.type.Role.USER;
 import static jakarta.persistence.EnumType.STRING;
@@ -31,13 +34,13 @@ public class Member extends BaseEntity {
     /**
      * 이메일
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     /**
      * 닉네임
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     /**
@@ -55,36 +58,48 @@ public class Member extends BaseEntity {
     /**
      * 티어
      */
+    @Enumerated(STRING)
+    @Column(nullable = false)
     private Tier tier;
 
     /**
      * 인증
      */
     @Enumerated(STRING)
+    @Column(nullable = false)
     private Role role;
 
     /**
      * 포인트
      */
+    @Column(nullable = false)
+    @ColumnDefault("0")
     private Integer point;
 
+    /**
+     * 약관 동의 여부
+     */
     @Embedded
     private Agree agree;
 
     /**
      * 맞춘 판결 수
      */
+    @ColumnDefault("0")
     private Integer predictedResult;
+
     /**
      * 참여한 판결 수
      */
+    @ColumnDefault("0")
     private Integer joinedResult;
 
     /**
      * SNS 가입 경로
      */
+    @Enumerated(STRING)
+    @Column(nullable = false)
     private OAuthProvider oAuthProvider;
-
 
     /**
      * 네이버 로그인
@@ -96,13 +111,13 @@ public class Member extends BaseEntity {
                 .mobile(null)
                 .profileImage(request.getProfileImage())
                 .agree(Agree.builder()
-                        .agreeAge(request.getAgrees().isAgreeAge())
-                        .agreeTerms(request.getAgrees().isAgreeTerms())
-                        .agreePrivacy(request.getAgrees().isAgreePrivacy())
-                        .agreePromotion(request.getAgrees().isAgreePromotion())
+                        .agreeAge(request.getAgrees().isAgreeAge() ? TRUE : FALSE)
+                        .agreeTerms(request.getAgrees().isAgreeTerms() ? TRUE : FALSE)
+                        .agreePrivacy(request.getAgrees().isAgreePrivacy() ? TRUE : FALSE)
+                        .agreePromotion(request.getAgrees().isAgreePromotion() ? TRUE : FALSE)
                         .build())
                 .role(USER)
-                .tier(Tier. UNRANK)
+                .tier(UNRANK)
                 .oAuthProvider(NAVER)
                 .predictedResult(0)
                 .joinedResult(0)

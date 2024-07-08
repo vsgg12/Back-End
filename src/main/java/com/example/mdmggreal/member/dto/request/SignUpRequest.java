@@ -1,6 +1,5 @@
 package com.example.mdmggreal.member.dto.request;
 
-import com.example.mdmggreal.member.type.Agree;
 import lombok.Getter;
 
 @Getter
@@ -13,5 +12,16 @@ public class SignUpRequest {
     private String profileImage;
 
     // 약관 동의 여부
-    private Agree agrees;
+    private AgreeDTO agrees;
+
+    @Getter
+    public static class AgreeDTO {
+        private boolean agreeAge;
+
+        private boolean agreeTerms;
+
+        private boolean agreePrivacy;
+
+        private boolean agreePromotion;
+    }
 }
