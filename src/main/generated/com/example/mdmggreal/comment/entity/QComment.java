@@ -33,7 +33,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isDeleted = createBoolean("isDeleted");
+    public final EnumPath<com.example.mdmggreal.global.entity.type.BooleanEnum> isDeleted = createEnum("isDeleted", com.example.mdmggreal.global.entity.type.BooleanEnum.class);
 
     public final com.example.mdmggreal.member.entity.QMember member;
 

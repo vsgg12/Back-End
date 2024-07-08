@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
 
 @Service
@@ -107,8 +108,7 @@ public class CommentService {
 
     private Comment getDeletableAncestorComment(Comment comment) {
         Comment parent = comment.getParent();
-        if (parent != null && parent.getChildren().size() == 1 && parent.getIsDeleted())
-
+        if (parent != null && parent.getChildren().size() == 1 && parent.getIsDeleted().equals(TRUE))
             return getDeletableAncestorComment(parent);
         return comment;
     }
