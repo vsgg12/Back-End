@@ -135,7 +135,8 @@ public class PostService {
         return PostDTO.of(MemberDTO.from(post.getMember()), post, hashtags, inGameInfoDTOList, isVote);
     }
 
-    private List<InGameInfoDTO> createInGameInfoDTOList(Post post) {
+    @Transactional
+    public List<InGameInfoDTO> createInGameInfoDTOList(Post post) {
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(post.getId());
         BigDecimal votedMembersCount = new BigDecimal(voteRepository.countByInGameInfoId(inGameInfoList.get(0).getId()).toString());
 
