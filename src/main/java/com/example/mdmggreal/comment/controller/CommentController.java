@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RequestMapping("/api/post/{postid}/comment")
 @RequiredArgsConstructor
@@ -39,9 +40,9 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentid}")
-    public ResponseEntity<BaseResponse> commentDelete(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "postid") Long postId, @PathVariable(value = "comment") Long commentId) {
+    public ResponseEntity<BaseResponse> commentDelete(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "postid") Long postId, @PathVariable(value = "commentid") Long commentId) {
         Long memberId = JwtUtil.getMemberId(token);
-        commentService.deleteCommentList(postId, memberId, commentId);
+        commentService.deleteComment(memberId, commentId, postId);
         return BaseResponse.toResponseEntity(OK);
     }
 

@@ -16,10 +16,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
+import static java.lang.Boolean.TRUE;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +31,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-
     private final CommentDAO commentDAO;
-
     private final CommentAlarmService commentAlarmService;
 
     @Transactional
@@ -71,8 +72,6 @@ public class CommentService {
         rewardPoint(postId, commentedMember);
     }
 
-
-
     @Transactional
     public List<CommentDTO> getCommentList(Long postId) {
         List<Comment> list = commentDAO.getList(postId);
@@ -90,31 +89,36 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteCommentList(Long postId, Long memberId, Long commentId) {
+    public void deleteComment(Long memberId, Long commentId, Long postId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
         Comment comment = commentDAO.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> new CustomException(INVALID_COMMENT));
         if (!comment.getMember().getId().equals(member.getId())) {
-            throw new CustomException(ErrorCode.NO_PERMISSION);
+            throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        if (comment.getChildren().size() != 0) {
-            comment.changeIsDeleted(true);
-        } else {
-            commentRepository.delete(getDeletableAncestorComment(comment));
-        }
+        comment.changeIsDeleted(TRUE);
+        /*
+        todo 1.댓글 삭제시 포인트 롤백정책 정해질 경우 로직구현
+         */
+//        validateRollbackPoint(postId, memberId);
     }
 
-    private Comment getDeletableAncestorComment(Comment comment) {
-        Comment parent = comment.getParent();
-        if (parent != null && parent.getChildren().size() == 1 && parent.getIsDeleted().equals(TRUE))
-            return getDeletableAncestorComment(parent);
-        return comment;
-    }
+//    private void validateRollbackPoint(Long postId, Long memberId) {
+//        boolean isCommentAuthor = commentRepository.existsByPostIdAndMemberId(postId, memberId);
+//        if (!isCommentAuthor) {
+//            rollbackPoint(postId, memberId);
+//        }
+//    }
+//
+//    private void rollbackPoint(Long postId, Long memberId) {
+//
+//    }
+
     private void rewardPoint(Long postId, Member commentedMember) {
-        boolean isComment = commentRepository.existsByPostIdAndMemberId(postId, commentedMember.getId());
-        if (!isComment) {
+        boolean isFirstCommentOnPost = commentRepository.existsByPostIdAndMemberId(postId, commentedMember.getId());
+        if (!isFirstCommentOnPost) {
             commentedMember.rewardPointByComment(5);
         }
 
