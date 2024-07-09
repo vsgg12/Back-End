@@ -8,6 +8,7 @@ import com.example.mdmggreal.member.dto.response.SignUpResponse;
 import com.example.mdmggreal.member.dto.response.TokenRefreshResponse;
 import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.oauth.dto.AuthTokens;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class MemberController {
      * 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<SignUpResponse> signup(@RequestBody SignUpRequest request) {
+    public ResponseEntity<SignUpResponse> signup(@RequestBody @Valid SignUpRequest request) {
         return ResponseEntity.ok(memberService.signUp(request));
     }
 
