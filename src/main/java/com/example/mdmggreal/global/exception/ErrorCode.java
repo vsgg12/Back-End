@@ -33,6 +33,7 @@ public enum ErrorCode {
 
 
     // 투표
+    INVALID_VOTE_OF_AUTHOR(HttpStatus.FORBIDDEN, "본인의 게시글에 투표할 수 없습니다."),
     VOTE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 투표한 게시글 입니다."),
     VOTES_TOTAL_VALUE_MUST_BE_TEN(HttpStatus.BAD_REQUEST, "모든 투표값의 합은 10이어야합니다."),
     ALL_IN_GAME_INFO_VOTE_REQUIRED(HttpStatus.BAD_REQUEST, "게시글의 모든 투표 항목에 투표해주세요."),

@@ -37,6 +37,7 @@ public class VoteService {
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
         // 클라이언트 요청 검증
+        validateIsPostAuthor(inGameInfoList, member);
         validateVoteExistence(postId, member);
         validateInGameInfoId(inGameInfoList, voteAddDTOList);
         validateVotesTotalValue(voteAddDTOList);
@@ -51,6 +52,11 @@ public class VoteService {
         // Member 업데이트
         updateMemberAfterVote(member);
         rewardPoint(member);
+    }
+
+    private void validateIsPostAuthor(List<InGameInfo> inGameInfoList, Member member) {
+        if (member.getId().equals(inGameInfoList.get(0).getPost().getMember().getId()))
+            throw new CustomException(INVALID_VOTE_OF_AUTHOR);
     }
 
     private void validateVoteExistence(Long postId, Member member) {
