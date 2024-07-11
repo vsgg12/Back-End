@@ -16,6 +16,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +46,9 @@ public class CommentService {
         );
         Comment addedComment;
 
+        // 댓글을 db에 저장하기 전에 point 지급을 먼저 해야함.
+        // 저장 후에 지급하면, 이미 그 게시글에 댓글을 작성한 것으로 판별되어 포인트 지급이 안됨.
+        rewardPoint(postId, commentedMember);
 
         if (request.getParentId() == null) { // 댓글 작성
             addedComment = Comment.of(post, commentedMember, request);
@@ -69,7 +74,6 @@ public class CommentService {
         if (addedComment != null) {
             commentRepository.save(addedComment);
         }
-        rewardPoint(postId, commentedMember);
     }
 
     @Transactional
@@ -117,10 +121,16 @@ public class CommentService {
 //    }
 
     private void rewardPoint(Long postId, Member commentedMember) {
-        boolean isFirstCommentOnPost = commentRepository.existsByPostIdAndMemberId(postId, commentedMember.getId());
-        if (!isFirstCommentOnPost) {
+        Long commentedMemberId = commentedMember.getId();
+        LocalDate today = LocalDate.now();
+
+        boolean isAlreadyCommentOnPost = commentRepository.existsByPostIdAndMemberId(postId, commentedMemberId);
+        long todayRewardedCommentCount = commentRepository.countDistinctPostsWithCommentsByMemberAndDate(
+                commentedMemberId, today.atStartOfDay(), today.atTime(LocalTime.MAX)
+        );
+
+        if (!isAlreadyCommentOnPost && todayRewardedCommentCount < 30) {
             commentedMember.rewardPointByComment(5);
         }
-
     }
 }
