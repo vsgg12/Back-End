@@ -79,10 +79,12 @@ public class PostService {
             }
 
         });
-
-        rewardPoint(member);
     }
 
+    @Transactional
+    public void rewardPointByPostCreation(Member member) {
+        member.rewardPointByPostCreation(member.getMemberTier().getPostCreationPoint());
+    }
 
     @Transactional
     public PostDTO getPost(Long postId, Long memberId) {
@@ -192,9 +194,4 @@ public class PostService {
                 () -> new CustomException(INVALID_USER_ID)
         );
     }
-
-    private void rewardPoint(Member member) {
-        member.rewardPointByPostCreation(member.getMemberTier().getPostCreationPoint());
-    }
-
 }
