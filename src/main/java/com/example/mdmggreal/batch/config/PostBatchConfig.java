@@ -4,6 +4,7 @@ import com.example.mdmggreal.alarm.service.PostAlarmService;
 import com.example.mdmggreal.ingameinfo.service.InGameInfoService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
+import com.example.mdmggreal.post.service.PostService;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import java.util.List;
 public class PostBatchConfig extends DefaultBatchConfiguration {
     private final PostRepository postRepository;
     private final VoteQueryRepository voteQueryRepository;
+    private final PostService postService;
     private final PostAlarmService postAlarmService;
     private final InGameInfoService inGameInfoService;
 
@@ -59,6 +61,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     private void processPostsAfterEndDate(List<Post> postList) {
         postList.forEach(post -> {
             post.editStatus();
+            postService.rewardPointByPostCreation(post.getMember());
             addPostAlarms(post);
             inGameInfoService.processInGameInfoByPostId(post.getId());
         });

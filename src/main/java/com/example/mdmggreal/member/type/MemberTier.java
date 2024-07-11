@@ -23,10 +23,6 @@ public enum MemberTier {
     private final Integer joinedResultPoint;
     private final Integer postCreationPoint;
 
-
-
-
-
     public static MemberTier fromName(String name) {
         for (MemberTier memberTier : MemberTier.values()) {
             if (memberTier.getName().equalsIgnoreCase(name)) {
