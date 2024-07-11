@@ -19,7 +19,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public class Hashtag {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "hastag_id")
+    @Column(name = "hashtag_id")
     private Long id;
     private String name;
 
