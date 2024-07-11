@@ -20,9 +20,11 @@ public class PostHashtag {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @ManyToOne
+    @JoinColumn(name = "hashtag_id")
     private Hashtag hashtag;
 
     public static PostHashtag of(Post post, Hashtag hashtag) {
