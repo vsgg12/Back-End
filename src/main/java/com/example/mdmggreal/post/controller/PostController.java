@@ -10,6 +10,7 @@ import com.example.mdmggreal.post.dto.response.PostGetListResponse;
 import com.example.mdmggreal.post.dto.response.PostGetResponse;
 import com.example.mdmggreal.post.entity.type.VideoType;
 import com.example.mdmggreal.post.service.PostService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class PostController {
                                                    @RequestPart("uploadVideos") MultipartFile videoFile,
                                                    @RequestPart("content") MultipartFile contentFile,
                                                    @RequestPart("thumbnailImage") MultipartFile thumbnailImage,
-                                                   @RequestPart("postAddRequest") PostAddRequest postAddRequest
+                                                   @RequestPart("postAddRequest") @Valid PostAddRequest postAddRequest
     ) throws IOException {
         Long memberId = JwtUtil.getMemberId(token);
         checkVideoAttachment(videoFile, postAddRequest);
