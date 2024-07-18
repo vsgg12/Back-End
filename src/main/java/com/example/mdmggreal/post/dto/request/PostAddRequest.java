@@ -10,7 +10,7 @@ import java.util.List;
 public record PostAddRequest(
         String title,
         VideoType videoType,
-        List<@Size(max = 12, message = "해시태그는 공백포함 12자까지 작성가능합니다.") String> hashtag,
+        List<@Size(max = 12, message = "공백포함 12자까지 작성가능합니다.") String> hashtag,
         List<InGameInfoRequest> inGameInfoRequests,
         String videoLink
 ) {
