@@ -1,12 +1,15 @@
 package com.example.mdmggreal.member.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
 public class SignUpRequest {
 
+    @NotNull
     private String email;
 
+    @NotNull
     private String nickname;
 
     private String profileImage;

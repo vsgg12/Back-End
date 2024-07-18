@@ -27,6 +27,14 @@ public class BaseResponse {
                         .build());
     }
 
+    public static ResponseEntity<BaseResponse> toResponseEntity(HttpStatus httpStatus, String msg) {
+        return ResponseEntity.status(httpStatus)
+                .body(BaseResponse.builder()
+                        .resultCode(httpStatus.value())
+                        .resultMsg(msg)
+                        .build());
+    }
+
     public static ResponseEntity<BaseResponse> toResponseEntity(ErrorCode e) {
         return ResponseEntity.status(e.getHttpStatus())
                 .body(BaseResponse.builder()
