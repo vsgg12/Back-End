@@ -29,6 +29,7 @@ public enum ErrorCode {
     VIDEO_REQUIRED(HttpStatus.BAD_REQUEST, "영상링크 또는 파일을 첨부해주세요."),
     VIDEO_LINK_REQUIRED(HttpStatus.BAD_REQUEST, "영상링크를 첨부해주세요."),
     VIDEO_FILE_REQUIRED(HttpStatus.BAD_REQUEST, "영상파일을 첨부해주세요."),
+    INVALID_END_DATE(HttpStatus.BAD_REQUEST,"판결 종료날짜는 오늘부터 최소 1일 후, 최대 30일 후로 설정할 수 있습니다."),
     NO_PERMISSION_TO_DELETE_POST(HttpStatus.UNAUTHORIZED, "게시글 삭제는 게시글 생성자만 가능합니다."),
 
 
