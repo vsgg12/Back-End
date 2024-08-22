@@ -57,7 +57,7 @@ public class Post extends BaseEntity {
     @Enumerated(STRING)
     private BooleanEnum isDeleted;
 
-    public static Post of(PostAddRequest request, LocalDateTime endDateTime, String thumbnailURL, String videoUrl, String content, Member member) {
+    public static Post of(PostAddRequest request, String thumbnailURL, String videoUrl, String content, Member member) {
         return Post.builder()
                 .member(member)
                 .title(request.title())
@@ -66,7 +66,7 @@ public class Post extends BaseEntity {
                 .status(PROGRESS)
                 .video(Video.of(videoUrl, request.videoType()))
                 .viewCount(0L)
-                .endDateTime(endDateTime)
+                .endDateTime(LocalDateTime.now().plusMonths(1).with(LocalTime.MIN))
                 .isDeleted(FALSE)
                 .build();
     }
