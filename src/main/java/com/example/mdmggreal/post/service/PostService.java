@@ -61,7 +61,7 @@ public class PostService {
     public void addPost(MultipartFile videoFile, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
         Member member = getMemberByMemberId(memberId);
 
-        LocalDateTime requestEndDateTime = validateEndDateTime(postAddRequest.voteEndDate());
+        LocalDateTime requestEndDateTime = validateAndConvertStringToDateTime(postAddRequest.voteEndDate());
 
         String thumbnailUrl;
         if (thumbnailImage == null || thumbnailImage.isEmpty()) {
@@ -125,9 +125,10 @@ public class PostService {
     /**
      * 판결 종료일은 오늘부터 최소 1일 후, 최대 30일 후의 날짜로 설정 가능
      */
-    private LocalDateTime validateEndDateTime(String voteEndDate) {
+    private LocalDateTime validateAndConvertStringToDateTime(String voteEndDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDateTime requestEndDateTime = LocalDate.parse(voteEndDate, formatter).atTime(LocalTime.MAX);
+        LocalDateTime requestEndDateTime = LocalDate.parse(voteEndDate, formatter)
+                .atTime(LocalTime.of(23, 59, 59, 999_999_000));
 
         long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(), requestEndDateTime);
         if (daysBetween >=1 && daysBetween <= 30) {
