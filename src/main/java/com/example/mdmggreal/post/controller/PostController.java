@@ -66,13 +66,6 @@ public class PostController {
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<PostGetListResponse> postsGetByMember(@RequestHeader(value = "Authorization") String token) {
-        Long memberId = JwtUtil.getMemberId(token);
-        List<PostDTO> posts = postService.getPostsByMember(memberId);
-        return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
-    }
-
     @DeleteMapping("/{postId}")
     public ResponseEntity<BaseResponse> postDelete(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
         Long memberId = JwtUtil.getMemberId(token);

@@ -105,13 +105,6 @@ public class PostService {
         return posts.stream().map(post -> createPostDTO(post, memberId)).toList();
     }
 
-    @Transactional(readOnly = true)
-    public List<PostDTO> getPostsByMember(Long memberId) {
-        Member loginMember = getMemberByMemberId(memberId);
-        List<Post> posts = postQueryRepository.getPostsMember(loginMember.getId());
-        return posts.stream().map(post -> createPostDTO(post, loginMember.getId())).toList();
-    }
-
     @Transactional
     public void deletePost(Long postId, Long memberId) {
         Member loginMember = getMemberByMemberId(memberId);
