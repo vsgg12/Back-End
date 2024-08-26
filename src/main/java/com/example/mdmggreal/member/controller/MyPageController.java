@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyPageController {
     private final MyPageService myPageService;
 
+    // TODO member 패키지에 위치시킬지, post 패키지에 위치시킬지 확정 후 주석 삭제
     @GetMapping("/post")
     public ResponseEntity<PostsByMemberGetResponse> postsByMemberGet(@RequestHeader(value = "Authorization") String token) {
         Long memberId = JwtUtil.getMemberId(token);
