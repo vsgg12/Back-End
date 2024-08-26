@@ -19,6 +19,6 @@ public class MyPageController {
     @GetMapping("/post")
     public ResponseEntity<PostsByMemberGetResponse> postsByMemberGet(@RequestHeader(value = "Authorization") String token) {
         Long memberId = JwtUtil.getMemberId(token);
-        return ResponseEntity.ok(myPageService.getPostsByMemberId(memberId));
+        return ResponseEntity.ok(myPageService.getPostsByMember(memberId));
     }
 }

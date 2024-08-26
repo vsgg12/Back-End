@@ -1,12 +1,13 @@
 package com.example.mdmggreal.member.dto.response;
 
 import com.example.mdmggreal.global.response.BaseResponse;
-import com.example.mdmggreal.member.type.PostVoteStatus;
-import jdk.jfr.Description;
+import com.example.mdmggreal.post.entity.type.PostStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,6 @@ public class PostsByMemberGetResponse extends BaseResponse {
     private List<MyPost> postList;
 
     @Getter
-    @Builder
     public static class MyPost {
         /**
          * 글의 id
@@ -44,6 +44,14 @@ public class PostsByMemberGetResponse extends BaseResponse {
         /**
          * 판결 진행 상태
          */
-        private PostVoteStatus voteStatus;
+        private String voteStatus;
+
+        public MyPost(Long id, String title, Long commentNum, LocalDateTime createdDateTime, PostStatus voteStatus) {
+            this.id = id;
+            this.title = title;
+            this.commentNum = commentNum;
+            this.createdDate = createdDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            this.voteStatus = voteStatus.getValue();
+        }
     }
 }
