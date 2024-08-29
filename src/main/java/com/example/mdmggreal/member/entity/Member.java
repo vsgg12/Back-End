@@ -145,4 +145,9 @@ public class Member extends BaseEntity {
     public void rewardPointByPostCreation(Integer point) {
         this.point += point;
     }
+
+    public void editPredictedResult() {
+        this.predictedResult += 1;
+
+    }
 }

@@ -1,11 +1,15 @@
 package com.example.mdmggreal.ingameinfo.service;
 
-import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
+import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoQueryRepository;
+import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberQueryRepository;
+import com.example.mdmggreal.member.type.MemberTier;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -17,18 +21,16 @@ public class InGameInfoService {
 
     @Transactional
     public void processInGameInfoByPostId(Long postId) {
-        InGameInfo inGameInfo = inGameInfoQueryRepository.getInGameInfoVoteMaxRatioByPostId(postId);
-        updateMembers(inGameInfo);
+        InGameInfoDTO inGameInfoVoteMaxRatioByPostId = inGameInfoQueryRepository.getInGameInfoVoteMaxRatioByPostId(postId);
+        updateMembers(inGameInfoVoteMaxRatioByPostId);
     }
 
-    private void updateMembers(InGameInfo inGameInfo) {
-//        List<Member> correctMembers = memberQueryRepository.getCorrectMember(inGameInfo.getId(), inGameInfo.getAverageRatio());
-//        correctMembers.forEach(Member::editPredictedResult);
-//
-//        List<Member> joinedMembers = memberQueryRepository.getJoinedMember(inGameInfo.getId());
-//        joinedMembers.forEach(member -> {
-//            Tier tier = Tier.getTier(member.getJoinedResult(), member.getPredictedResult());
-//            member.updateTier(tier);
-//        });
+    private void updateMembers(InGameInfoDTO inGameInfo) {
+        List<Member> correctMembers = memberQueryRepository.getCorrectMember(inGameInfo.getInGameInfoId(), inGameInfo.getAverageRatio());
+        correctMembers.forEach(Member::editPredictedResult);
+        correctMembers.forEach(member -> {
+            MemberTier tier = MemberTier.getTier(member.getJoinedResult(), member.getPredictedResult());
+            member.updateTier(tier);
+        });
     }
 }
