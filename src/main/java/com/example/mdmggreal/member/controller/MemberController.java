@@ -1,7 +1,6 @@
 package com.example.mdmggreal.member.controller;
 
 import com.example.mdmggreal.global.security.JwtUtil;
-import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.dto.request.SignUpRequest;
 import com.example.mdmggreal.member.dto.request.TokenRefreshRequest;
 import com.example.mdmggreal.member.dto.response.NicknameCheckResponse;
@@ -49,10 +48,4 @@ public class MemberController {
         return ResponseEntity.ok(TokenRefreshResponse.of(HttpStatus.OK, tokens));
     }
 
-    @GetMapping
-    public ResponseEntity<MemberResponse> getMember(@RequestHeader(value = "Authorization") String token) {
-        Long memberId = JwtUtil.getMemberId(token);
-        MemberDTO memberDTO = memberService.memberGet(memberId);
-        return ResponseEntity.ok(MemberResponse.of(HttpStatus.OK, memberDTO));
-    }
 }
