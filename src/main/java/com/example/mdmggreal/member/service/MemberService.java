@@ -5,7 +5,6 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.global.security.CustomUserInfoDto;
 import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.member.dto.request.SignUpRequest;
-import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.SignUpResponse;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
@@ -39,10 +38,4 @@ public class MemberService {
         }
     }
 
-    public MemberProfileDTO memberGet(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
-        );
-        return MemberProfileDTO.from(member);
-    }
 }

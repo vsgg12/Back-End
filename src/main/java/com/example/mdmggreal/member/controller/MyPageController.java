@@ -30,7 +30,7 @@ public class MyPageController {
     @GetMapping
     public ResponseEntity<MemberResponse> getMember(@RequestHeader(value = "Authorization") String token) {
         Long memberId = JwtUtil.getMemberId(token);
-        MemberProfileDTO memberProfileDTO = memberService.memberGet(memberId);
+        MemberProfileDTO memberProfileDTO = myPageService.memberGet(memberId);
         return ResponseEntity.ok(MemberResponse.of(HttpStatus.OK, memberProfileDTO));
     }
 }
