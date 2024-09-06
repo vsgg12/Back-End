@@ -47,4 +47,5 @@ public class MemberController {
         AuthTokens tokens = jwtUtil.refreshTokens(request.getRefreshToken());
         return ResponseEntity.ok(TokenRefreshResponse.of(HttpStatus.OK, tokens));
     }
+
 }
