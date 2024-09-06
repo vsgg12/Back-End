@@ -49,9 +49,10 @@ public class MemberController {
         return ResponseEntity.ok(TokenRefreshResponse.of(HttpStatus.OK, tokens));
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<MemberResponse> getMember(@PathVariable(value = "userId") Long userId) {
-        MemberDTO memberDTO = memberService.memberGet(userId);
+    @GetMapping
+    public ResponseEntity<MemberResponse> getMember(@RequestHeader(value = "Authorization") String token) {
+        Long memberId = JwtUtil.getMemberId(token);
+        MemberDTO memberDTO = memberService.memberGet(memberId);
         return ResponseEntity.ok(MemberResponse.of(HttpStatus.OK, memberDTO));
     }
 }
