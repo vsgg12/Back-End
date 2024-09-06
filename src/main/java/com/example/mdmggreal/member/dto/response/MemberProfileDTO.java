@@ -23,6 +23,7 @@ public class MemberProfileDTO {
 
     public static MemberProfileDTO from(Member member) {
         MemberTier nextTier = MemberTier.getNextTier(member.getMemberTier());
+        assert nextTier != null;
         return MemberProfileDTO.builder()
                 .id(member.getId())
                 .point(member.getPoint())

@@ -3,7 +3,6 @@ package com.example.mdmggreal.member.controller;
 import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
-import com.example.mdmggreal.member.service.MemberService;
 import com.example.mdmggreal.member.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MyPageController {
     private final MyPageService myPageService;
-    private final MemberService memberService;
 
     // TODO member 패키지에 위치시킬지, post 패키지에 위치시킬지 확정 후 주석 삭제
     @GetMapping("/post")
