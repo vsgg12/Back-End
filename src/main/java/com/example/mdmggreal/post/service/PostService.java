@@ -30,11 +30,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
-import static com.example.mdmggreal.global.exception.ErrorCode.NO_PERMISSION_TO_DELETE_POST;
+import static com.example.mdmggreal.global.exception.ErrorCode.*;
 import static java.math.BigDecimal.ZERO;
 import static java.math.RoundingMode.CEILING;
 
@@ -56,6 +60,9 @@ public class PostService {
     @Transactional
     public void addPost(MultipartFile videoFile, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
         Member member = getMemberByMemberId(memberId);
+
+        LocalDateTime requestEndDateTime = validateAndConvertStringToDateTime(postAddRequest.voteEndDate());
+
         String thumbnailUrl;
         if (thumbnailImage == null || thumbnailImage.isEmpty()) {
             thumbnailUrl = createThumbnailImageFromVideo(videoFile);
@@ -65,7 +72,7 @@ public class PostService {
 
         String videoUrl = postAddRequest.videoType() == VideoType.FILE ? s3Service.uploadVideo(videoFile) : postAddRequest.videoLink();
 
-        Post post = postRepository.save(Post.of(postAddRequest, thumbnailUrl, videoUrl, content, member));
+        Post post = postRepository.save(Post.of(postAddRequest, requestEndDateTime, thumbnailUrl, videoUrl, content, member));
 
         postAddRequest.inGameInfoRequests().forEach(inGameInfo -> inGameInfoRepository.save(InGameInfo.of(inGameInfo, post)));
         postAddRequest.hashtag().forEach(name -> {
@@ -77,7 +84,6 @@ public class PostService {
                 Hashtag savedHashtag = hashtagRepository.save(hashtag);
                 postHashtagRepository.save(PostHashtag.of(post, savedHashtag));
             }
-
         });
     }
 
@@ -99,13 +105,6 @@ public class PostService {
         return posts.stream().map(post -> createPostDTO(post, memberId)).toList();
     }
 
-    @Transactional(readOnly = true)
-    public List<PostDTO> getPostsByMember(Long memberId) {
-        Member loginMember = getMemberByMemberId(memberId);
-        List<Post> posts = postQueryRepository.getPostsMember(loginMember.getId());
-        return posts.stream().map(post -> createPostDTO(post, loginMember.getId())).toList();
-    }
-
     @Transactional
     public void deletePost(Long postId, Long memberId) {
         Member loginMember = getMemberByMemberId(memberId);
@@ -114,6 +113,22 @@ public class PostService {
             throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
         }
         post.deleted();
+    }
+
+    /**
+     * 판결 종료일은 오늘부터 최소 1일 후, 최대 30일 후의 날짜로 설정 가능
+     */
+    private LocalDateTime validateAndConvertStringToDateTime(String voteEndDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDateTime requestEndDateTime = LocalDate.parse(voteEndDate, formatter)
+                .atTime(LocalTime.of(23, 59, 59, 999_999_000));
+
+        long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(), requestEndDateTime);
+        if (daysBetween >=1 && daysBetween <= 30) {
+            return requestEndDateTime;
+        } else {
+            throw new CustomException(INVALID_END_DATE);
+        }
     }
 
     /*

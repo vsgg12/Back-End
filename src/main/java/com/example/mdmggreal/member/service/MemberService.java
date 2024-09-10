@@ -31,11 +31,7 @@ public class MemberService {
     }
 
     public Boolean checkNickname(String nickname) {
-        if (memberRepository.existsByNickname(nickname)) {
-            return true;
-        } else {
-            return false;
-        }
+        return memberRepository.existsByNickname(nickname);
     }
 
 }

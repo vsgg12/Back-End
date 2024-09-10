@@ -23,22 +23,16 @@ public enum MemberTier {
     private final Integer joinedResultPoint;
     private final Integer postCreationPoint;
 
-    public static MemberTier fromName(String name) {
-        for (MemberTier memberTier : MemberTier.values()) {
-            if (memberTier.getName().equalsIgnoreCase(name)) {
-                return memberTier;
+    public static MemberTier getNextTier(MemberTier currentTier) {
+        MemberTier[] tiers = MemberTier.values();
+        if (!currentTier.equals(MemberTier.CHALLENGER)) {
+            for (int i = 0; i < tiers.length ; i++) {
+                if (tiers[i].joinedResultPoint.equals(currentTier.joinedResultPoint)) {
+                    return tiers[i - 1];
+                }
             }
         }
-        throw new IllegalArgumentException("No enum constant with name " + name);
-    }
-
-    public static String fromTier(MemberTier memberTier) {
-        for (MemberTier t : memberTier.values()) {
-            if (memberTier.equals(t)) {
-                return t.name;
-            }
-        }
-        throw new IllegalArgumentException("해당하는 티어가 없습니다. : " + memberTier);
+        return null;
     }
 
     public static MemberTier getTier(Integer joinedResult, Integer predictedResult) {

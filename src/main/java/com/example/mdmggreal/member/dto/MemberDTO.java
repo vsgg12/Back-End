@@ -32,6 +32,9 @@ public class MemberDTO  {
     private boolean agreeTerms;
     private boolean agreePrivacy;
     private boolean agreePromotion;
+    private Integer predictedResult;
+    private Integer joinedResult;
+    private Integer point;
 
     public static MemberDTO from(Member member) {
         return MemberDTO.builder()
@@ -39,6 +42,9 @@ public class MemberDTO  {
                 .email(member.getEmail())
                 .mobile(member.getMobile())
                 .tier(member.getMemberTier().getName())
+                .predictedResult(member.getPredictedResult())
+                .joinedResult(member.getJoinedResult())
+                .point(member.getPoint())
                 .build();
     }
 }

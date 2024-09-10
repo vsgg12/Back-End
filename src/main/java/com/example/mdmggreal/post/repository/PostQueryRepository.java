@@ -1,9 +1,11 @@
 package com.example.mdmggreal.post.repository;
 
 import com.example.mdmggreal.global.entity.type.BooleanEnum;
+import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
 import com.example.mdmggreal.post.entity.Post;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.example.mdmggreal.comment.entity.QComment.comment;
 import static com.example.mdmggreal.member.entity.QMember.member;
 import static com.example.mdmggreal.post.entity.QPost.post;
 
@@ -52,15 +55,23 @@ public class PostQueryRepository extends QuerydslRepositorySupport {
         return predicate;
     }
 
-    public List<Post> getPostsMember(Long id) {
-        return jpaQueryFactory.from(post)
-                .leftJoin(member)
-                .on(post.member.id.eq(member.id))
-                .select(post)
-                .where(member.id.eq(id))
-                .orderBy(post.createdDateTime.desc())
+    public List<PostsByMemberGetResponse.MyPost> getPostsMember(Long memberId) {
+        return jpaQueryFactory
+                .select(
+                        Projections.constructor(
+                                PostsByMemberGetResponse.MyPost.class,
+                                post.id,
+                                post.title,
+                                comment.count(),
+                                post.createdDateTime,
+                                post.status
+                        )
+                )
+                .from(post)
+                .leftJoin(comment).on(comment.post.id.eq(post.id))
+                .where(post.member.id.eq(memberId))
+                .groupBy(post.id)
                 .fetch();
-
     }
 
     public List<Post> getPostsKeyword(String keyWord) {

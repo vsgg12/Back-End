@@ -14,23 +14,21 @@ import static com.example.mdmggreal.vote.entity.QVote.vote;
 @Repository
 @Slf4j
 public class MemberQueryRepository extends QuerydslRepositorySupport {
-    private final JPAQueryFactory jpaQueryFactory;
 
     public MemberQueryRepository(JPAQueryFactory jpaQueryFactory) {
         super(Member.class);
-        this.jpaQueryFactory = jpaQueryFactory;
     }
 
     public List<Member> getCorrectMember(Long inGameInfoId, Double avgRatio) {
-        return jpaQueryFactory.selectFrom(member)
+        return from(member)
                 .leftJoin(vote).on(member.id.eq(vote.memberId))
                 .where(vote.inGameInfo.id.eq(inGameInfoId)
-                        .and(vote.ratio.goe(avgRatio)))
+                        .and(vote.ratio.lt(avgRatio)))
                 .fetch();
     }
 
     public List<Member> getJoinedMember(Long inGameInfoId) {
-        return jpaQueryFactory.selectFrom(member)
+        return from(member)
                 .leftJoin(vote).on(member.id.eq(vote.memberId))
                 .where(vote.inGameInfo.id.eq(inGameInfoId))
                 .fetch();
