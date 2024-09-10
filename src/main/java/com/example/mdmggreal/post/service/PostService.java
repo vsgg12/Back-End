@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,7 +41,6 @@ import java.util.List;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.*;
 import static java.math.BigDecimal.ZERO;
-import static java.math.RoundingMode.CEILING;
 
 @RequiredArgsConstructor
 @Service
@@ -124,7 +124,7 @@ public class PostService {
                 .atTime(LocalTime.of(23, 59, 59, 999_999_000));
 
         long daysBetween = ChronoUnit.DAYS.between(LocalDateTime.now(), requestEndDateTime);
-        if (daysBetween >=1 && daysBetween <= 30) {
+        if (daysBetween >= 1 && daysBetween <= 30) {
             return requestEndDateTime;
         } else {
             throw new CustomException(INVALID_END_DATE);
@@ -152,43 +152,25 @@ public class PostService {
         return PostDTO.of(MemberDTO.from(post.getMember()), post, hashtags, inGameInfoDTOList, isVote);
     }
 
+    /**
+     * 판결 결과 표시 로직
+     */
     private List<InGameInfoDTO> createInGameInfoDTOList(Post post) {
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(post.getId());
         BigDecimal votedMembersCount = new BigDecimal(voteRepository.countByInGameInfoId(inGameInfoList.get(0).getId()).toString());
 
+        // 투표자 없을 경우 전부 0.0으로 표시
         if (votedMembersCount.compareTo(ZERO) == 0) {
             return inGameInfoList.stream().map(inGameInfo ->
                     InGameInfoDTO.of(inGameInfo, 0.0)).toList();
         }
 
+        // 투표자 있는 경우 소수점 둘째 자리까지 자른 후 표시
         HashMap<Long, BigDecimal> inGameInfoAverageRatioMap = new HashMap<>();
-        inGameInfoList.forEach((inGameInfo) -> {
-                    inGameInfoAverageRatioMap.put(inGameInfo.getId(),
-                            new BigDecimal(inGameInfo.getTotalRatio()).divide(votedMembersCount, 1, CEILING));
-                }
+        inGameInfoList.forEach(inGameInfo ->
+                inGameInfoAverageRatioMap.put(inGameInfo.getId(),
+                        new BigDecimal(inGameInfo.getTotalRatio()).divide(votedMembersCount, 2, RoundingMode.DOWN))
         );
-
-        BigDecimal averageRatioSum = inGameInfoAverageRatioMap.values().stream().reduce(ZERO, BigDecimal::add);
-        final BigDecimal TEN = new BigDecimal(10);
-
-        if (averageRatioSum.compareTo(TEN) != 0) {
-            BigDecimal sumMinusTen = averageRatioSum.subtract(TEN);
-
-            if (sumMinusTen.compareTo(ZERO) > 0) {
-                BigDecimal minValue = inGameInfoAverageRatioMap.values().stream().min(BigDecimal::compareTo).orElseThrow();
-                Long minKey = inGameInfoAverageRatioMap.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals(minValue)).toList().get(0).getKey();
-
-                inGameInfoAverageRatioMap.put(minKey, minValue.subtract(sumMinusTen));
-            }
-            if (sumMinusTen.compareTo(ZERO) < 0) {
-                BigDecimal maxValue = inGameInfoAverageRatioMap.values().stream().max(BigDecimal::compareTo).orElseThrow();
-                Long maxKey = inGameInfoAverageRatioMap.entrySet().stream()
-                        .filter(entry -> entry.getValue().equals(maxValue)).toList().get(0).getKey();
-
-                inGameInfoAverageRatioMap.put(maxKey, maxValue.add(sumMinusTen));
-            }
-        }
 
         return inGameInfoList.stream().map(inGameInfo ->
                 InGameInfoDTO.of(inGameInfo, inGameInfoAverageRatioMap.get(inGameInfo.getId()).doubleValue())).toList();
