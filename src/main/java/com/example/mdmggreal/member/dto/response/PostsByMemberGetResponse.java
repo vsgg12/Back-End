@@ -1,51 +1,36 @@
 package com.example.mdmggreal.member.dto.response;
 
-import com.example.mdmggreal.global.response.BaseResponse;
+import com.example.mdmggreal.common.dto.PageInfo;
 import com.example.mdmggreal.post.entity.type.PostStatus;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
-@SuperBuilder
-public class PostsByMemberGetResponse extends BaseResponse {
-    /**
-     * 내가 쓴 글 목록
-     */
-    private List<MyPost> postList;
+@Builder
+public class PostsByMemberGetResponse {
+
+    private PageInfo pageInfo;
+    private List<MyPost> postList; // 내가 쓴 글 목록
 
     @Getter
     public static class MyPost {
-        /**
-         * 글의 id
-         */
-        private Long id;
 
-        /**
-         * 제목
-         */
-        private String title;
+        private final Long id; //글의 id
 
-        /**
-         * 댓글 수
-         */
-        private Long commentNum;
+        private final String title; //제목
 
-        /**
-         * 작성일
-         * - yyyyMMdd
-         */
-        private String createdDate;
+        private final Long commentNum; //댓글 수
 
-        /**
-         * 판결 진행 상태
-         */
-        private String voteStatus;
+        private final String createdDate; // 작성일. 형식: yyyyMMdd
 
+        private final String voteStatus; //판결 진행 상태
+
+        @Builder
         public MyPost(Long id, String title, Long commentNum, LocalDateTime createdDateTime, PostStatus voteStatus) {
             this.id = id;
             this.title = title;
@@ -53,5 +38,17 @@ public class PostsByMemberGetResponse extends BaseResponse {
             this.createdDate = createdDateTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             this.voteStatus = voteStatus.getValue();
         }
+    }
+
+    public static PostsByMemberGetResponse of(Page<PostsByMemberGetResponse.MyPost> postList) {
+        return PostsByMemberGetResponse.builder()
+                .pageInfo(PageInfo.from(
+                                postList.getSize()
+                                , postList.getPageable().getPageNumber() + 1L
+                                , postList.getTotalPages()
+                        )
+                )
+                .postList(postList.getContent())
+                .build();
     }
 }
