@@ -5,24 +5,33 @@ import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
 import com.example.mdmggreal.member.service.MyPageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequestMapping("/api/mypage")
 @RequiredArgsConstructor
 public class MyPageController {
     private final MyPageService myPageService;
 
-    // TODO member 패키지에 위치시킬지, post 패키지에 위치시킬지 확정 후 주석 삭제
+    /**
+     * 회원이 작성한 글 목록 조회 - 페이지네이션
+     * 페이지 시작 번호 : 1
+     */
     @GetMapping("/post")
-    public ResponseEntity<PostsByMemberGetResponse> postsByMemberGet(@RequestHeader(value = "Authorization") String token) {
+    public ResponseEntity<PostsByMemberGetResponse> postsByMemberGet(
+            @RequestHeader(value = "Authorization") String token,
+            @PageableDefault(size = 5, page = 1) Pageable pageable
+    ) {
         Long memberId = JwtUtil.getMemberId(token);
-        return ResponseEntity.ok(myPageService.getPostsByMember(memberId));
+        return ResponseEntity.ok(
+                myPageService.getPostsByMemberWithPagination(memberId, pageable.getPageNumber(), pageable.getPageSize())
+        );
     }
 
     @GetMapping
@@ -31,4 +40,5 @@ public class MyPageController {
         MemberProfileDTO memberProfileDTO = myPageService.memberGet(memberId);
         return ResponseEntity.ok(MemberResponse.of(HttpStatus.OK, memberProfileDTO));
     }
+
 }
