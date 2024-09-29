@@ -19,7 +19,7 @@ public class MemberProfileDTO {
     private Integer nextJoinedResult;
     private Integer predicateResult;
     private Integer nextPredicateResult;
-    private MemberTier tier;
+    private String tier;
 
     public static MemberProfileDTO from(Member member) {
         MemberTier nextTier = MemberTier.getNextTier(member.getMemberTier());
@@ -31,7 +31,7 @@ public class MemberProfileDTO {
                 .nextJoinedResult(nextTier.getJoinedResult())
                 .predicateResult((member.getPredictedResult()))
                 .nextPredicateResult(nextTier.getPredictedResult())
-                .tier(member.getMemberTier())
+                .tier(member.getMemberTier().getName())
                 .nickName(member.getNickname())
                 .build();
 
