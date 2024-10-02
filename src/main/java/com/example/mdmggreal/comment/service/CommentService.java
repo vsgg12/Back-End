@@ -86,7 +86,7 @@ public class CommentService {
             CommentDTO commentResponseDTO = CommentDTO.from(c);
             commentDTOHashMap.put(commentResponseDTO.getId(), commentResponseDTO);
             if (c.getParent() != null)
-                commentDTOHashMap.get(c.getParent().getId()).getChildren().add(commentResponseDTO);
+                commentDTOHashMap.get(c.getParent().getId()).getChildren().add(0, commentResponseDTO); // 대댓글 오래된 순으로 정렬
             else commentResponseDTOList.add(commentResponseDTO);
         });
         return commentResponseDTOList;
