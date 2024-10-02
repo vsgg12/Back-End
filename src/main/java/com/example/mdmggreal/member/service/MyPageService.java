@@ -2,6 +2,9 @@ package com.example.mdmggreal.member.service;
 
 import com.example.mdmggreal.common.dto.PageInfo;
 import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
+import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
+import com.example.mdmggreal.member.dto.request.UpdateProfileImageRequest;
 import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
 import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
@@ -50,18 +53,30 @@ public class MyPageService {
         return PostsByMemberGetResponse.of(postsByMember);
     }
 
-    /**
-     * 회원 조회.
-     *
-     * @param memberId 회원 id
-     * @return Member entity
-     */
-    private Member getMemberByMemberId(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
-        );
+    @Transactional(readOnly = true)
+    public MemberProfileDTO memberGet(Long memberId) {
+        Member member = getMemberByMemberId(memberId);
+        return MemberProfileDTO.from(member);
     }
 
+    @Transactional
+    public void updateProfileImage(UpdateProfileImageRequest request) {
+        Member member = getMemberByMemberId(request.getMemberId());
+        member.updateProfile(request.getProfileUrl());
+    }
+
+    @Transactional
+    public void updateNickName(UpdateNickNameRequest request) {
+        Member member = getMemberByMemberId(request.getMemberId());
+        member.updateNickName(request.getNickName());
+    }
+
+    @Transactional
+    public void deleteProfile(DeleteProfileRequest request) {
+        Member member = getMemberByMemberId(request.getMemberId());
+        member.deleteProfile();
+    }
+ 
     public MemberProfileDTO memberGet(Long memberId) {
         Member member = getMemberByMemberId(memberId);
         return MemberProfileDTO.from(member);
@@ -132,5 +147,15 @@ public class MyPageService {
 
         return maxInGameInfoList;
     }
-
+  
+     * 회원 조회.
+     *
+     * @param memberId 회원 id
+     * @return Member entity
+     */
+    private Member getMemberByMemberId(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(INVALID_USER_ID)
+        );
+    }
 }

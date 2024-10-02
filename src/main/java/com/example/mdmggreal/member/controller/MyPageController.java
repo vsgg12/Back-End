@@ -1,6 +1,9 @@
 package com.example.mdmggreal.member.controller;
 
 import com.example.mdmggreal.global.security.JwtUtil;
+import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
+import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
+import com.example.mdmggreal.member.dto.request.UpdateProfileImageRequest;
 import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
@@ -37,11 +40,35 @@ public class MyPageController {
     }
 
     @GetMapping
-    public ResponseEntity<MemberResponse> getMember(@RequestHeader(value = "Authorization") String token) {
+    public ResponseEntity<MemberResponse> memberGet(@RequestHeader(value = "Authorization") String token) {
         Long memberId = JwtUtil.getMemberId(token);
         MemberProfileDTO memberProfileDTO = myPageService.memberGet(memberId);
         return ResponseEntity.ok(MemberResponse.of(HttpStatus.OK, memberProfileDTO));
     }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<Void> profileImageUpdate(@RequestHeader(value = "Authorization") String token,
+                                                   @RequestBody UpdateProfileImageRequest request) {
+        Long memberId = JwtUtil.getMemberId(token);
+        request.setMemberId(memberId);
+        myPageService.updateProfileImage(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/nickname")
+    public ResponseEntity<Void> nickNameUpdate(@RequestHeader(value = "Authorization") String token,
+                                               @RequestBody UpdateNickNameRequest request) {
+        Long memberId = JwtUtil.getMemberId(token);
+        request.setMemberId(memberId);
+        myPageService.updateNickName(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/profile")
+    public ResponseEntity<Void> profileImageDelete(@RequestHeader(value = "Authorization") String token) {
+        Long memberId = JwtUtil.getMemberId(token);
+        myPageService.deleteProfile(new DeleteProfileRequest(memberId));
+        return ResponseEntity.ok().build();
 
     /**
      * 회원이 투표에 참여한 글 목록 조회 페이지네이션
@@ -59,5 +86,6 @@ public class MyPageController {
         return ResponseEntity.ok(
                 myPageService.getVotedPostsByMemberPagination(memberId, newPageable)
         );
+
     }
 }
