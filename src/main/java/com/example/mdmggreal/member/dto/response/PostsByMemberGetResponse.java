@@ -42,12 +42,7 @@ public class PostsByMemberGetResponse {
 
     public static PostsByMemberGetResponse of(Page<PostsByMemberGetResponse.MyPost> postList) {
         return PostsByMemberGetResponse.builder()
-                .pageInfo(PageInfo.from( // TODO: from(Page) 로 변경하기
-                                postList.getSize()
-                                , postList.getPageable().getPageNumber() + 1L
-                                , postList.getTotalPages()
-                        )
-                )
+                .pageInfo(PageInfo.from(postList))
                 .postList(postList.getContent())
                 .build();
     }
