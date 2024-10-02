@@ -4,9 +4,9 @@ import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
 import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
 import com.example.mdmggreal.member.dto.request.UpdateProfileImageRequest;
-import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
+import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -14,8 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 @Validated
 @RestController
@@ -69,6 +69,7 @@ public class MyPageController {
         Long memberId = JwtUtil.getMemberId(token);
         myPageService.deleteProfile(new DeleteProfileRequest(memberId));
         return ResponseEntity.ok().build();
+    }
 
     /**
      * 회원이 투표에 참여한 글 목록 조회 페이지네이션
@@ -80,8 +81,7 @@ public class MyPageController {
             @PageableDefault(size = 5, page = 1) Pageable pageable
     ) {
         Long memberId = JwtUtil.getMemberId(token);
-
-        Pageable newPageable = PageRequest.of( pageable.getPageNumber() - 1, pageable.getPageSize());
+        Pageable newPageable = PageRequest.of(pageable.getPageNumber() - 1, pageable.getPageSize());
 
         return ResponseEntity.ok(
                 myPageService.getVotedPostsByMemberPagination(memberId, newPageable)

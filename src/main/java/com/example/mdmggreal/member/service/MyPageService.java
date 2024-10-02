@@ -76,11 +76,6 @@ public class MyPageService {
         Member member = getMemberByMemberId(request.getMemberId());
         member.deleteProfile();
     }
- 
-    public MemberProfileDTO memberGet(Long memberId) {
-        Member member = getMemberByMemberId(memberId);
-        return MemberProfileDTO.from(member);
-    }
 
     @Transactional(readOnly = true)
     public VotedPostsByMemberGetResponse getVotedPostsByMemberPagination(Long memberId, Pageable pageable) {
@@ -147,7 +142,8 @@ public class MyPageService {
 
         return maxInGameInfoList;
     }
-  
+
+    /*
      * 회원 조회.
      *
      * @param memberId 회원 id
