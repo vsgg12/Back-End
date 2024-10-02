@@ -1,8 +1,8 @@
 package com.example.mdmggreal.comment.service;
 
 import com.example.mdmggreal.alarm.service.CommentAlarmService;
-import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
+import com.example.mdmggreal.comment.dto.response.CommentGetListResponse;
 import com.example.mdmggreal.comment.entity.Comment;
 import com.example.mdmggreal.comment.repository.CommentDAO;
 import com.example.mdmggreal.comment.repository.CommentRepository;
@@ -77,13 +77,13 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentDTO> getCommentList(Long postId) {
+    public List<CommentGetListResponse.CommentDTO> getCommentList(Long postId) {
         List<Comment> list = commentDAO.getList(postId);
-        List<CommentDTO> commentResponseDTOList = new ArrayList<>();
-        Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
+        List<CommentGetListResponse.CommentDTO> commentResponseDTOList = new ArrayList<>();
+        Map<Long, CommentGetListResponse.CommentDTO> commentDTOHashMap = new HashMap<>();
 
         list.forEach(c -> {
-            CommentDTO commentResponseDTO = CommentDTO.from(c);
+            CommentGetListResponse.CommentDTO commentResponseDTO = CommentGetListResponse.CommentDTO.from(c);
             commentDTOHashMap.put(commentResponseDTO.getId(), commentResponseDTO);
             if (c.getParent() != null)
                 commentDTOHashMap.get(c.getParent().getId()).getChildren().add(0, commentResponseDTO); // 대댓글 오래된 순으로 정렬
