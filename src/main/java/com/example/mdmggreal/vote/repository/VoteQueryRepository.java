@@ -59,4 +59,13 @@ public class VoteQueryRepository extends QuerydslRepositorySupport {
                         .where(post.id.eq(postId).and(member.id.eq(memberId)))
                         .fetchFirst() != null;
     }
+
+    public List<Vote> getVoteListByMemberIdAndPostId(Long memberId, Long postId) {
+        return jpaQueryFactory.select(vote)
+                .from(vote)
+                .innerJoin(inGameInfo).on(vote.inGameInfo.id.eq(inGameInfo.id))
+                .where(vote.memberId.eq(memberId)
+                        .and(inGameInfo.post.id.eq(postId)))
+                .fetch();
+    }
 }
