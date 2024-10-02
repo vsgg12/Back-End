@@ -1,7 +1,7 @@
 package com.example.mdmggreal.member.controller;
 
 import com.example.mdmggreal.global.security.JwtUtil;
-import com.example.mdmggreal.member.dto.VotedPostsByMemberGetResponse;
+import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
 import com.example.mdmggreal.member.service.MyPageService;

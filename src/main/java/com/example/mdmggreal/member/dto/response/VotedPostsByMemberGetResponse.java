@@ -1,4 +1,4 @@
-package com.example.mdmggreal.member.dto;
+package com.example.mdmggreal.member.dto.response;
 
 import com.example.mdmggreal.common.dto.PageInfo;
 import com.example.mdmggreal.post.dto.vo.VotedPostVo;

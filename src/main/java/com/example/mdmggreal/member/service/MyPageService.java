@@ -3,7 +3,7 @@ package com.example.mdmggreal.member.service;
 import com.example.mdmggreal.common.dto.PageInfo;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
-import com.example.mdmggreal.member.dto.VotedPostsByMemberGetResponse;
+import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
 import com.example.mdmggreal.member.entity.Member;
