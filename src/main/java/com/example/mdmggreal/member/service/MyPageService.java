@@ -1,7 +1,9 @@
 package com.example.mdmggreal.member.service;
 
 import com.example.mdmggreal.global.exception.CustomException;
-import com.example.mdmggreal.global.exception.ErrorCode;
+import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
+import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
+import com.example.mdmggreal.member.dto.request.UpdateProfileImageRequest;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
 import com.example.mdmggreal.member.entity.Member;
@@ -35,16 +37,33 @@ public class MyPageService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
+    public MemberProfileDTO memberGet(Long memberId) {
+        Member member = getMemberByMemberId(memberId);
+        return MemberProfileDTO.from(member);
+    }
+
+    @Transactional
+    public void updateProfileImage(UpdateProfileImageRequest request) {
+        Member member = getMemberByMemberId(request.getMemberId());
+        member.updateProfile(request.getProfileUrl());
+    }
+
+    @Transactional
+    public void updateNickName(UpdateNickNameRequest request) {
+        Member member = getMemberByMemberId(request.getMemberId());
+        member.updateNickName(request.getNickName());
+    }
+
+    @Transactional
+    public void deleteProfile(DeleteProfileRequest request) {
+        Member member = getMemberByMemberId(request.getMemberId());
+        member.deleteProfile();
+    }
+
     private Member getMemberByMemberId(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(INVALID_USER_ID)
         );
-    }
-
-    public MemberProfileDTO memberGet(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
-        );
-        return MemberProfileDTO.from(member);
     }
 }
