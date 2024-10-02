@@ -2,6 +2,7 @@ package com.example.mdmggreal.common.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 
 @Getter
 @Builder
@@ -16,6 +17,14 @@ public class PageInfo {
                 .size(size)
                 .page(page)
                 .totalPageNum(totalPageNum)
+                .build();
+    }
+
+    public static PageInfo from(Page page) {
+        return PageInfo.builder()
+                .size(page.getSize())
+                .page(page.getPageable().getPageNumber() + 1L)
+                .totalPageNum(page.getTotalPages())
                 .build();
     }
 }
