@@ -86,7 +86,7 @@ public class MyPageService {
         List<VotedPostsByMemberGetResponse.VotedPost> responseDtoList = new ArrayList<>();
         postVoList.forEach(post -> {
             // 게시글이 판결 완료된 경우에만 회원의 판결 결과 계산
-            String myVoteResult = post.getStatus().equals(FINISHED) ? calculateMyVoteResult(post, memberId).toString() : null;
+            String myVoteResult = post.getStatus().equals(FINISHED) ? calculateMyVoteResult(post, memberId).getValue() : null;
             responseDtoList.add(VotedPostsByMemberGetResponse.VotedPost.from(post, myVoteResult));
         });
 
