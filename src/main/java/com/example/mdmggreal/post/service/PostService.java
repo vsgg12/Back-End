@@ -147,7 +147,7 @@ public class PostService {
 
         List<Hashtag> hashtags = hashtagQueryRepository.getListHashtagByPostId(post.getId());
 
-        List<InGameInfoDTO> inGameInfoDTOList = createInGameInfoDTOList(post);
+        List<InGameInfoDTO> inGameInfoDTOList = createInGameInfoDTOList(post.getId());
 
         return PostDTO.of(MemberDTO.from(post.getMember()), post, hashtags, inGameInfoDTOList, isVote);
     }
@@ -155,8 +155,8 @@ public class PostService {
     /**
      * 판결 결과 표시 로직
      */
-    private List<InGameInfoDTO> createInGameInfoDTOList(Post post) {
-        List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(post.getId());
+    public List<InGameInfoDTO> createInGameInfoDTOList(Long postId) {
+        List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
         BigDecimal votedMembersCount = new BigDecimal(voteRepository.countByInGameInfoId(inGameInfoList.get(0).getId()).toString());
 
         // 투표자 없을 경우 전부 0.0으로 표시
