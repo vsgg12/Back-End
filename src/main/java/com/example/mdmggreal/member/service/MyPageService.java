@@ -64,12 +64,6 @@ public class MyPageService {
     }
 
     @Transactional
-    public void updateProfileImage(UpdateProfileImageRequest request) {
-        Member member = getMemberByMemberId(request.getMemberId());
-        member.updateProfile(request.getProfileUrl());
-    }
-
-    @Transactional
     public void updateNickName(UpdateNickNameRequest request) {
         Member member = getMemberByMemberId(request.getMemberId());
         member.updateNickName(request.getNickName());
@@ -159,6 +153,7 @@ public class MyPageService {
         );
     }
 
+    @Transactional
     public void updateProfileImage(Long memberId, MultipartFile profileImage) throws IOException {
         String imageUrl = s3Service.uploadImages(profileImage);
         Member member = memberRepository.findById(memberId).orElseThrow(
