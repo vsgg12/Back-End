@@ -2,18 +2,18 @@ package com.example.mdmggreal.member.service;
 
 import com.example.mdmggreal.common.dto.PageInfo;
 import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
 import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
 import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
-import com.example.mdmggreal.member.dto.request.UpdateProfileImageRequest;
-import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
-import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
+import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.post.dto.vo.VotedPostVo;
 import com.example.mdmggreal.post.repository.PostQueryRepository;
 import com.example.mdmggreal.post.service.PostService;
+import com.example.mdmggreal.s3.service.S3Service;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.type.VoteResultType;
@@ -23,7 +23,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,7 @@ public class MyPageService {
     private final PostQueryRepository postQueryRepository;
     private final MemberRepository memberRepository;
     private final VoteQueryRepository voteQueryRepository;
+    private final S3Service s3Service;
 
     private final PostService postService;
 
@@ -57,12 +60,6 @@ public class MyPageService {
     public MemberProfileDTO memberGet(Long memberId) {
         Member member = getMemberByMemberId(memberId);
         return MemberProfileDTO.from(member);
-    }
-
-    @Transactional
-    public void updateProfileImage(UpdateProfileImageRequest request) {
-        Member member = getMemberByMemberId(request.getMemberId());
-        member.updateProfile(request.getProfileUrl());
     }
 
     @Transactional
@@ -153,5 +150,14 @@ public class MyPageService {
         return memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(INVALID_USER_ID)
         );
+    }
+
+    @Transactional
+    public void updateProfileImage(Long memberId, MultipartFile profileImage) throws IOException {
+        String imageUrl = s3Service.uploadImages(profileImage);
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(INVALID_USER_ID)
+        );
+        member.updateProfile(imageUrl);
     }
 }
