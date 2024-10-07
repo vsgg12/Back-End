@@ -5,7 +5,6 @@ import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
 import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
 import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
-import com.example.mdmggreal.member.dto.request.UpdateProfileImageRequest;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
 import com.example.mdmggreal.member.dto.response.PostsByMemberGetResponse;
 import com.example.mdmggreal.member.dto.response.VotedPostsByMemberGetResponse;
