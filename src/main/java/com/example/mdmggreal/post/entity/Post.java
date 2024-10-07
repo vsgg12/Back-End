@@ -12,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
@@ -80,7 +79,7 @@ public class Post extends BaseEntity {
     }
 
 
-    public void deleted() {
+    public void delete() {
         this.isDeleted = TRUE;
     }
 }

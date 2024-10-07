@@ -111,8 +111,8 @@ public class PostService {
         Post post = getPostById(postId);
         if (!post.getMember().getId().equals(loginMember.getId())) {
             throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
-        }
-        post.deleted();
+        } // TODO: 판결 종료 전 게시글 삭제 시 포인트 롤백...?
+        post.delete();
     }
 
     /**
