@@ -19,7 +19,7 @@ public class MemberQueryRepository extends QuerydslRepositorySupport {
         super(Member.class);
     }
 
-    public List<Member> getCorrectMember(Long inGameInfoId, Double avgRatio) {
+    public List<Member> getCorrectMember(Long inGameInfoId, Long avgRatio) {
         return from(member)
                 .leftJoin(vote).on(member.id.eq(vote.memberId))
                 .where(vote.inGameInfo.id.eq(inGameInfoId)
