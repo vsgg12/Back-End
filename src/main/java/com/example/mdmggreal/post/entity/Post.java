@@ -78,6 +78,13 @@ public class Post extends BaseEntity {
         this.viewCount = this.viewCount + 1;
     }
 
+    public void deleteThumbnail() {
+        this.thumbnailURL = null;
+    }
+
+    public void deleteVideo() {
+        this.video = null;
+    }
 
     public void delete() {
         this.isDeleted = TRUE;

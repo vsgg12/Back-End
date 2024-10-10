@@ -36,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -95,6 +96,11 @@ public class PostService {
     @Transactional
     public PostDTO getPost(Long postId, Long memberId) {
         Post post = getPostById(postId);
+
+        if (post.getIsDeleted().equals(BooleanEnum.TRUE)) { // 삭제된 게시글의 경우
+            return PostDTO.createDeletedPostDTO(postId);
+        }
+
         post.addView();
         return createPostDTO(post, memberId);
     }
@@ -109,10 +115,28 @@ public class PostService {
     public void deletePost(Long postId, Long memberId) {
         Member loginMember = getMemberByMemberId(memberId);
         Post post = getPostById(postId);
+
         if (!post.getMember().getId().equals(loginMember.getId())) {
             throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
-        } // TODO: 판결 종료 전 게시글 삭제 시 포인트 롤백...?
+        }
+
+        deleteThumbnailAndVideo(post);
         post.delete();
+    }
+
+    /*
+    썸네일 이미지, 게시글 동영상 삭제
+     */
+    private void deleteThumbnailAndVideo(Post post) {
+        // S3에서 썸네일이미지, 게시글동영상 삭제
+        String thumbnailURL = post.getThumbnailURL();
+        String videoURL = post.getVideo().getUrl();
+        List<String> deleteUrls = List.of(thumbnailURL, videoURL);
+        s3Service.deleteS3Objects(deleteUrls);
+
+        // db 썸네일, 동영상 삭제 처리
+        post.deleteThumbnail();
+        post.deleteVideo();
     }
 
     /**
