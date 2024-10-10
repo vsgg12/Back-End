@@ -46,6 +46,10 @@ public class PostController {
         return ResponseEntity.ok(PostAddResponse.of(HttpStatus.CREATED));
     }
 
+    /*
+    게시글 상세 조회
+    - 삭제된 게시글은 id, isDeleted 필드 외에는 전부 null 반환
+     */
     @GetMapping("/{postId}")
     public ResponseEntity<PostGetResponse> postGet(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
         Long memberId = null;
@@ -66,6 +70,12 @@ public class PostController {
         return ResponseEntity.ok(PostGetListResponse.from(OK, posts));
     }
 
+    /*
+    TODO: 삭제관련 체크리스트
+    1. 게시글 조회 시 삭제된 게시글은 postId, isDeleted 외 다른 정보는 null 로 보냄 - 완료
+    2. postDTO 에 isDeleted 필드 추가 - 완료
+    3. 게시글 관련 알람 조회 시 idDeleted 필드 추가해서 게시글 조회 api 호출하지 않고 바로 삭제된 게시글 페이지로 이동하도록 함.
+     */
     @DeleteMapping("/{postId}")
     public ResponseEntity<BaseResponse> postDelete(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
         Long memberId = JwtUtil.getMemberId(token);

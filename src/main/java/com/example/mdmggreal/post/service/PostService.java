@@ -24,6 +24,7 @@ import com.example.mdmggreal.s3.service.S3Service;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
 import com.example.mdmggreal.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -95,6 +96,11 @@ public class PostService {
     @Transactional
     public PostDTO getPost(Long postId, Long memberId) {
         Post post = getPostById(postId);
+
+        if (post.getIsDeleted().equals(BooleanEnum.TRUE)) { // 삭제된 게시글의 경우
+            return PostDTO.createDeletedPostDTO(postId);
+        }
+
         post.addView();
         return createPostDTO(post, memberId);
     }
@@ -111,7 +117,8 @@ public class PostService {
         Post post = getPostById(postId);
         if (!post.getMember().getId().equals(loginMember.getId())) {
             throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
-        } // TODO: 판결 종료 전 게시글 삭제 시 포인트 롤백...?
+        }
+        // TODO: 삭제 시 S3에서 동영상, 이미지 삭제하기
         post.delete();
     }
 
