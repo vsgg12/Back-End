@@ -14,6 +14,7 @@ import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
+import com.example.mdmggreal.post.dto.request.PostUpdateRequest;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.entity.type.VideoType;
 import com.example.mdmggreal.post.repository.PostQueryRepository;
@@ -113,6 +114,14 @@ public class PostService {
             throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
         }
         post.deleted();
+    }
+
+    @Transactional
+    public void updatePost(Long postId, Long memberId, PostUpdateRequest request) {
+        Post post = getPostById(postId);
+        if (!post.getMember().getId().equals(memberId)) {
+            throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
+        }
     }
 
     /**

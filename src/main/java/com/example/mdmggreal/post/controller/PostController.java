@@ -5,6 +5,7 @@ import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
+import com.example.mdmggreal.post.dto.request.PostUpdateRequest;
 import com.example.mdmggreal.post.dto.response.PostAddResponse;
 import com.example.mdmggreal.post.dto.response.PostGetListResponse;
 import com.example.mdmggreal.post.dto.response.PostGetResponse;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.mdmggreal.global.exception.ErrorCode.*;
 import static org.springframework.http.HttpStatus.OK;
@@ -71,6 +73,13 @@ public class PostController {
         Long memberId = JwtUtil.getMemberId(token);
         postService.deletePost(postId, memberId);
         return BaseResponse.toResponseEntity(OK);
+    }
+
+    @PostMapping("/{postId}")
+    public ResponseEntity<Object> postUpdate(@RequestHeader(value = "Authorization") String token, @PathVariable Long postId, @RequestBody PostUpdateRequest request) {
+        Long memberId =  JwtUtil.getMemberId(token);
+        postService.updatePost(postId, memberId, request);
+        return null;
     }
 
     private void checkVideoAttachment(MultipartFile videoFile, PostAddRequest postAddRequest) {
