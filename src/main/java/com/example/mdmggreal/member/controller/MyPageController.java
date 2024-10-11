@@ -1,5 +1,6 @@
 package com.example.mdmggreal.member.controller;
 
+import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
 import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
 import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
@@ -49,27 +50,27 @@ public class MyPageController {
     }
 
     @PatchMapping("/profile")
-    public ResponseEntity<Void> profileImageUpdate(@RequestHeader(value = "Authorization") String token,
-                                                   @RequestPart(value = "profile") MultipartFile profileImage) throws IOException {
+    public ResponseEntity<BaseResponse> profileImageUpdate(@RequestHeader(value = "Authorization") String token,
+                                                           @RequestPart(value = "profile") MultipartFile profileImage) throws IOException {
         Long memberId = JwtUtil.getMemberId(token);
         myPageService.updateProfileImage(memberId, profileImage);
-        return ResponseEntity.ok().build();
+        return BaseResponse.toResponseEntity(HttpStatus.OK);
     }
 
     @PatchMapping("/nickname")
-    public ResponseEntity<Void> nickNameUpdate(@RequestHeader(value = "Authorization") String token,
+    public ResponseEntity<BaseResponse> nickNameUpdate(@RequestHeader(value = "Authorization") String token,
                                                @RequestBody UpdateNickNameRequest request) {
         Long memberId = JwtUtil.getMemberId(token);
         request.setMemberId(memberId);
         myPageService.updateNickName(request);
-        return ResponseEntity.ok().build();
+        return BaseResponse.toResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping("/profile")
-    public ResponseEntity<Void> profileImageDelete(@RequestHeader(value = "Authorization") String token) {
+    public ResponseEntity<BaseResponse> profileImageDelete(@RequestHeader(value = "Authorization") String token) {
         Long memberId = JwtUtil.getMemberId(token);
         myPageService.deleteProfile(new DeleteProfileRequest(memberId));
-        return ResponseEntity.ok().build();
+        return BaseResponse.toResponseEntity(HttpStatus.OK);
     }
 
     /**
@@ -88,6 +89,5 @@ public class MyPageController {
         return ResponseEntity.ok(
                 myPageService.getVotedPostsByMemberPagination(memberId, newPageable)
         );
-
     }
 }
