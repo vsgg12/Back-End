@@ -43,9 +43,9 @@ public class AlarmBatchConfig extends DefaultBatchConfiguration {
     @Bean
     public Tasklet deleteOldAlarmsTasklet() {
         return ((contribution, chunkContext) -> {
-            LocalDateTime fourteenDaysAgo = LocalDateTime.now().minusDays(14);
-            postAlarmRepository.deleteByCreatedDateTimeBefore(fourteenDaysAgo);
-            commentAlarmRepository.deleteByCreatedDateTimeBefore(fourteenDaysAgo);
+            LocalDateTime alarmStorageTime = LocalDateTime.now().minusMonths(1);
+            postAlarmRepository.deleteByCreatedDateTimeBefore(alarmStorageTime);
+            commentAlarmRepository.deleteByCreatedDateTimeBefore(alarmStorageTime);
             return RepeatStatus.FINISHED;
         });
     }
