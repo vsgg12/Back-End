@@ -72,13 +72,11 @@ public class MyPageService {
         Page<VotedPostVo> votedPostVoList = postQueryRepository.getVotedPostsByMemberIdPagination(memberId, pageable);
         List<VotedPostsByMemberGetResponse.VotedPost> responseDtoList = new ArrayList<>();
 
-        if (!votedPostVoList.isEmpty()) {
-            votedPostVoList.forEach(post -> {
-                // 게시글이 판결 완료된 경우에만 회원의 판결 결과 계산
-                String myVoteResult = post.getStatus().equals(FINISHED) ? voteResultService.calculateMemberResultByPostId(post.getPostId(), memberId).getValue() : null;
-                responseDtoList.add(VotedPostsByMemberGetResponse.VotedPost.from(post, myVoteResult));
-            });
-        }
+        votedPostVoList.forEach(post -> {
+            // 게시글이 판결 완료된 경우에만 회원의 판결 결과 계산
+            String myVoteResult = post.getStatus().equals(FINISHED) ? voteResultService.calculateMemberResultByPostId(post.getPostId(), memberId).getValue() : null;
+            responseDtoList.add(VotedPostsByMemberGetResponse.VotedPost.from(post, myVoteResult));
+        });
 
         return VotedPostsByMemberGetResponse.from(PageInfo.from(votedPostVoList), responseDtoList);
     }
