@@ -1,7 +1,6 @@
 package com.example.mdmggreal.member.repository;
 
 import com.example.mdmggreal.member.entity.Member;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
@@ -17,11 +16,9 @@ import static com.example.mdmggreal.vote.entity.QVote.vote;
 @Repository
 @Slf4j
 public class MemberQueryRepository extends QuerydslRepositorySupport {
-    private final JPAQueryFactory jpaQueryFactory;
 
-    public MemberQueryRepository(JPAQueryFactory jpaQueryFactory) {
+    public MemberQueryRepository() {
         super(Member.class);
-        this.jpaQueryFactory = jpaQueryFactory;
     }
 
     /**
@@ -29,8 +26,7 @@ public class MemberQueryRepository extends QuerydslRepositorySupport {
      * 주의 : 게시글이 종료된 상태에서 조회해야 함!!
      */
     public List<Member> getVotedMemberListByPostId(Long postId) {
-        return jpaQueryFactory.select(member)
-                .from(member)
+        return from(member)
                 .leftJoin(vote)
                 .on(vote.memberId.eq(member.id))
                 .leftJoin(inGameInfo)
