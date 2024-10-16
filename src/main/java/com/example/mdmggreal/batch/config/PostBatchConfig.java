@@ -1,12 +1,12 @@
 package com.example.mdmggreal.batch.config;
 
 import com.example.mdmggreal.alarm.service.PostAlarmService;
-import com.example.mdmggreal.ingameinfo.service.InGameInfoService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.post.service.PostService;
 import com.example.mdmggreal.vote.entity.Vote;
 import com.example.mdmggreal.vote.repository.VoteQueryRepository;
+import com.example.mdmggreal.vote.service.VoteResultService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -31,7 +31,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     private final VoteQueryRepository voteQueryRepository;
     private final PostService postService;
     private final PostAlarmService postAlarmService;
-    private final InGameInfoService inGameInfoService;
+    private final VoteResultService voteResultService;
 
     @Bean
     public Job updatePostJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
@@ -52,7 +52,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     public Tasklet updatePostTasklet() {
         return (contribution, chunkContext) -> {
             LocalDateTime now = LocalDateTime.now();
-            List<Post> postList = postRepository.findByEndDateTimeBefore(now);
+            List<Post> postList = postRepository.findByEndDateTimeBeforeAndIsDeletedFalse(now);
             processPostsAfterEndDate(postList);
             return RepeatStatus.FINISHED;
         };
@@ -63,7 +63,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
             post.editStatus();
             postService.rewardPointByPostCreation(post.getMember());
             addPostAlarms(post);
-            inGameInfoService.processInGameInfoByPostId(post.getId());
+            voteResultService.findVictoryMembersAndUpdateMembers(post.getId());
         });
     }
 

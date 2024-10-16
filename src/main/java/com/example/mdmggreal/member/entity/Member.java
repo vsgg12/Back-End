@@ -146,9 +146,8 @@ public class Member extends BaseEntity {
         this.point += point;
     }
 
-    public void editPredictedResult() {
+    public void increasePredictedResult() {
         this.predictedResult += 1;
-
     }
 
     public void updateProfile(String profileUrl) {
