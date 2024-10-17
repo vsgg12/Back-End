@@ -1,7 +1,9 @@
 package com.example.mdmggreal.batch.config;
 
 import com.example.mdmggreal.alarm.service.PostAlarmService;
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.post.entity.type.PostStatus;
 import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.post.service.PostService;
 import com.example.mdmggreal.vote.entity.Vote;
@@ -52,7 +54,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     public Tasklet updatePostTasklet() {
         return (contribution, chunkContext) -> {
             LocalDateTime now = LocalDateTime.now();
-            List<Post> postList = postRepository.findEndedActiveProgressPosts(now);
+            List<Post> postList = postRepository.findByEndDateTimeBeforeAndIsDeletedAndStatus(now, BooleanEnum.FALSE, PostStatus.PROGRESS);
             processPostsAfterEndDate(postList);
             return RepeatStatus.FINISHED;
         };
