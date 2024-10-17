@@ -52,7 +52,7 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     public Tasklet updatePostTasklet() {
         return (contribution, chunkContext) -> {
             LocalDateTime now = LocalDateTime.now();
-            List<Post> postList = postRepository.findByEndDateTimeBeforeAndIsDeletedFalse(now);
+            List<Post> postList = postRepository.findEndedActiveProgressPosts(now);
             processPostsAfterEndDate(postList);
             return RepeatStatus.FINISHED;
         };
