@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberProfileDTO {
     private Long id;
+    private String profileUrl;
     private String nickName;
     private Integer point;
     private Integer joinedResult;
@@ -20,18 +21,21 @@ public class MemberProfileDTO {
     private Integer predicateResult;
     private Integer nextPredicateResult;
     private String tier;
+    private String nextTier;
 
     public static MemberProfileDTO from(Member member) {
         MemberTier nextTier = MemberTier.getNextTier(member.getMemberTier());
         assert nextTier != null;
         return MemberProfileDTO.builder()
                 .id(member.getId())
+                .profileUrl(member.getProfileImage())
                 .point(member.getPoint())
                 .joinedResult(member.getJoinedResult())
                 .nextJoinedResult(nextTier.getJoinedResult())
                 .predicateResult((member.getPredictedResult()))
                 .nextPredicateResult(nextTier.getPredictedResult())
                 .tier(member.getMemberTier().getName())
+                .nextTier(nextTier.getName())
                 .nickName(member.getNickname())
                 .build();
 
