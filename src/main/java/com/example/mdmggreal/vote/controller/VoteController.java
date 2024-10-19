@@ -2,7 +2,6 @@ package com.example.mdmggreal.vote.controller;
 
 import com.example.mdmggreal.global.response.BaseResponse;
 import com.example.mdmggreal.global.security.JwtUtil;
-import com.example.mdmggreal.vote.dto.VoteResultResponse;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
 import com.example.mdmggreal.vote.service.VoteService;
 import lombok.AllArgsConstructor;
