@@ -18,10 +18,10 @@ public enum MemberTier {
     UNRANK("언랭", 0, 0, 5,10),
     ;
     private final String name;
-    private final Integer joinedResult;
-    private final Integer predictedResult;
-    private final Integer joinedResultPoint;
-    private final Integer postCreationPoint;
+    private final Integer joinedResult;         // 참여 판결 수. 충족 시 해당 티어로 승급 가능
+    private final Integer predictedResult;      // 맞춘 판결 수. 충족 시 해당 티어로 승급 가능
+    private final Integer joinedResultPoint;    // 해당 티어로 판결 참여 시 획득 가능한 포인트
+    private final Integer postCreationPoint;    // 해당 티어로 게시글 작성 시 획득 가능한 포인트
 
     public static MemberTier getNextTier(MemberTier currentTier) {
         MemberTier[] tiers = MemberTier.values();
