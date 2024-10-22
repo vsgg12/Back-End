@@ -40,7 +40,9 @@ public class CommentController {
     }
 
     @DeleteMapping("/{commentid}")
-    public ResponseEntity<BaseResponse> commentDelete(@RequestHeader(value = "Authorization") String token, @PathVariable(value = "postid") Long postId, @PathVariable(value = "commentid") Long commentId) {
+    public ResponseEntity<BaseResponse> commentDelete(@RequestHeader(value = "Authorization") String token,
+                                                      @PathVariable(value = "postid") Long postId,
+                                                      @PathVariable(value = "commentid") Long commentId) {
         Long memberId = JwtUtil.getMemberId(token);
         commentService.deleteComment(memberId, commentId, postId);
         return BaseResponse.toResponseEntity(OK);

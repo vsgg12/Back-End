@@ -1,8 +1,8 @@
 package com.example.mdmggreal.member.entity;
 
 import com.example.mdmggreal.global.entity.BaseEntity;
-import com.example.mdmggreal.member.type.MemberTier;
 import com.example.mdmggreal.member.dto.request.SignUpRequest;
+import com.example.mdmggreal.member.type.MemberTier;
 import com.example.mdmggreal.member.type.OAuthProvider;
 import com.example.mdmggreal.member.type.Role;
 import jakarta.persistence.*;
@@ -146,8 +146,19 @@ public class Member extends BaseEntity {
         this.point += point;
     }
 
-    public void editPredictedResult() {
+    public void increasePredictedResult() {
         this.predictedResult += 1;
+    }
 
+    public void updateProfile(String profileUrl) {
+        this.profileImage = profileUrl;
+    }
+
+    public void updateNickName(String nickName) {
+        this.nickname = nickName;
+    }
+
+    public void deleteProfile() {
+        this.profileImage = "none";
     }
 }
