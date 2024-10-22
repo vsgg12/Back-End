@@ -1,7 +1,6 @@
 package com.example.mdmggreal.image.service;
 
 import com.example.mdmggreal.global.exception.CustomException;
-import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.image.dto.request.ImageDeleteRequest;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
@@ -30,7 +29,7 @@ public class ImageService {
 
     public void deleteImage(ImageDeleteRequest request, Long memberId) {
         Member member = getMemberByMemberId(memberId);
-        s3Service.delete(request);
+        s3Service.deleteImages(request);
     }
 
     private Member getMemberByMemberId(Long memberId) {
