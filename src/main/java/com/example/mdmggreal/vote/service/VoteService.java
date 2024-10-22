@@ -7,6 +7,9 @@ import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.repository.MemberRepository;
 import com.example.mdmggreal.member.type.MemberTier;
+import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.post.entity.type.PostStatus;
+import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest.VoteAddDTO;
 import com.example.mdmggreal.vote.entity.Vote;
@@ -29,6 +32,7 @@ public class VoteService {
     private final VoteRepository voteRepository;
     private final VoteQueryRepository voteQueryRepository;
     private final InGameInfoRepository inGameInfoRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public void addVotes(VoteAddRequest request, Long memberId, Long postId) {
@@ -37,6 +41,7 @@ public class VoteService {
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
         // 클라이언트 요청 검증
+        validateIsProgressPost(postId);
         validateVoteExistence(postId, member);
         validateInGameInfoId(inGameInfoList, voteAddDTOList);
         validateVotesTotalValue(voteAddDTOList);
@@ -51,6 +56,16 @@ public class VoteService {
         // Member 업데이트
         updateMemberAfterVote(member);
         rewardPoint(member);
+    }
+
+    /*
+    판결 중인 게시글인지 검증
+     */
+    private void validateIsProgressPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(INVALID_POST));
+        if (!PostStatus.PROGRESS.equals(post.getStatus())) {
+            throw new CustomException(ErrorCode.CANNOT_VOTE_TO_FINISHED_POST);
+        }
     }
 
     private void validateVoteExistence(Long postId, Member member) {
