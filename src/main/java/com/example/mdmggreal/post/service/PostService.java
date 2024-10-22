@@ -65,11 +65,7 @@ public class PostService {
         LocalDateTime requestEndDateTime = validateAndConvertStringToDateTime(postAddRequest.voteEndDate());
 
         String thumbnailUrl;
-        if (thumbnailImage == null || thumbnailImage.isEmpty()) {
-            thumbnailUrl = createThumbnailImageFromVideo(videoFile);
-        } else {
-            thumbnailUrl = s3Service.uploadImages(thumbnailImage);
-        }
+        thumbnailUrl = s3Service.uploadImages(thumbnailImage);
 
         String videoUrl = postAddRequest.videoType() == VideoType.FILE ? s3Service.uploadVideo(videoFile) : postAddRequest.videoLink();
 
@@ -153,13 +149,6 @@ public class PostService {
         } else {
             throw new CustomException(INVALID_END_DATE);
         }
-    }
-
-    /*
-    todo 비디오 파일을 이용한 썸네일 추출기능
-     */
-    private String createThumbnailImageFromVideo(MultipartFile videoFile) {
-        return null;
     }
 
     private PostDTO createPostDTO(Post post, Long memberId) {
