@@ -117,11 +117,13 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(Long postId, Long memberId, PostUpdateRequest request) {
+    public void updatePost(Long postId, Long memberId, PostUpdateRequest request, String content) {
         Post post = getPostById(postId);
         if (!post.getMember().getId().equals(memberId)) {
             throw new CustomException(NO_PERMISSION_TO_UPDATE_POST);
         }
+
+
     }
 
     /**
