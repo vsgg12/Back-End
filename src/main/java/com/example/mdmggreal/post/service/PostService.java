@@ -120,7 +120,7 @@ public class PostService {
     public void updatePost(Long postId, Long memberId, PostUpdateRequest request) {
         Post post = getPostById(postId);
         if (!post.getMember().getId().equals(memberId)) {
-            throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
+            throw new CustomException(NO_PERMISSION_TO_UPDATE_POST);
         }
     }
 

@@ -76,10 +76,10 @@ public class PostController {
     }
 
     @PostMapping("/{postId}")
-    public ResponseEntity<Object> postUpdate(@RequestHeader(value = "Authorization") String token, @PathVariable Long postId, @RequestBody PostUpdateRequest request) {
+    public ResponseEntity<BaseResponse> postUpdate(@RequestHeader(value = "Authorization") String token, @PathVariable Long postId, @RequestBody PostUpdateRequest request) {
         Long memberId =  JwtUtil.getMemberId(token);
         postService.updatePost(postId, memberId, request);
-        return null;
+        return BaseResponse.toResponseEntity(OK);
     }
 
     private void checkVideoAttachment(MultipartFile videoFile, PostAddRequest postAddRequest) {

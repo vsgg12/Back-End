@@ -31,7 +31,7 @@ public enum ErrorCode {
     VIDEO_FILE_REQUIRED(HttpStatus.BAD_REQUEST, "영상파일을 첨부해주세요."),
     INVALID_END_DATE(HttpStatus.BAD_REQUEST,"판결 종료날짜는 오늘부터 최소 1일 후, 최대 30일 후로 설정할 수 있습니다."),
     NO_PERMISSION_TO_DELETE_POST(HttpStatus.UNAUTHORIZED, "게시글 삭제는 게시글 생성자만 가능합니다."),
-
+    NO_PERMISSION_TO_UPDATE_POST(HttpStatus.UNAUTHORIZED, "게시글 수정는 게시글 생성자만 가능합니다."),
 
     // 투표
     VOTE_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 투표한 게시글 입니다."),
