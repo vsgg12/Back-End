@@ -75,7 +75,7 @@ public class Comment extends BaseEntity {
                 .build();
     }
 
-    public void changeIsDeleted(Boolean isDeleted) {
+    public void changeIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted ? TRUE : FALSE;
     }
 }

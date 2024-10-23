@@ -93,7 +93,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long memberId, Long commentId, Long postId) {
+    public void deleteComment(Long memberId, Long commentId) {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
@@ -102,23 +102,8 @@ public class CommentService {
         if (!comment.getMember().getId().equals(member.getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        comment.changeIsDeleted(TRUE);
-        /*
-        todo 1.댓글 삭제시 포인트 롤백정책 정해질 경우 로직구현
-         */
-//        validateRollbackPoint(postId, memberId);
+        comment.changeIsDeleted(true);
     }
-
-//    private void validateRollbackPoint(Long postId, Long memberId) {
-//        boolean isCommentAuthor = commentRepository.existsByPostIdAndMemberId(postId, memberId);
-//        if (!isCommentAuthor) {
-//            rollbackPoint(postId, memberId);
-//        }
-//    }
-//
-//    private void rollbackPoint(Long postId, Long memberId) {
-//
-//    }
 
     private void rewardPoint(Long postId, Member commentedMember) {
         Long commentedMemberId = commentedMember.getId();
