@@ -2,7 +2,6 @@ package com.example.mdmggreal.comment.repository;
 
 import com.example.mdmggreal.comment.entity.Comment;
 import com.example.mdmggreal.comment.entity.QComment;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -13,14 +12,11 @@ import static com.example.mdmggreal.comment.entity.QComment.comment;
 import static com.example.mdmggreal.post.entity.QPost.post;
 
 @Repository
-public class CommentDAO extends QuerydslRepositorySupport {
-    private final JPAQueryFactory jpaQueryFactory;
+public class CommentQueryRepository extends QuerydslRepositorySupport {
 
-    public CommentDAO(JPAQueryFactory jpaQueryFactory) {
-        super(CommentDAO.class);
-        this.jpaQueryFactory = jpaQueryFactory;
+    public CommentQueryRepository() {
+        super(Comment.class);
     }
-
 
     public List<Comment> getList(Long postId) {
         return from(comment)
@@ -39,6 +35,5 @@ public class CommentDAO extends QuerydslRepositorySupport {
                 .where(QComment.comment.id.eq(commentId))
                 .fetchOne();
         return Optional.of(comment);
-
     }
 }

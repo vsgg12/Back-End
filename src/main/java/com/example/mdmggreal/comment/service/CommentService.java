@@ -4,7 +4,7 @@ import com.example.mdmggreal.alarm.service.CommentAlarmService;
 import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.comment.entity.Comment;
-import com.example.mdmggreal.comment.repository.CommentDAO;
+import com.example.mdmggreal.comment.repository.CommentQueryRepository;
 import com.example.mdmggreal.comment.repository.CommentRepository;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
@@ -33,7 +33,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final CommentDAO commentDAO;
+    private final CommentQueryRepository commentQueryRepository;
     private final CommentAlarmService commentAlarmService;
 
     @Transactional
@@ -78,7 +78,7 @@ public class CommentService {
 
     @Transactional
     public List<CommentDTO> getCommentList(Long postId) {
-        List<Comment> list = commentDAO.getList(postId);
+        List<Comment> list = commentQueryRepository.getList(postId);
         List<CommentDTO> commentResponseDTOList = new ArrayList<>();
         Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
 
@@ -97,7 +97,7 @@ public class CommentService {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_USER_ID)
         );
-        Comment comment = commentDAO.findCommentByIdWithParent(commentId)
+        Comment comment = commentQueryRepository.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> new CustomException(INVALID_COMMENT));
         if (!comment.getMember().getId().equals(member.getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
