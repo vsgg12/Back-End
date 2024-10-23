@@ -9,7 +9,7 @@ import com.example.mdmggreal.comment.repository.CommentRepository;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.service.MemberGetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +18,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
-
 @Service
 @RequiredArgsConstructor
 public class AlarmService {
 
     private final PostAlarmRepository postAlarmRepository;
-    private final MemberRepository memberRepository;
     private final CommentAlarmRepository commentAlarmRepository;
     private final CommentRepository commentRepository;
+    private final MemberGetService memberGetService;
 
     public List<AlarmDTO> getAlarmList(Long memberId) {
-        Member member = getMemberByMemberId(memberId);
+        Member member = memberGetService.getMemberByIdOrThrow(memberId);
         List<AlarmDTO> alarmListResult = new ArrayList<>();
 
         // 게시글 알람 목록 조회 후 List에 추가
@@ -53,11 +51,5 @@ public class AlarmService {
                         .comparing(AlarmDTO::getIsRead)
                         .thenComparing(AlarmDTO::getCreatedDateTime, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
-    }
-
-    private Member getMemberByMemberId(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
-        );
     }
 }

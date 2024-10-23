@@ -5,23 +5,21 @@ import com.example.mdmggreal.alarm.repository.PostAlarmRepository;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.service.MemberGetService;
 import com.example.mdmggreal.post.entity.Post;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_USER_ID;
-
 @Service
 @RequiredArgsConstructor
 public class PostAlarmService {
     private final PostAlarmRepository postAlarmRepository;
-    private final MemberRepository memberRepository;
+    private final MemberGetService memberGetService;
 
     @Transactional
     public void addAlarm(Post post, Long memberId) {
-        Member votedMember = getMemberByMemberId(memberId);
+        Member votedMember = memberGetService.getMemberByIdOrThrow(memberId);
         Member postedMember = post.getMember();
 
         postAlarmRepository.save(PostAlarm.ofVotedMember(votedMember, post));
@@ -30,7 +28,7 @@ public class PostAlarmService {
 
     @Transactional
     public void modifyAlarm(Long memberId, Long alarmId) {
-        Member member = getMemberByMemberId(memberId);
+        Member member = memberGetService.getMemberByIdOrThrow(memberId);
         PostAlarm postAlarm = postAlarmRepository.findById(alarmId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_ALARM)
         );
@@ -44,9 +42,4 @@ public class PostAlarmService {
         }
     }
 
-    private Member getMemberByMemberId(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
-        );
-    }
 }
