@@ -12,6 +12,6 @@ public interface PostAlarmRepository extends JpaRepository<PostAlarm, Long> {
 
     List<PostAlarm> findByMemberId(Long memberId);
 
-    // 한 달 전에 생성된 알람 삭제
-    void deleteByCreatedDateTimeBefore(LocalDateTime createdDateTime);
+    // 보관 기간이 지난 알람 조회
+    List<PostAlarm> findByCreatedDateTimeBefore(LocalDateTime alarmStorageTime);
 }

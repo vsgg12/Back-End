@@ -2,6 +2,7 @@ package com.example.mdmggreal.alarm.service;
 
 import com.example.mdmggreal.alarm.dto.AlarmDTO;
 import com.example.mdmggreal.alarm.entity.CommentAlarm;
+import com.example.mdmggreal.alarm.entity.PostAlarm;
 import com.example.mdmggreal.alarm.repository.CommentAlarmRepository;
 import com.example.mdmggreal.alarm.repository.PostAlarmRepository;
 import com.example.mdmggreal.comment.entity.Comment;
@@ -12,7 +13,9 @@ import com.example.mdmggreal.member.entity.Member;
 import com.example.mdmggreal.member.service.MemberGetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -51,5 +54,17 @@ public class AlarmService {
                         .comparing(AlarmDTO::getIsRead)
                         .thenComparing(AlarmDTO::getCreatedDateTime, Comparator.reverseOrder()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 보관 기간 지난 알람 삭제
+     */
+    @Transactional
+    public void deleteOldAlarms(LocalDateTime alarmStorageTime) {
+        List<PostAlarm> oldPostAlarms = postAlarmRepository.findByCreatedDateTimeBefore(alarmStorageTime);
+        List<CommentAlarm> oldCommentAlarms = commentAlarmRepository.findByCreatedDateTimeBefore(alarmStorageTime);
+
+        oldPostAlarms.forEach(PostAlarm::delete);
+        oldCommentAlarms.forEach(CommentAlarm::delete);
     }
 }

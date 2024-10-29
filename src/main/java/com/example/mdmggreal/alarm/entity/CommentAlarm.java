@@ -46,6 +46,8 @@ public class CommentAlarm extends BaseEntity {
     // 알림 내용
     private String alarmContents;
 
+    private BooleanEnum isDeleted;
+
     public static CommentAlarm from(Comment comment, String commentedNickname, Member alarmedMember) {
         StringBuilder alarmContents = new StringBuilder();
         alarmContents.append(commentedNickname);
@@ -60,6 +62,7 @@ public class CommentAlarm extends BaseEntity {
                 .comment(comment)
                 .isRead(FALSE)
                 .alarmContents(alarmContents.toString())
+                .isDeleted(FALSE)
                 .build();
     }
 
@@ -67,4 +70,7 @@ public class CommentAlarm extends BaseEntity {
         this.isRead = TRUE;
     }
 
+    public void delete() {
+        this.isDeleted = TRUE;
+    }
 }

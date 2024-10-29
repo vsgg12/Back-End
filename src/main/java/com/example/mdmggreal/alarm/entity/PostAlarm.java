@@ -39,12 +39,15 @@ public class PostAlarm extends BaseEntity {
 
     private String alarmContents;
 
+    private BooleanEnum isDeleted;
+
     public static PostAlarm ofVotedMember(Member votedMember, Post post) {
         return PostAlarm.builder()
                 .member(votedMember)
                 .alarmContents(votedMember.getNickname() + "님이 참여한 게시글의 판결 결과를 확인하세요!")
                 .post(post)
                 .isRead(FALSE)
+                .isDeleted(FALSE)
                 .build();
     }
 
@@ -54,10 +57,15 @@ public class PostAlarm extends BaseEntity {
                 .alarmContents(postedMember.getNickname() + "님이 작성한 게시글의 판결 결과를 확인하세요!")
                 .post(post)
                 .isRead(FALSE)
+                .isDeleted(FALSE)
                 .build();
     }
 
     public void editIsRead() {
         this.isRead = TRUE;
+    }
+
+    public void delete() {
+        this.isDeleted = TRUE;
     }
 }

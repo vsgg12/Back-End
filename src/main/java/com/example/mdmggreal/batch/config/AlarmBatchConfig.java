@@ -1,7 +1,6 @@
 package com.example.mdmggreal.batch.config;
 
-import com.example.mdmggreal.alarm.repository.CommentAlarmRepository;
-import com.example.mdmggreal.alarm.repository.PostAlarmRepository;
+import com.example.mdmggreal.alarm.service.AlarmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -22,8 +21,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class AlarmBatchConfig extends DefaultBatchConfiguration {
 
-    private final PostAlarmRepository postAlarmRepository;
-    private final CommentAlarmRepository commentAlarmRepository;
+    private final AlarmService alarmService;
 
     @Bean
     public Job deleteOldAlarmsJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
@@ -44,8 +42,7 @@ public class AlarmBatchConfig extends DefaultBatchConfiguration {
     public Tasklet deleteOldAlarmsTasklet() {
         return ((contribution, chunkContext) -> {
             LocalDateTime alarmStorageTime = LocalDateTime.now().minusMonths(1);
-            postAlarmRepository.deleteByCreatedDateTimeBefore(alarmStorageTime);
-            commentAlarmRepository.deleteByCreatedDateTimeBefore(alarmStorageTime);
+            alarmService.deleteOldAlarms(alarmStorageTime);
             return RepeatStatus.FINISHED;
         });
     }
