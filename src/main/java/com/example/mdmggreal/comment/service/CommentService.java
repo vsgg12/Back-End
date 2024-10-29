@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.COMMENT_NOT_EXISTS;
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
-import static java.lang.Boolean.TRUE;
 
 @Service
 @RequiredArgsConstructor
@@ -91,15 +91,25 @@ public class CommentService {
         return commentResponseDTOList;
     }
 
+    /**
+     * 댓글 삭제
+     * - 대댓글이 달린 댓글은 삭제 불가
+     */
     @Transactional
     public void deleteComment(Long memberId, Long commentId) {
         Member member = memberGetService.getMemberByIdOrThrow(memberId);
         Comment comment = commentQueryRepository.findCommentByIdWithParent(commentId)
-                .orElseThrow(() -> new CustomException(INVALID_COMMENT));
+                .orElseThrow(() -> new CustomException(COMMENT_NOT_EXISTS));
+
         if (!comment.getMember().getId().equals(member.getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        comment.changeIsDeleted(TRUE);
+
+        if (!commentRepository.findByParentId(commentId).isEmpty()) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_COMMENT_WITH_CHILD);
+        }
+
+        comment.changeIsDeleted(true);
     }
 
     private void rewardPoint(Long postId, Member commentedMember) {

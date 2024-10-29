@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -20,4 +21,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     long countDistinctPostsWithCommentsByMemberAndDate(@Param("memberId") Long memberId,
                                                        @Param("startOfDay") LocalDateTime startOfDay,
                                                        @Param("endOfDay") LocalDateTime endOfDay);
+
+    /*
+    특정 댓글의 대댓글 조회
+     */
+    List<Comment> findByParentId(Long parentId);
 }
