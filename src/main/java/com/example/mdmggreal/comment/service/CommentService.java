@@ -32,7 +32,6 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final CommentAlarmService commentAlarmService;
     private final MemberGetService memberGetService;
@@ -93,7 +92,7 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long memberId, Long commentId, Long postId) {
+    public void deleteComment(Long memberId, Long commentId) {
         Member member = memberGetService.getMemberByIdOrThrow(memberId);
         Comment comment = commentQueryRepository.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> new CustomException(INVALID_COMMENT));
