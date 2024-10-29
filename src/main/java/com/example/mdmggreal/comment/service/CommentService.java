@@ -9,7 +9,7 @@ import com.example.mdmggreal.comment.repository.CommentRepository;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.service.MemberGetService;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.repository.PostRepository;
 import jakarta.transaction.Transactional;
@@ -35,12 +35,12 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final CommentQueryRepository commentQueryRepository;
     private final CommentAlarmService commentAlarmService;
+    private final MemberGetService memberGetService;
 
     @Transactional
     public void addComment(Long postId, CommentAddRequest request, Long memberId) {
-        Member commentedMember = memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
-        );
+        Member commentedMember = memberGetService.getMemberByIdOrThrow(memberId);
+
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new CustomException(ErrorCode.INVALID_POST)
         );
@@ -93,16 +93,14 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long memberId, Long commentId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(ErrorCode.INVALID_USER_ID)
-        );
+    public void deleteComment(Long memberId, Long commentId, Long postId) {
+        Member member = memberGetService.getMemberByIdOrThrow(memberId);
         Comment comment = commentQueryRepository.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> new CustomException(INVALID_COMMENT));
         if (!comment.getMember().getId().equals(member.getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        comment.changeIsDeleted(true);
+        comment.changeIsDeleted(TRUE);
     }
 
     private void rewardPoint(Long postId, Member commentedMember) {
@@ -115,7 +113,7 @@ public class CommentService {
         );
 
         if (!isAlreadyCommentOnPost && todayRewardedCommentCount < 30) {
-            commentedMember.rewardPointByComment(5);
+            commentedMember.increasePoint(5);
         }
     }
 }

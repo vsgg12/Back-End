@@ -11,7 +11,7 @@ import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.service.MemberGetService;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.entity.Post;
@@ -36,11 +36,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.mdmggreal.global.exception.ErrorCode.*;
+import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_END_DATE;
+import static com.example.mdmggreal.global.exception.ErrorCode.NO_PERMISSION_TO_DELETE_POST;
 import static java.math.BigDecimal.ZERO;
 
 @RequiredArgsConstructor
@@ -52,15 +52,15 @@ public class PostService {
     private final InGameInfoRepository inGameInfoRepository;
     private final PostHashtagRepository postHashtagRepository;
     private final HashtagQueryRepository hashtagQueryRepository;
-    private final MemberRepository memberRepository;
     private final PostQueryRepository postQueryRepository;
     private final VoteQueryRepository voteQueryRepository;
     private final HashtagRepository hashtagRepository;
     private final VoteRepository voteRepository;
+    private final MemberGetService memberGetService;
 
     @Transactional
     public void addPost(MultipartFile videoFile, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
-        Member member = getMemberByMemberId(memberId);
+        Member member = memberGetService.getMemberByIdOrThrow(memberId);
 
         LocalDateTime requestEndDateTime = validateAndConvertStringToDateTime(postAddRequest.voteEndDate());
 
@@ -86,7 +86,7 @@ public class PostService {
 
     @Transactional
     public void rewardPointByPostCreation(Member member) {
-        member.rewardPointByPostCreation(member.getMemberTier().getPostCreationPoint());
+        member.increasePoint(member.getMemberTier().getPostCreationPoint());
     }
 
     @Transactional
@@ -109,7 +109,7 @@ public class PostService {
 
     @Transactional
     public void deletePost(Long postId, Long memberId) {
-        Member loginMember = getMemberByMemberId(memberId);
+        Member loginMember = memberGetService.getMemberByIdOrThrow(memberId);
         Post post = getPostById(postId);
 
         if (!post.getMember().getId().equals(loginMember.getId())) {
@@ -154,7 +154,7 @@ public class PostService {
     private PostDTO createPostDTO(Post post, Long memberId) {
         boolean isVote = false;
         if (memberId != null) {
-            Member loginMember = getMemberByMemberId(memberId);
+            Member loginMember = memberGetService.getMemberByIdOrThrow(memberId);
             isVote = voteQueryRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
         }
 
@@ -199,9 +199,4 @@ public class PostService {
         return post;
     }
 
-    private Member getMemberByMemberId(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
-        );
-    }
 }
