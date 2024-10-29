@@ -130,7 +130,7 @@ public class CommentService {
         );
 
         if (!isAlreadyCommentOnPost && todayRewardedCommentCount < 30) {
-            commentedMember.rewardPointByComment(5);
+            commentedMember.increasePoint(5);
         }
     }
 }

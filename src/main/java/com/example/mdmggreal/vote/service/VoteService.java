@@ -125,7 +125,7 @@ public class VoteService {
 
     private void rewardPoint(Member member) {
         if (member.getJoinedResult() / 3 == 0 && member.getJoinedResult() != 0) {
-            member.rewardPointByJoinedResult(member.getMemberTier().getJoinedResultPoint());
+            member.increasePoint(member.getMemberTier().getJoinedResultPoint());
         }
     }
 

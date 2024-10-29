@@ -86,7 +86,7 @@ public class PostService {
 
     @Transactional
     public void rewardPointByPostCreation(Member member) {
-        member.rewardPointByPostCreation(member.getMemberTier().getPostCreationPoint());
+        member.increasePoint(member.getMemberTier().getPostCreationPoint());
     }
 
     @Transactional
