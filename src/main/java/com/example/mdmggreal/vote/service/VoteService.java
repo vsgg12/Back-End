@@ -5,7 +5,7 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.service.MemberGetService;
 import com.example.mdmggreal.member.type.MemberTier;
 import com.example.mdmggreal.post.entity.Post;
 import com.example.mdmggreal.post.entity.type.PostStatus;
@@ -28,16 +28,16 @@ import static com.example.mdmggreal.global.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class VoteService {
 
-    private final MemberRepository memberRepository;
     private final VoteRepository voteRepository;
     private final VoteQueryRepository voteQueryRepository;
     private final InGameInfoRepository inGameInfoRepository;
     private final PostRepository postRepository;
+    private final MemberGetService memberGetService;
 
     @Transactional
     public void addVotes(VoteAddRequest request, Long memberId, Long postId) {
         List<VoteAddDTO> voteAddDTOList = request.getVoteList();
-        Member member = getMemberById(memberId);
+        Member member = memberGetService.getMemberByIdOrThrow(memberId);
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
         // 클라이언트 요청 검증
@@ -137,15 +137,9 @@ public class VoteService {
         }
     }
 
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
-        );
-    }
-
     private void rewardPoint(Member member) {
         if (member.getJoinedResult() / 3 == 0 && member.getJoinedResult() != 0) {
-            member.rewardPointByJoinedResult(member.getMemberTier().getJoinedResultPoint());
+            member.increasePoint(member.getMemberTier().getJoinedResultPoint());
         }
     }
 
