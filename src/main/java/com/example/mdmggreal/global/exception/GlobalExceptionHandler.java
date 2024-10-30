@@ -1,7 +1,10 @@
 package com.example.mdmggreal.global.exception;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.example.mdmggreal.global.response.BaseResponse;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -16,6 +19,7 @@ import java.util.Objects;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
@@ -64,6 +68,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<BaseResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         return BaseResponse.toResponseEntity(BAD_REQUEST, ex.getMessage());
+    }
+
+    // AWS SDK에서 클라이언트 측의 문제로 인해 요청이 실패할 때 발생
+    // S3 문제와도 관련 있음.
+    @ExceptionHandler({SdkClientException.class, AmazonServiceException.class})
+    public ResponseEntity<BaseResponse> handleSdkClientAndAmazonService(Exception ex) {
+        log.error(ex.getMessage());
+        return BaseResponse.toResponseEntity(BAD_REQUEST, "알 수 없는 이유로 문제가 발생했습니다. \n지속되는 경우 개발자에게 문의하세요.");
     }
 
 }
