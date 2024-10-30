@@ -53,6 +53,9 @@ public class MyPageService {
     @Transactional
     public void updateNickName(UpdateNickNameRequest request) {
         Member member = memberGetService.getMemberByIdOrThrow(request.getMemberId());
+
+        // 7일에 한번만 변경할 수 있도록 확인
+
         member.updateNickName(request.getNickName());
     }
 

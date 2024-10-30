@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.FALSE;
 import static com.example.mdmggreal.global.entity.type.BooleanEnum.TRUE;
 import static com.example.mdmggreal.member.type.MemberTier.UNRANK;
@@ -102,6 +104,11 @@ public class Member extends BaseEntity {
     private OAuthProvider oAuthProvider;
 
     /**
+     * 마지막 닉네임 수정 일시
+     */
+    private LocalDateTime nickModifiedDateTime;
+
+    /**
      * 네이버 로그인
      */
     public static Member from(SignUpRequest request) {
@@ -122,6 +129,7 @@ public class Member extends BaseEntity {
                 .predictedResult(0)
                 .joinedResult(0)
                 .point(0)
+                .nickModifiedDateTime(null)
                 .build();
     }
 
