@@ -31,6 +31,8 @@ public class QComment extends EntityPathBase<Comment> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdDateTime = _super.createdDateTime;
 
+    public final QComment grandParent;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final EnumPath<com.example.mdmggreal.global.entity.type.BooleanEnum> isDeleted = createEnum("isDeleted", com.example.mdmggreal.global.entity.type.BooleanEnum.class);
@@ -62,6 +64,7 @@ public class QComment extends EntityPathBase<Comment> {
 
     public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.grandParent = inits.isInitialized("grandParent") ? new QComment(forProperty("grandParent"), inits.get("grandParent")) : null;
         this.member = inits.isInitialized("member") ? new com.example.mdmggreal.member.entity.QMember(forProperty("member"), inits.get("member")) : null;
         this.parent = inits.isInitialized("parent") ? new QComment(forProperty("parent"), inits.get("parent")) : null;
         this.post = inits.isInitialized("post") ? new com.example.mdmggreal.post.entity.QPost(forProperty("post"), inits.get("post")) : null;

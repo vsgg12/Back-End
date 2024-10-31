@@ -1,6 +1,5 @@
 package com.example.mdmggreal.comment.controller;
 
-import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.comment.dto.response.CommentGetListResponse;
 import com.example.mdmggreal.comment.service.CommentService;
@@ -35,8 +34,8 @@ public class CommentController {
 
     @GetMapping
     public ResponseEntity<CommentGetListResponse> commentGetList(@PathVariable(value = "postid") Long postId) {
-        List<CommentDTO> commentList = commentService.getCommentList(postId);
-        return ResponseEntity.ok(CommentGetListResponse.from(commentList, OK));
+        List<CommentGetListResponse.CommentDTO> commentDTOList = commentService.getCommentList(postId);
+        return ResponseEntity.ok(CommentGetListResponse.from(commentDTOList, OK));
     }
 
     @DeleteMapping("/{commentid}")

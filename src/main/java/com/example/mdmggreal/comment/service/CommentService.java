@@ -1,10 +1,10 @@
 package com.example.mdmggreal.comment.service;
 
 import com.example.mdmggreal.alarm.service.CommentAlarmService;
-import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
+import com.example.mdmggreal.comment.dto.response.CommentGetListResponse;
 import com.example.mdmggreal.comment.entity.Comment;
-import com.example.mdmggreal.comment.repository.CommentDAO;
+import com.example.mdmggreal.comment.repository.CommentQueryRepository;
 import com.example.mdmggreal.comment.repository.CommentRepository;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
@@ -32,7 +32,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final CommentDAO commentDAO;
+    private final CommentQueryRepository commentQueryRepository;
     private final CommentAlarmService commentAlarmService;
     private final MemberGetService memberGetService;
 
@@ -76,25 +76,56 @@ public class CommentService {
     }
 
     @Transactional
-    public List<CommentDTO> getCommentList(Long postId) {
-        List<Comment> list = commentDAO.getList(postId);
-        List<CommentDTO> commentResponseDTOList = new ArrayList<>();
-        Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
+    public List<CommentGetListResponse.CommentDTO> getCommentList(Long postId) {
+        List<Comment> list = commentQueryRepository.getList(postId);
+        List<CommentGetListResponse.CommentDTO> responseDTOList = new ArrayList<>();
+        Map<Long, CommentGetListResponse.CommentDTO> commentDTOHashMap = new HashMap<>();
 
-        list.forEach(c -> {
-            CommentDTO commentResponseDTO = CommentDTO.from(c);
-            commentDTOHashMap.put(commentResponseDTO.getId(), commentResponseDTO);
-            if (c.getParent() != null)
-                commentDTOHashMap.get(c.getParent().getId()).getChildren().add(0, commentResponseDTO); // 대댓글 오래된 순으로 정렬
-            else commentResponseDTOList.add(commentResponseDTO);
+        // 원래 구조
+//        list.forEach(c -> {
+//            Comment commentResponseDTO = Comment.from(c);
+//            commentDTOHashMap.put(commentResponseDTO.getId(), commentResponseDTO);
+//            if (c.getParent() != null)
+//                commentDTOHashMap.get(c.getParent().getId()).getChildren().add(0, commentResponseDTO); // 대댓글 오래된 순으로 정렬
+//            else commentResponseDTOList.add(commentResponseDTO);
+//        });
+//
+        // 댓글은 최신 순으로 정렬, 대댓글은 작성 순으로 정렬
+        // 1. 짱구 : 배고프다 - id=1, parentId=null, grandParentId=null
+            // 2. 나나 : @짱구 어쩌라고? - id=2, parentId=1, grandParentId=1
+            // 3. 철구 : @나나 인성 무엇 - id=3, parentId=2, grandParentId=1
+            // 4. 슬기 : @짱구 물 마시셈 - id=4, parentId=1, grandParentId=1
+            // 5. 철구 : @짱구 나도.... - id=5, parentId=1, grandParentId=1
+            // 6. 나나 : @철구 반사 ㅋㅋ - id=6, parentId=3, grandParentId=1
+
+        // 3번에서, 철구가 나나한테 댓글을 단 경우 댓글 알림이 어떻게 생성되나?
+        // 현재는 A)내가 쓴 게시글에 댓글이 달렸을 때, B)내가 쓴 댓글에 대댓글이 달렸을 때 댓글 알림 발송.
+        // 3번 케이스의 경우 A는 아님(우리 정책 상 댓글과 대댓글은 다름).
+        // 그럼 B인가? 짱구에게 대댓글을 남긴게 아니라 짱구의 대댓글에 대댓글을 남길 때도 짱구한테 댓글 알림이 가나?
+        // "나나님이 글에 답글을 남겼습니다. ~~~~" 이렇게?
+        // 그럼 만약 짱구의 댓글에서 대댓글들이 막 싸우고 있으면 짱구한테 계속 알람이 가는 건가??
+        // 나나와 짱구 둘 다 알림이 가는지, 나나만 가는지, 짱구만 가는지...
+
+        // 댓글의 대댓글도 달 수 있는 구조2
+        list.forEach(comment -> {
+            CommentGetListResponse.CommentDTO commentDTO = CommentGetListResponse.CommentDTO.from(comment);
+            commentDTOHashMap.put(commentDTO.getId(), commentDTO);
+
+            if (comment.getGrandParent() == null) { // 원 댓글
+                responseDTOList.add(commentDTO);
+            } else { // 원 댓글의 대댓글들
+                commentDTOHashMap.get(comment.getGrandParent().getId())
+                        .getChildren()
+                        .add(0, commentDTO); // 대댓글 오래된 순으로 정렬
+            }
         });
-        return commentResponseDTOList;
+        return responseDTOList;
     }
 
     @Transactional
     public void deleteComment(Long memberId, Long commentId, Long postId) {
         Member member = memberGetService.getMemberByIdOrThrow(memberId);
-        Comment comment = commentDAO.findCommentByIdWithParent(commentId)
+        Comment comment = commentQueryRepository.findCommentByIdWithParent(commentId)
                 .orElseThrow(() -> new CustomException(INVALID_COMMENT));
         if (!comment.getMember().getId().equals(member.getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
