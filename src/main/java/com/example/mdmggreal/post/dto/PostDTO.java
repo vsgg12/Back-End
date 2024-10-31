@@ -39,7 +39,7 @@ public class PostDTO {
 
     public static PostDTO of(MemberDTO memberDTO, Post post, List<Hashtag> hashtagList, List<InGameInfoDTO> inGameInfoList, Boolean isVote) {
         LocalDateTime now = LocalDateTime.now();
-        long daysUntilEnd = ChronoUnit.DAYS.between(now, post.getEndDateTime());
+        long daysUntilEnd = ChronoUnit.DAYS.between(now, post.getEndDateTime()); // 기준: 마감일 당일 조회 시 - 0일
 
         return PostDTO.builder()
                 .id(post.getId())
