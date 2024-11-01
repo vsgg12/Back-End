@@ -37,7 +37,8 @@ public class CommentService {
     private final MemberGetService memberGetService;
 
     @Transactional
-    public void addComment(Long postId, CommentAddRequest request, Long memberId) {
+    public void addComment(CommentAddRequest request, Long memberId) {
+        Long postId = request.getPostId();
         Member commentedMember = memberGetService.getMemberByIdOrThrow(memberId);
 
         Post post = postRepository.findById(postId).orElseThrow(

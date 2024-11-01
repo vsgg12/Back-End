@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CommentAddRequest {
 
+    @NotBlank(message = "게시글 ID를 입력하세요.")
+    private Long postId;
+
     private Long parentId;
 
     @NotBlank(message = "댓글 내용을 작성해주세요.")
