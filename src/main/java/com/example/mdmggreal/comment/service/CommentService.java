@@ -97,11 +97,9 @@ public class CommentService {
      */
     @Transactional
     public void deleteComment(Long memberId, Long commentId) {
-        Member member = memberGetService.getMemberByIdOrThrow(memberId);
-        Comment comment = commentQueryRepository.findCommentByIdWithParent(commentId)
-                .orElseThrow(() -> new CustomException(COMMENT_NOT_EXISTS));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_EXISTS));
 
-        if (!comment.getMember().getId().equals(member.getId())) {
+        if (!memberId.equals(comment.getMember().getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
 
