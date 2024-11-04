@@ -1,5 +1,6 @@
 package com.example.mdmggreal.post.dto;
 
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.example.mdmggreal.hashtag.entity.Hashtag;
 import com.example.mdmggreal.ingameinfo.dto.response.InGameInfoDTO;
 import com.example.mdmggreal.member.dto.MemberDTO;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Getter
@@ -29,11 +31,15 @@ public class PostDTO {
     private MemberDTO memberDTO;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long daysUntilEnd; // 게시글 마감까지 남은 일자
     private List<Hashtag> hashtagList;
     private List<InGameInfoDTO> inGameInfoList;
     private Boolean isVote;
+    private BooleanEnum isDeleted; // 게시글 삭제 여부
 
     public static PostDTO of(MemberDTO memberDTO, Post post, List<Hashtag> hashtagList, List<InGameInfoDTO> inGameInfoList, Boolean isVote) {
+        LocalDateTime now = LocalDateTime.now();
+        long daysUntilEnd = ChronoUnit.DAYS.between(now, post.getEndDateTime()); // 기준: 마감일 당일 조회 시 - 0일
 
         return PostDTO.builder()
                 .id(post.getId())
@@ -46,10 +52,21 @@ public class PostDTO {
                 .memberDTO(memberDTO)
                 .createdAt(post.getCreatedDateTime())
                 .updatedAt(post.getModifyDateTime())
+                .daysUntilEnd(daysUntilEnd)
                 .hashtagList(hashtagList)
                 .inGameInfoList(inGameInfoList)
                 .isVote(isVote)
+                .isDeleted(post.getIsDeleted())
                 .build();
+    }
 
+    /*
+    삭제된 게시글 조회 시 사용
+     */
+    public static PostDTO createDeletedPostDTO(Long postId) {
+        return PostDTO.builder()
+                .id(postId)
+                .isDeleted(BooleanEnum.TRUE)
+                .build();
     }
 }

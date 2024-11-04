@@ -48,6 +48,10 @@ public class PostController {
         return ResponseEntity.ok(PostAddResponse.of(HttpStatus.CREATED));
     }
 
+    /*
+    게시글 상세 조회
+    - 삭제된 게시글은 id, isDeleted 필드 외에는 전부 null 반환
+     */
     @GetMapping("/{postId}")
     public ResponseEntity<PostGetResponse> postGet(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long postId) {
         Long memberId = null;

@@ -11,7 +11,7 @@ import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.dto.MemberDTO;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.service.MemberGetService;
 import com.example.mdmggreal.post.dto.PostDTO;
 import com.example.mdmggreal.post.dto.request.PostAddRequest;
 import com.example.mdmggreal.post.dto.request.PostUpdateRequest;
@@ -40,7 +40,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.mdmggreal.global.exception.ErrorCode.*;
+import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_END_DATE;
+import static com.example.mdmggreal.global.exception.ErrorCode.NO_PERMISSION_TO_DELETE_POST;
 import static java.math.BigDecimal.ZERO;
 
 @RequiredArgsConstructor
@@ -52,24 +53,20 @@ public class PostService {
     private final InGameInfoRepository inGameInfoRepository;
     private final PostHashtagRepository postHashtagRepository;
     private final HashtagQueryRepository hashtagQueryRepository;
-    private final MemberRepository memberRepository;
     private final PostQueryRepository postQueryRepository;
     private final VoteQueryRepository voteQueryRepository;
     private final HashtagRepository hashtagRepository;
     private final VoteRepository voteRepository;
+    private final MemberGetService memberGetService;
 
     @Transactional
     public void addPost(MultipartFile videoFile, MultipartFile thumbnailImage, PostAddRequest postAddRequest, String content, Long memberId) throws IOException {
-        Member member = getMemberByMemberId(memberId);
+        Member member = memberGetService.getMemberByIdOrThrow(memberId);
 
         LocalDateTime requestEndDateTime = validateAndConvertStringToDateTime(postAddRequest.voteEndDate());
 
         String thumbnailUrl;
-        if (thumbnailImage == null || thumbnailImage.isEmpty()) {
-            thumbnailUrl = createThumbnailImageFromVideo(videoFile);
-        } else {
-            thumbnailUrl = s3Service.uploadImages(thumbnailImage);
-        }
+        thumbnailUrl = s3Service.uploadImages(thumbnailImage);
 
         String videoUrl = postAddRequest.videoType() == VideoType.FILE ? s3Service.uploadVideo(videoFile) : postAddRequest.videoLink();
 
@@ -90,12 +87,17 @@ public class PostService {
 
     @Transactional
     public void rewardPointByPostCreation(Member member) {
-        member.rewardPointByPostCreation(member.getMemberTier().getPostCreationPoint());
+        member.increasePoint(member.getMemberTier().getPostCreationPoint());
     }
 
     @Transactional
     public PostDTO getPost(Long postId, Long memberId) {
         Post post = getPostById(postId);
+
+        if (post.getIsDeleted().equals(BooleanEnum.TRUE)) { // 삭제된 게시글의 경우
+            return PostDTO.createDeletedPostDTO(postId);
+        }
+
         post.addView();
         return createPostDTO(post, memberId);
     }
@@ -108,12 +110,30 @@ public class PostService {
 
     @Transactional
     public void deletePost(Long postId, Long memberId) {
-        Member loginMember = getMemberByMemberId(memberId);
+        Member loginMember = memberGetService.getMemberByIdOrThrow(memberId);
         Post post = getPostById(postId);
+
         if (!post.getMember().getId().equals(loginMember.getId())) {
             throw new CustomException(NO_PERMISSION_TO_DELETE_POST);
         }
-        post.deleted();
+
+        deleteThumbnailAndVideo(post);
+        post.delete();
+    }
+
+    /*
+    썸네일 이미지, 게시글 동영상 삭제
+     */
+    private void deleteThumbnailAndVideo(Post post) {
+        // S3에서 썸네일이미지, 게시글동영상 삭제
+        String thumbnailURL = post.getThumbnailURL();
+        String videoURL = post.getVideo().getUrl();
+        List<String> deleteUrls = List.of(thumbnailURL, videoURL);
+        s3Service.deleteS3Objects(deleteUrls);
+
+        // db 썸네일, 동영상 삭제 처리
+        post.deleteThumbnail();
+        post.deleteVideo();
     }
 
     @Transactional
@@ -142,17 +162,10 @@ public class PostService {
         }
     }
 
-    /*
-    todo 비디오 파일을 이용한 썸네일 추출기능
-     */
-    private String createThumbnailImageFromVideo(MultipartFile videoFile) {
-        return null;
-    }
-
     private PostDTO createPostDTO(Post post, Long memberId) {
         boolean isVote = false;
         if (memberId != null) {
-            Member loginMember = getMemberByMemberId(memberId);
+            Member loginMember = memberGetService.getMemberByIdOrThrow(memberId);
             isVote = voteQueryRepository.existsVoteByMemberId(post.getId(), loginMember.getId());
         }
 
@@ -197,9 +210,4 @@ public class PostService {
         return post;
     }
 
-    private Member getMemberByMemberId(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
-        );
-    }
 }

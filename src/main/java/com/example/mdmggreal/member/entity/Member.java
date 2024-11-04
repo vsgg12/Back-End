@@ -134,21 +134,8 @@ public class Member extends BaseEntity {
         this.memberTier = memberTier;
     }
 
-    public void rewardPointByComment(int point) {
-        this.point += point;
-    }
-
-    public void rewardPointByJoinedResult(Integer point) {
-        this.point += point;
-    }
-
-    public void rewardPointByPostCreation(Integer point) {
-        this.point += point;
-    }
-
-    public void editPredictedResult() {
+    public void increasePredictedResult() {
         this.predictedResult += 1;
-
     }
 
     public void updateProfile(String profileUrl) {
@@ -161,5 +148,9 @@ public class Member extends BaseEntity {
 
     public void deleteProfile() {
         this.profileImage = "none";
+    }
+
+    public void increasePoint(int point) {
+        this.point += point;
     }
 }

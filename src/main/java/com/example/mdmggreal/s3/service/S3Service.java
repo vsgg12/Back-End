@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
 @RequiredArgsConstructor
@@ -82,11 +80,26 @@ public class S3Service {
         return amazonS3.getUrl(bucket, path).toString();
     }
 
-    public void delete(ImageDeleteRequest request) {
+    public void deleteImages(ImageDeleteRequest request) {
         String splitStr = ".com/";
         request.getImageUrl().forEach(imageUrl -> {
             String fileName = imageUrl.substring(imageUrl.lastIndexOf(splitStr) + splitStr.length());
             amazonS3.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        });
+    }
+
+    /**
+     * S3 이미지/동영상 삭제
+     * - 삭제 후 복구 불가능!
+     */
+    public void deleteS3Objects(List<String> s3Urls) {
+        s3Urls.forEach(s3Url -> {
+            // S3 객체 경로 추출
+            // ex) https://example.s3.example.amazonaws.com/example/cg123-772jsl-d33dg -> /example/cg123-772jsl-d33dg
+            String[] splitArr = s3Url.split("com/");
+            String objectUrl = splitArr[splitArr.length - 1];
+
+            amazonS3.deleteObject(new DeleteObjectRequest(bucket, objectUrl));
         });
     }
 }

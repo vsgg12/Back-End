@@ -5,8 +5,11 @@ import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.ingameinfo.entity.InGameInfo;
 import com.example.mdmggreal.ingameinfo.repository.InGameInfoRepository;
 import com.example.mdmggreal.member.entity.Member;
-import com.example.mdmggreal.member.repository.MemberRepository;
+import com.example.mdmggreal.member.service.MemberGetService;
 import com.example.mdmggreal.member.type.MemberTier;
+import com.example.mdmggreal.post.entity.Post;
+import com.example.mdmggreal.post.entity.type.PostStatus;
+import com.example.mdmggreal.post.repository.PostRepository;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest;
 import com.example.mdmggreal.vote.dto.request.VoteAddRequest.VoteAddDTO;
 import com.example.mdmggreal.vote.entity.Vote;
@@ -25,18 +28,21 @@ import static com.example.mdmggreal.global.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class VoteService {
 
-    private final MemberRepository memberRepository;
     private final VoteRepository voteRepository;
     private final VoteQueryRepository voteQueryRepository;
     private final InGameInfoRepository inGameInfoRepository;
+    private final PostRepository postRepository;
+    private final MemberGetService memberGetService;
 
     @Transactional
     public void addVotes(VoteAddRequest request, Long memberId, Long postId) {
         List<VoteAddDTO> voteAddDTOList = request.getVoteList();
-        Member member = getMemberById(memberId);
+        Member member = memberGetService.getMemberByIdOrThrow(memberId);
         List<InGameInfo> inGameInfoList = inGameInfoRepository.findByPostId(postId);
 
         // 클라이언트 요청 검증
+        validateSelfVoting(postId, memberId);
+        validateIsProgressPost(postId);
         validateVoteExistence(postId, member);
         validateInGameInfoId(inGameInfoList, voteAddDTOList);
         validateVotesTotalValue(voteAddDTOList);
@@ -53,12 +59,38 @@ public class VoteService {
         rewardPoint(member);
     }
 
+    /*
+    본인의 게시글에 투표 못하도록 검증
+     */
+    private void validateSelfVoting(Long postId, Long memberId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(INVALID_POST));
+        if (memberId.equals(post.getMember().getId())) {
+            throw new CustomException(ErrorCode.CANNOT_VOTE_OWN_POST);
+        }
+    }
+
+    /*
+    판결 중인 게시글인지 검증
+     */
+    private void validateIsProgressPost(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(INVALID_POST));
+        if (!PostStatus.PROGRESS.equals(post.getStatus())) {
+            throw new CustomException(ErrorCode.CANNOT_VOTE_TO_FINISHED_POST);
+        }
+    }
+
+    /*
+    이미 투표한 게시글인지 검증
+     */
     private void validateVoteExistence(Long postId, Member member) {
         if (voteQueryRepository.existsVoteByMemberId(postId, member.getId())) {
             throw new CustomException(VOTE_ALREADY_EXISTS);
         }
     }
 
+    /*
+    게시글에 해당하는 inGameInfo 를 전부 요청했는지 검증
+     */
     private void validateInGameInfoId(List<InGameInfo> inGameInfoList, List<VoteAddDTO> voteAddDTOList) {
         for (VoteAddDTO voteAddDTO : voteAddDTOList) {
             boolean isMatchedInGameInfo = inGameInfoList.stream()
@@ -73,6 +105,9 @@ public class VoteService {
         }
     }
 
+    /*
+    투표의 총합이 10인지 검증
+     */
     private void validateVotesTotalValue(List<VoteAddDTO> VoteAddDTOs) {
         long sum = VoteAddDTOs.stream().mapToLong(VoteAddDTO::getRatio).sum();
         if (sum != 10) throw new CustomException(VOTES_TOTAL_VALUE_MUST_BE_TEN);
@@ -102,15 +137,9 @@ public class VoteService {
         }
     }
 
-    private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(INVALID_USER_ID)
-        );
-    }
-
     private void rewardPoint(Member member) {
         if (member.getJoinedResult() / 3 == 0 && member.getJoinedResult() != 0) {
-            member.rewardPointByJoinedResult(member.getMemberTier().getJoinedResultPoint());
+            member.increasePoint(member.getMemberTier().getJoinedResultPoint());
         }
     }
 
