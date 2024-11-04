@@ -40,8 +40,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_END_DATE;
-import static com.example.mdmggreal.global.exception.ErrorCode.NO_PERMISSION_TO_DELETE_POST;
+import static com.example.mdmggreal.global.exception.ErrorCode.*;
 import static java.math.BigDecimal.ZERO;
 
 @RequiredArgsConstructor

@@ -79,11 +79,15 @@ public class PostController {
         return BaseResponse.toResponseEntity(OK);
     }
 
+    /**
+     * 게시글 수정
+     */
     @PostMapping("/{postId}")
-    public ResponseEntity<BaseResponse> postUpdate(@RequestHeader(value = "Authorization") String token
-            , @PathVariable Long postId
-            , @RequestBody PostUpdateRequest request
-            , @RequestPart("content") MultipartFile contentFile) throws IOException {
+    public ResponseEntity<BaseResponse> postUpdate(@RequestHeader(value = "Authorization") String token,
+                                                   @PathVariable Long postId,
+                                                   @RequestBody PostUpdateRequest request,
+                                                   @RequestPart("content") MultipartFile contentFile
+    ) throws IOException {
         Long memberId = JwtUtil.getMemberId(token);
 
         String content = new String(contentFile.getBytes(), StandardCharsets.UTF_8);
