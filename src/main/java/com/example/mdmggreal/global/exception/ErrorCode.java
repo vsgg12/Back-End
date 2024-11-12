@@ -46,6 +46,7 @@ public enum ErrorCode {
     COMMENT_NOT_EXISTS(HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다"),
     INVALID_PARENT_ID(HttpStatus.BAD_REQUEST, "postId에 맞는 parentId인지 확인해주세요."),
     NO_PERMISSION_TO_DELETE_COMMENT(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+    CANNOT_DELETE_COMMENT_WITH_CHILD(HttpStatus.UNAUTHORIZED, "대댓글이 있는 댓글은 삭제할 수 없습니다."),
 
     // 해시태그
     HASHTAGNAME_NOT_MATCH(HttpStatus.BAD_REQUEST, "해시태그 이름이 일치하지 않습니다."),

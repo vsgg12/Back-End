@@ -16,16 +16,16 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-@RequestMapping("/api/post/{postid}/comment")
+//@RequestMapping("/api/comment")
 @RequiredArgsConstructor
 @RestController
 public class CommentController {
     private final CommentService commentService;
 
 
-    @PostMapping
+    @PostMapping("/api/post/{postId}/comment")
     public ResponseEntity<BaseResponse> commentAdd(@RequestHeader(value = "Authorization") String token,
-                                                   @PathVariable(value = "postid") Long postId,
+                                                   @PathVariable(value = "postId") Long postId,
                                                    @RequestBody @Valid CommentAddRequest request
     ) {
         Long memberId = JwtUtil.getMemberId(token);
@@ -33,18 +33,20 @@ public class CommentController {
         return BaseResponse.toResponseEntity(CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<CommentGetListResponse> commentGetList(@PathVariable(value = "postid") Long postId) {
+    @GetMapping("/api/post/{postId}/comment")
+    public ResponseEntity<CommentGetListResponse> commentGetList(@PathVariable(value = "postId") Long postId) {
         List<CommentDTO> commentList = commentService.getCommentList(postId);
         return ResponseEntity.ok(CommentGetListResponse.from(commentList, OK));
     }
 
-    @DeleteMapping("/{commentid}")
+    /**
+     * 댓글 삭제
+     */
+    @DeleteMapping("/api/comment/{commentId}")
     public ResponseEntity<BaseResponse> commentDelete(@RequestHeader(value = "Authorization") String token,
-                                                      @PathVariable(value = "postid") Long postId,
-                                                      @PathVariable(value = "commentid") Long commentId) {
+                                                      @PathVariable(value = "commentId") Long commentId) {
         Long memberId = JwtUtil.getMemberId(token);
-        commentService.deleteComment(memberId, commentId, postId);
+        commentService.deleteComment(memberId, commentId);
         return BaseResponse.toResponseEntity(OK);
     }
 
