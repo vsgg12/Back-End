@@ -4,7 +4,7 @@ import com.example.mdmggreal.alarm.service.CommentAlarmService;
 import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
 import com.example.mdmggreal.comment.entity.Comment;
-import com.example.mdmggreal.comment.repository.CommentDAO;
+import com.example.mdmggreal.comment.repository.CommentQueryRepository;
 import com.example.mdmggreal.comment.repository.CommentRepository;
 import com.example.mdmggreal.global.exception.CustomException;
 import com.example.mdmggreal.global.exception.ErrorCode;
@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.COMMENT_NOT_EXISTS;
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
-import static java.lang.Boolean.TRUE;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final CommentDAO commentDAO;
+    private final CommentQueryRepository commentQueryRepository;
     private final CommentAlarmService commentAlarmService;
     private final MemberGetService memberGetService;
 
@@ -77,7 +77,7 @@ public class CommentService {
 
     @Transactional
     public List<CommentDTO> getCommentList(Long postId) {
-        List<Comment> list = commentDAO.getList(postId);
+        List<Comment> list = commentQueryRepository.getList(postId);
         List<CommentDTO> commentResponseDTOList = new ArrayList<>();
         Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
 
@@ -91,31 +91,24 @@ public class CommentService {
         return commentResponseDTOList;
     }
 
+    /**
+     * 댓글 삭제
+     * - 대댓글이 달린 댓글은 삭제 불가
+     */
     @Transactional
-    public void deleteComment(Long memberId, Long commentId, Long postId) {
-        Member member = memberGetService.getMemberByIdOrThrow(memberId);
-        Comment comment = commentDAO.findCommentByIdWithParent(commentId)
-                .orElseThrow(() -> new CustomException(INVALID_COMMENT));
-        if (!comment.getMember().getId().equals(member.getId())) {
+    public void deleteComment(Long memberId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_EXISTS));
+
+        if (!memberId.equals(comment.getMember().getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        comment.changeIsDeleted(TRUE);
-        /*
-        todo 1.댓글 삭제시 포인트 롤백정책 정해질 경우 로직구현
-         */
-//        validateRollbackPoint(postId, memberId);
-    }
 
-//    private void validateRollbackPoint(Long postId, Long memberId) {
-//        boolean isCommentAuthor = commentRepository.existsByPostIdAndMemberId(postId, memberId);
-//        if (!isCommentAuthor) {
-//            rollbackPoint(postId, memberId);
-//        }
-//    }
-//
-//    private void rollbackPoint(Long postId, Long memberId) {
-//
-//    }
+        if (!commentRepository.findByParentId(commentId).isEmpty()) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_COMMENT_WITH_CHILD);
+        }
+
+        comment.changeIsDeleted(true);
+    }
 
     private void rewardPoint(Long postId, Member commentedMember) {
         Long commentedMemberId = commentedMember.getId();

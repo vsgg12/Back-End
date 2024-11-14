@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Getter
@@ -30,12 +32,17 @@ public class PostDTO {
     private MemberDTO memberDTO;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long daysUntilEnd; // 게시글 마감까지 남은 일자
     private List<Hashtag> hashtagList;
     private List<InGameInfoDTO> inGameInfoList;
     private Boolean isVote;
     private BooleanEnum isDeleted; // 게시글 삭제 여부
 
     public static PostDTO of(MemberDTO memberDTO, Post post, List<Hashtag> hashtagList, List<InGameInfoDTO> inGameInfoList, Boolean isVote) {
+        // 마감까지 남은 일자 기준: 마감일 당일 조회 시 - 0일
+        // 24-11-11T23:59:59.9999 의 경우 11월 12일로 계산되기 때문에, 날짜만 추출한 후, 시간은 0시0분으로 따로 넣음.
+        LocalDateTime now = LocalDateTime.now();
+        long daysUntilEnd = ChronoUnit.DAYS.between(now, LocalDateTime.of(post.getEndDateTime().toLocalDate(), LocalTime.of(0, 0)));
 
         return PostDTO.builder()
                 .id(post.getId())
@@ -48,12 +55,12 @@ public class PostDTO {
                 .memberDTO(memberDTO)
                 .createdAt(post.getCreatedDateTime())
                 .updatedAt(post.getModifyDateTime())
+                .daysUntilEnd(daysUntilEnd)
                 .hashtagList(hashtagList)
                 .inGameInfoList(inGameInfoList)
                 .isVote(isVote)
                 .isDeleted(post.getIsDeleted())
                 .build();
-
     }
 
     /*
