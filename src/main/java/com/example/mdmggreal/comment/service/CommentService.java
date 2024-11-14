@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.example.mdmggreal.global.exception.ErrorCode.COMMENT_NOT_EXISTS;
 import static com.example.mdmggreal.global.exception.ErrorCode.INVALID_COMMENT;
-import static java.lang.Boolean.TRUE;
 
 @Service
 @RequiredArgsConstructor
@@ -92,11 +92,11 @@ public class CommentService {
 //
         // 댓글은 최신 순으로 정렬, 대댓글은 작성 순으로 정렬
         // 1. 짱구 : 배고프다 - id=1, parentId=null, grandParentId=null
-            // 2. 나나 : @짱구 어쩌라고? - id=2, parentId=1, grandParentId=1
-            // 3. 철구 : @나나 인성 무엇 - id=3, parentId=2, grandParentId=1
-            // 4. 슬기 : @짱구 물 마시셈 - id=4, parentId=1, grandParentId=1
-            // 5. 철구 : @짱구 나도.... - id=5, parentId=1, grandParentId=1
-            // 6. 나나 : @철구 반사 ㅋㅋ - id=6, parentId=3, grandParentId=1
+        // 2. 나나 : @짱구 어쩌라고? - id=2, parentId=1, grandParentId=1
+        // 3. 철구 : @나나 인성 무엇 - id=3, parentId=2, grandParentId=1
+        // 4. 슬기 : @짱구 물 마시셈 - id=4, parentId=1, grandParentId=1
+        // 5. 철구 : @짱구 나도.... - id=5, parentId=1, grandParentId=1
+        // 6. 나나 : @철구 반사 ㅋㅋ - id=6, parentId=3, grandParentId=1
 
         // 3번에서, 철구가 나나한테 댓글을 단 경우 댓글 알림이 어떻게 생성되나?
         // 현재는 A)내가 쓴 게시글에 댓글이 달렸을 때, B)내가 쓴 댓글에 대댓글이 달렸을 때 댓글 알림 발송.
@@ -122,31 +122,24 @@ public class CommentService {
         return responseDTOList;
     }
 
+    /**
+     * 댓글 삭제
+     * - 대댓글이 달린 댓글은 삭제 불가
+     */
     @Transactional
-    public void deleteComment(Long memberId, Long commentId, Long postId) {
-        Member member = memberGetService.getMemberByIdOrThrow(memberId);
-        Comment comment = commentQueryRepository.findCommentByIdWithParent(commentId)
-                .orElseThrow(() -> new CustomException(INVALID_COMMENT));
-        if (!comment.getMember().getId().equals(member.getId())) {
+    public void deleteComment(Long memberId, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomException(COMMENT_NOT_EXISTS));
+
+        if (!memberId.equals(comment.getMember().getId())) {
             throw new CustomException(ErrorCode.NO_PERMISSION_TO_DELETE_COMMENT);
         }
-        comment.changeIsDeleted(TRUE);
-        /*
-        todo 1.댓글 삭제시 포인트 롤백정책 정해질 경우 로직구현
-         */
-//        validateRollbackPoint(postId, memberId);
-    }
 
-//    private void validateRollbackPoint(Long postId, Long memberId) {
-//        boolean isCommentAuthor = commentRepository.existsByPostIdAndMemberId(postId, memberId);
-//        if (!isCommentAuthor) {
-//            rollbackPoint(postId, memberId);
-//        }
-//    }
-//
-//    private void rollbackPoint(Long postId, Long memberId) {
-//
-//    }
+        if (!commentRepository.findByParentId(commentId).isEmpty()) {
+            throw new CustomException(ErrorCode.CANNOT_DELETE_COMMENT_WITH_CHILD);
+        }
+
+        comment.changeIsDeleted(true);
+    }
 
     private void rewardPoint(Long postId, Member commentedMember) {
         Long commentedMemberId = commentedMember.getId();
