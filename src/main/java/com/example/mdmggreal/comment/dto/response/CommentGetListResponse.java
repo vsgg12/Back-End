@@ -37,6 +37,7 @@ public class CommentGetListResponse extends BaseResponse {
         private Long id;
         private String content;
         private MemberDTO member;
+        private String parentMemberNickname;
         private LocalDateTime createdDateTime;
         private List<CommentDTO> children = new ArrayList<>();
 
@@ -45,6 +46,7 @@ public class CommentGetListResponse extends BaseResponse {
                     .id(comment.getId())
                     .content(comment.getIsDeleted().equals(TRUE) ? "삭제된 댓글입니다." : comment.getContent())
                     .member(MemberDTO.from(comment.getMember()))
+                    .parentMemberNickname(comment.getParent() == null ? null : comment.getParent().getMember().getNickname())
                     .createdDateTime(comment.getCreatedDateTime())
                     .children(new ArrayList<>())  // children 리스트를 초기화
                     .build();

@@ -37,13 +37,15 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @org.hibernate.annotations.Comment("부모 댓글. 본 댓글이 언급한 댓글")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Comment parent;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "grand_parent_id")
-    private Comment grandParent;
+//    @org.hibernate.annotations.Comment("조상 댓글. 본 댓글이 언급하지 않았지만 소속돼 있는 댓글")
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "grand_parent_id")
+//    private Comment grandParent;
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();

@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,8 +77,8 @@ public class CommentService {
     @Transactional
     public List<CommentGetListResponse.CommentDTO> getCommentList(Long postId) {
         List<Comment> list = commentQueryRepository.getList(postId);
-        List<CommentGetListResponse.CommentDTO> responseDTOList = new ArrayList<>();
-        Map<Long, CommentGetListResponse.CommentDTO> commentDTOHashMap = new HashMap<>();
+        Map<Long, CommentGetListResponse.CommentDTO> resultMap = new LinkedHashMap<>(); // Map<댓글 ID, 댓글 DTO>
+        Map<Long, LinkedHashMap<Long, CommentGetListResponse.CommentDTO>> commentChildMap = new LinkedHashMap<>(); // Map<댓글 ID, LinkedHashMap<댓글 하위의 답글 ID, 답글 DTO>>
 
         // 원래 구조
 //        list.forEach(c -> {
@@ -106,20 +105,51 @@ public class CommentService {
         // 그럼 만약 짱구의 댓글에서 대댓글들이 막 싸우고 있으면 짱구한테 계속 알람이 가는 건가??
         // 나나와 짱구 둘 다 알림이 가는지, 나나만 가는지, 짱구만 가는지...
 
-        // 댓글의 대댓글도 달 수 있는 구조2
         list.forEach(comment -> {
             CommentGetListResponse.CommentDTO commentDTO = CommentGetListResponse.CommentDTO.from(comment);
-            commentDTOHashMap.put(commentDTO.getId(), commentDTO);
 
-            if (comment.getGrandParent() == null) { // 원 댓글
-                responseDTOList.add(commentDTO);
-            } else { // 원 댓글의 대댓글들
-                commentDTOHashMap.get(comment.getGrandParent().getId())
-                        .getChildren()
-                        .add(0, commentDTO); // 대댓글 오래된 순으로 정렬
+            // 일반 댓글인 경우
+            if (comment.getParent() == null) {
+                resultMap.put(comment.getId(), commentDTO);
+            }
+
+            // 답글/자식답글인 경우
+            if (comment.getParent() != null) {
+                CommentGetListResponse.CommentDTO parentCommentInResult = resultMap.get(comment.getParent().getId());
+
+                // 1. 답글인 경우 - parentId 댓글의 childMap에 추가
+                if (parentCommentInResult != null) {
+                    if (commentChildMap.get(comment.getParent().getId()).isEmpty()) {
+                        LinkedHashMap<Long, List<CommentGetListResponse.CommentDTO>> emptyChildMap = new LinkedHashMap<>();
+                        emptyChildMap.put(commentDTO.getId(), List.of(commentDTO));
+//                        commentChildMap.put(comment.getParent().getId(), emptyChildMap);
+                    }
+                }
+
+                // 2. 자식답글인 경우 - childMap에 parentId 댓글이 존재하면 그 childMap에 넣기
+
+
+                // 3. childMap을 한번에 resultMap에 맞는 곳에 넣는다.
+
+
+//                // 1. 답글인 경우 - parentId 댓글의 childMap에 추가
+//                if (resultComment != null) {
+//                    resultComment.getChildren().add(commentDTO);
+//                }
+//
+//                // 2. 자식답글인 경우 - parentId 댓글이 childMap에 있는 경우, childMap에 추가
+//                if (resultComment == null) {
+//                    resultMap.values().forEach(commentDTO1 -> {
+//                        if (commentDTO1.getChildren().contains(parentCommentDTO)) {
+//                            resultMap.get(commentDTO1.getId()).getChildren().add(commentDTO);
+//                        }
+//                    });
+//                }
+
+                // 1. 답글인 경우 - parentId
             }
         });
-        return responseDTOList;
+        return resultMap.values().stream().toList();
     }
 
     /**
