@@ -41,6 +41,7 @@ public class MemberDTO  {
                 .nickname(member.getNickname())
                 .email(member.getEmail())
                 .mobile(member.getMobile())
+                .profileImage(member.getProfileImage())
                 .tier(member.getMemberTier().getName())
                 .predictedResult(member.getPredictedResult())
                 .joinedResult(member.getJoinedResult())
