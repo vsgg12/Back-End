@@ -1,8 +1,8 @@
 package com.example.mdmggreal.comment.service;
 
 import com.example.mdmggreal.alarm.service.CommentAlarmService;
-import com.example.mdmggreal.comment.dto.CommentDTO;
 import com.example.mdmggreal.comment.dto.request.CommentAddRequest;
+import com.example.mdmggreal.comment.dto.response.CommentGetListResponse;
 import com.example.mdmggreal.comment.entity.Comment;
 import com.example.mdmggreal.comment.repository.CommentQueryRepository;
 import com.example.mdmggreal.comment.repository.CommentRepository;
@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,20 +74,47 @@ public class CommentService {
         }
     }
 
+    /**
+     * 게시글의 댓글 목록 조회
+     */
     @Transactional
-    public List<CommentDTO> getCommentList(Long postId) {
+    public List<CommentGetListResponse.CommentDTO> getCommentList(Long postId) {
         List<Comment> list = commentQueryRepository.getList(postId);
-        List<CommentDTO> commentResponseDTOList = new ArrayList<>();
-        Map<Long, CommentDTO> commentDTOHashMap = new HashMap<>();
+        Map<Long, CommentGetListResponse.CommentDTO> dtoMap = new LinkedHashMap<>(); // Map<댓글 ID, 댓글 DTO>
+        Map<Long, CommentGetListResponse.CommentDTO> resultMap = new LinkedHashMap<>(); // Map<댓글 ID, 댓글 DTO>
 
-        list.forEach(c -> {
-            CommentDTO commentResponseDTO = CommentDTO.from(c);
-            commentDTOHashMap.put(commentResponseDTO.getId(), commentResponseDTO);
-            if (c.getParent() != null)
-                commentDTOHashMap.get(c.getParent().getId()).getChildren().add(0, commentResponseDTO); // 대댓글 오래된 순으로 정렬
-            else commentResponseDTOList.add(commentResponseDTO);
+        list.forEach(comment -> {
+            // DTO 생성
+            CommentGetListResponse.CommentDTO commentDTO = CommentGetListResponse.CommentDTO.from(comment);
+            dtoMap.put(comment.getId(), commentDTO);
+
+            // 최상위 댓글만 결과 맵에 저장
+            if (comment.getParent() == null) {
+                resultMap.put(comment.getId(), commentDTO);
+            }
         });
-        return commentResponseDTOList;
+
+        list.forEach(comment -> {
+            if (comment.getParent() != null) {
+                // 최상위 부모 댓글을 찾아서 그 댓글의 자식 리스트에 추가
+                CommentGetListResponse.CommentDTO rootParent = findRootParent(comment.getParent(), dtoMap);
+                if (rootParent != null) {
+                    rootParent.getChildren().add(dtoMap.get(comment.getId()));
+                }
+            }
+        });
+
+        return resultMap.values().stream().toList();
+    }
+
+    /*
+    최상위 댓글 찾는 메서드
+     */
+    private CommentGetListResponse.CommentDTO findRootParent(Comment parent, Map<Long, CommentGetListResponse.CommentDTO> dtoMap) {
+        while (parent.getParent() != null) {
+            parent = parent.getParent(); // 부모의 부모로 계속 올라감
+        }
+        return dtoMap.get(parent.getId());
     }
 
     /**
