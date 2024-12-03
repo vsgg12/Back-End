@@ -59,8 +59,8 @@ public class PostQueryRepository extends QuerydslRepositorySupport {
             predicate.and(post.content.containsIgnoreCase(keyword).or(
                     post.title.containsIgnoreCase(keyword)
             ));
-            predicate.and(post.isDeleted.eq(BooleanEnum.FALSE));
         }
+        predicate.and(post.isDeleted.eq(BooleanEnum.FALSE));
 
         return predicate;
     }
