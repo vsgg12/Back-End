@@ -22,25 +22,19 @@ public class CommentQueryRepository extends QuerydslRepositorySupport {
         super(CommentQueryRepository.class);
     }
 
-    // TOBE - 댓글 전체 조회 시 나오는 데이터
-    // 5,1
-    // 8,7,6
-    // 9,4,3,2
-
-    // grandParent 가 null(게시글의 원 댓글) 인 것이 먼저 온 후 desc 정렬
-    // grandParent 가 같으면 최신 순 정렬
     public List<Comment> getList(Long postId) {
-        // 정렬 조건 구현
+        // 부모 댓글이 없는 최상위 댓글들은 최신순 정렬
         OrderSpecifier<?> orderByParentNull = new OrderSpecifier<>(
-                Order.DESC, // 정렬 방향 지정
+                Order.DESC,
                 new CaseBuilder()
                         .when(comment.parent.id.isNull())
                         .then(comment.createdDateTime)
                         .otherwise((LocalDateTime) null)
         );
 
+        // 부모 댓글이 있는 댓글들은 작성순 정렬
         OrderSpecifier<?> orderByParentNotNull = new OrderSpecifier<>(
-                Order.ASC, // 정렬 방향 지정
+                Order.ASC,
                 new CaseBuilder()
                         .when(comment.parent.id.isNotNull())
                         .then(comment.createdDateTime)
@@ -50,8 +44,6 @@ public class CommentQueryRepository extends QuerydslRepositorySupport {
         return from(comment)
                 .where(comment.post.id.eq(postId))
                 .orderBy(orderByParentNull, orderByParentNotNull)
-//                .orderBy(comment.createdDateTime.desc().nullsFirst(),
-//                        comment.createdDateTime.asc())
                 .fetch();
     }
 
