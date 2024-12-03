@@ -2,6 +2,7 @@ package com.example.mdmggreal.comment.repository;
 
 import com.example.mdmggreal.comment.entity.Comment;
 import com.example.mdmggreal.comment.entity.QComment;
+import com.example.mdmggreal.global.entity.type.BooleanEnum;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.CaseBuilder;
@@ -42,7 +43,8 @@ public class CommentQueryRepository extends QuerydslRepositorySupport {
         );
 
         return from(comment)
-                .where(comment.post.id.eq(postId))
+                .where(comment.post.id.eq(postId)
+                        .and(comment.isDeleted.eq(BooleanEnum.FALSE)))
                 .orderBy(orderByParentNull, orderByParentNotNull)
                 .fetch();
     }

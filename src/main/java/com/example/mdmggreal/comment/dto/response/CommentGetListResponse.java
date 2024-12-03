@@ -44,7 +44,7 @@ public class CommentGetListResponse extends BaseResponse {
         public static CommentDTO from(Comment comment) {
             return CommentDTO.builder()
                     .id(comment.getId())
-                    .content(comment.getIsDeleted().equals(TRUE) ? "삭제된 댓글입니다." : comment.getContent())
+                    .content(comment.getContent())
                     .member(MemberDTO.from(comment.getMember()))
                     .parentMemberNickname(comment.getParent() == null ? null : comment.getParent().getMember().getNickname())
                     .createdDateTime(comment.getCreatedDateTime())
