@@ -20,6 +20,7 @@ public enum ErrorCode {
     INVALID_JWT_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다."),
     UNSUPPORTED_TOKEN(HttpStatus.BAD_REQUEST, "변조된 토큰입니다."),
     JWT_CLAIMS_EMPTY(HttpStatus.BAD_REQUEST, "토큰 정보가 없습니다."),
+    NICKNAME_CHANGE_LIMIT(HttpStatus.BAD_REQUEST, "닉네임은 7일에 한 번만 변경할 수 있습니다."),
 
     // 이미지
     NOT_FOUND_IMAGE(HttpStatus.BAD_REQUEST, "이미지가 존재하지 않습니다."),

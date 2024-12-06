@@ -57,6 +57,9 @@ public class MyPageController {
         return BaseResponse.toResponseEntity(HttpStatus.OK);
     }
 
+    /**
+     * 닉네임 수정
+     */
     @PatchMapping("/nickname")
     public ResponseEntity<BaseResponse> nickNameUpdate(@RequestHeader(value = "Authorization") String token,
                                                @RequestBody UpdateNickNameRequest request) {

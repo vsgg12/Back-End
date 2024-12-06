@@ -1,6 +1,8 @@
 package com.example.mdmggreal.member.service;
 
 import com.example.mdmggreal.common.dto.PageInfo;
+import com.example.mdmggreal.global.exception.CustomException;
+import com.example.mdmggreal.global.exception.ErrorCode;
 import com.example.mdmggreal.member.dto.request.DeleteProfileRequest;
 import com.example.mdmggreal.member.dto.request.UpdateNickNameRequest;
 import com.example.mdmggreal.member.dto.response.MemberProfileDTO;
@@ -33,6 +35,7 @@ public class MyPageService {
     private final S3Service s3Service;
     private final VoteResultService voteResultService;
     private final MemberGetService memberGetService;
+    private final NicknameUpdateHistoryService nicknameUpdateHistoryService;
 
     @Transactional(readOnly = true)
     public PostsByMemberGetResponse getPostsByMemberWithPagination(Long memberId, int pageNumber, int pageSize) {
@@ -80,8 +83,18 @@ public class MyPageService {
 
     @Transactional
     public void updateProfileImage(Long memberId, MultipartFile profileImage) throws IOException {
+        validateNicknameUpdateTerm(memberId);
         String imageUrl = s3Service.uploadImages(profileImage);
         Member member = memberGetService.getMemberByIdOrThrow(memberId);
         member.updateProfile(imageUrl);
+    }
+
+    /*
+    닉네임 변경 7일 제한 여부 검증
+     */
+    private void validateNicknameUpdateTerm(Long memberId) {
+        if (!nicknameUpdateHistoryService.isNicknameChangeAllowed(memberId)) {
+            throw new CustomException(ErrorCode.NICKNAME_CHANGE_LIMIT);
+        }
     }
 }
