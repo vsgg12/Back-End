@@ -62,10 +62,11 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
 
     private void processPostsAfterEndDate(List<Post> postList) {
         postList.forEach(post -> {
-            post.editStatus();
-            postService.rewardPointByPostCreation(post.getMember());
             addPostAlarms(post);
+            postService.rewardPointByPostCreation(post.getMember());
             voteResultService.findVictoryMembersAndUpdateMembers(post.getId());
+
+            post.editStatus();
         });
     }
 
