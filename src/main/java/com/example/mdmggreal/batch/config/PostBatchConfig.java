@@ -71,7 +71,10 @@ public class PostBatchConfig extends DefaultBatchConfiguration {
     }
 
     private void addPostAlarms(Post post) {
-        List<Vote> voteList = voteQueryRepository.getVoteListByPostId(post.getId());
-        voteList.forEach(vote -> postAlarmService.addAlarm(post, vote.getMemberId()));
+        // 게시글 작성한 사람 알람
+        postAlarmService.addPostedMemberAlarm(post);
+        // 게시글 참여한 사람 알람
+        List<Long> memberIdsByPostId = voteQueryRepository.getVoteListByPostId(post.getId());
+        memberIdsByPostId.forEach(memberId -> postAlarmService.addVotedMemberAlarm(post, memberId));
     }
 }

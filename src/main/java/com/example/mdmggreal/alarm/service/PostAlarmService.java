@@ -18,11 +18,15 @@ public class PostAlarmService {
     private final MemberGetService memberGetService;
 
     @Transactional
-    public void addAlarm(Post post, Long memberId) {
+    public void addVotedMemberAlarm(Post post, Long memberId) {
         Member votedMember = memberGetService.getMemberByIdOrThrow(memberId);
-        Member postedMember = post.getMember();
-
         postAlarmRepository.save(PostAlarm.ofVotedMember(votedMember, post));
+
+    }
+
+    @Transactional
+    public void addPostedMemberAlarm(Post post) {
+        Member postedMember = post.getMember();
         postAlarmRepository.save(PostAlarm.ofPostedMember(postedMember, post));
     }
 

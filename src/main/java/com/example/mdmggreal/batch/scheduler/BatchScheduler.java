@@ -40,7 +40,6 @@ public class BatchScheduler {
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
 //    @Scheduled(cron = "0/10 * * * * *")
     public void runFinishPostBatchJob() throws Exception {
-
         jobLauncher.run(updatePostJob, new JobParametersBuilder()
                 .addDate("timestamp", new Date())
                 .toJobParameters());

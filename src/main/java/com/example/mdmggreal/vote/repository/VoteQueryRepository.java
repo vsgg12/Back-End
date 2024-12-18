@@ -35,8 +35,9 @@ public class VoteQueryRepository extends QuerydslRepositorySupport {
         );
     }
 
-    public List<Vote> getVoteListByPostId(Long postId) {
+    public List<Long> getVoteListByPostId(Long postId) {
         return from(vote)
+                .select(vote.memberId)
                 .leftJoin(inGameInfo)
                 .on(vote.inGameInfo.id.eq(inGameInfo.id))
                 .leftJoin(post)
